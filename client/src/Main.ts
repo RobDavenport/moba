@@ -1,5 +1,12 @@
-import Game from './Game'
+import Renderer from './Renderer'
+import NetworkManager from './NetworkManager'
+//import ResourceManager from './ResourceManager'
+//import Game from './Game'
 
-const game = new Game();
+const renderer = new Renderer()
+const networkManager = new NetworkManager()
+//const resourceManager = new ResourceManager()
+
 const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement
-game.init(canvas);
+networkManager.init();
+renderer.init(canvas);
