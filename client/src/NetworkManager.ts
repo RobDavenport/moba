@@ -2,10 +2,10 @@
 export default class NetworkManager {
   private ws: WebSocket
 
-  init() {
-    const address: string = prompt("Enter game server address.", "ws://localhost:8000")
+  constructor () {
+    const address: string = prompt('Enter game server address.', 'ws://localhost:8000')
 
-    console.log("connecting to: " + address)
+    console.log('connecting to: ' + address)
     this.ws = new WebSocket(address)
 
     this.ws.onopen = (event) => {
@@ -13,16 +13,20 @@ export default class NetworkManager {
     }
 
     this.ws.onclose = (event) => {
-      console.log("Websocket closed. Reason: " + event.reason)
+      console.log('Websocket closed. Reason: ' + event.reason)
     }
 
     this.ws.onmessage = (event) => {
-      console.log("Got message: " + event.data)
+      console.log('Got message: ' + event.data)
     }
   }
 
-  sendRightClick(x: number, y: number) {
-    console.log('clicked: ' + {x, y}.toString())
-    this.ws.send(JSON.stringify({x, y}))
+  sendMoveCommand (x: number, y: number, isAttackMove: boolean) {
+    console.log('sending move command: ' + { x, y }.toString())
+    this.ws.send(JSON.stringify({ x, y }))
+  }
+
+  sendTryActivateAbility (index: number) {
+    alert('todo')
   }
 }
