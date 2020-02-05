@@ -1,21 +1,28 @@
 
 export default class NetworkManager {
+  private ws: WebSocket
+
   init() {
     const address: string = prompt("Enter game server address.", "ws://localhost:8000")
 
     console.log("connecting to: " + address)
-    const ws = new WebSocket(address)
+    this.ws = new WebSocket(address)
 
-    ws.onopen = (event) => {
+    this.ws.onopen = (event) => {
       console.log('WebSocket connected successfully.')
     }
 
-    ws.onclose = (event) => {
+    this.ws.onclose = (event) => {
       console.log("Websocket closed. Reason: " + event.reason)
     }
 
-    ws.onmessage = (event) => {
+    this.ws.onmessage = (event) => {
       console.log("Got message: " + event.data)
     }
+  }
+
+  sendRightClick(x: number, y: number) {
+    console.log('clicked: ' + {x, y}.toString())
+    this.ws.send(JSON.stringify({x, y}))
   }
 }

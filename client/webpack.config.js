@@ -1,6 +1,7 @@
 'use strict';
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 module.exports = (env, args) => {
@@ -19,7 +20,10 @@ module.exports = (env, args) => {
       new webpack.ProvidePlugin({
         TextDecoder: ['text-encoding', 'TextDecoder'],
         TextEncoder: ['text-encoding', 'TextEncoder']
-      })
+      }),
+      new CopyWebpackPlugin([
+        { from: 'assets' }
+      ]),
     ],
     module: {
       rules: [
