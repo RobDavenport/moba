@@ -4,11 +4,11 @@ use ws::util::Token;
 
 use super::client;
 
-pub struct Server {
+pub struct WsServer {
   senders: Vec<Sender>
 }
 
-impl Server {
+impl WsServer {
   pub fn new() -> Self {
       Self {
           senders: Vec::new()
@@ -30,13 +30,13 @@ impl Server {
   }
 }
 
-impl Factory for Server {
+impl Factory for WsServer {
   type Handler = client::Client;
 
   fn connection_made(&mut self, ws: Sender) -> client::Client {
       self.add_user(ws.clone());
       client::Client {
-          server: self,
+        server: self,
           out: ws
       }
   }

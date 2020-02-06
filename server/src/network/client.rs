@@ -1,10 +1,10 @@
 extern crate ws;
 use ws::*;
 
-use super::server;
+use super::ws_server::WsServer;
 
 pub struct Client { 
-  pub server: *mut server::Server,
+  pub server: *mut WsServer,
   pub out: Sender
 }
 
