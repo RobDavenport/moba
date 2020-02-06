@@ -4,18 +4,23 @@ use ws::util::Token;
 
 use super::client;
 
+use crate::engine::engine::Engine;
+
 pub struct WsServer {
-  senders: Vec<Sender>
+  senders: Vec<Sender>,
+  engine: Engine
 }
 
 impl WsServer {
-  pub fn new() -> Self {
+  pub fn new(engine: Engine) -> Self {
       Self {
-          senders: Vec::new()
+          senders: Vec::new(),
+          engine
       }
   }
 
   pub fn add_user(&mut self, sender: Sender) {
+      self.engine.player_connected();
       self.senders.push(sender)
   }
 

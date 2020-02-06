@@ -14,7 +14,7 @@ fn main() {
     let game = Engine::new();
 
     let ws_thread = thread::spawn(|| {
-        let server = WsServer::new();
+        let server = WsServer::new(game);
         let websocket = WebSocket::<WsServer>::new(server).unwrap();
         println!("WS server listening at: {}", IP_ADDRESS);
         websocket.listen(IP_ADDRESS);

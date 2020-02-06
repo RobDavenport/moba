@@ -19,6 +19,7 @@ impl Engine {
   }
 
   pub fn player_connected(&mut self) {
+    println!("Player connected! - from Engine.rs :)");
 
     self.world.insert(
       (),
