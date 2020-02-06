@@ -1,4 +1,4 @@
 #[derive(Clone, Copy, Debug, PartialEq)]
-struct Render {
+pub struct Render {
 
 }

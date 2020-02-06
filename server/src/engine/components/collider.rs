@@ -1,4 +1,4 @@
 #[derive(Clone, Copy, Debug, PartialEq)]
-struct Collider {
+pub struct Collider {
 
 }

@@ -1,5 +1,5 @@
 #[derive(Clone, Copy, Debug, PartialEq)]
-struct Attacks {
+pub struct Attacks {
 
-  range: f32
+  pub range: f32
 }
