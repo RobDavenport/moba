@@ -1,10 +1,13 @@
+use std::sync::mpsc;
+
 extern crate ws;
 use ws::*;
 
-use super::ws_server::WsServer;
+use super::client_manager::ClientManager;
+use super::client_message::ClientMessage;
 
 pub struct Client { 
-  pub server: *mut WsServer,
+  pub manager_out: mpsc::Sender<ClientMessage>,
   pub out: Sender
 }
 
@@ -16,16 +19,17 @@ impl Handler for Client {
 
   fn on_message(&mut self, msg: Message) -> Result<()> {
       println!("Got message: {}", msg);
-      unsafe {
-          self.server.as_ref().unwrap().broadcast_all(msg);
-      }
+      self.manager_out.send(ClientMessage::ChatMessage {
+          public: false,
+          message: "DEFAULT".to_string()
+      });
+
       Ok(())
   }
 
   fn on_close(&mut self, code: CloseCode, _reason: &str) {
       println!("User left because: {:?}", code);
-      unsafe {
-          self.server.as_mut().unwrap().remove_user(self.out.token());
-      }
+      self.manager_out.send(ClientMessage::Disconnected);
+
   }
 }

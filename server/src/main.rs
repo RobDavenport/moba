@@ -1,7 +1,7 @@
 use ws::*;
 
 mod network;
-use network::ws_server::WsServer;
+use network::client_manager::ClientManager;
 
 use std::thread;
 
@@ -12,13 +12,14 @@ const IP_ADDRESS: &str = "127.0.0.1:8000";
 
 fn main() {
     let game = Engine::new();
+    let game_channel = game.request_channel();
 
     let ws_thread = thread::spawn(|| {
-        let server = WsServer::new(game);
-        let websocket = WebSocket::<WsServer>::new(server).unwrap();
+        let client_manager = ClientManager::new(game_channel);
+        let websocket = WebSocket::<ClientManager>::new(client_manager).unwrap();
         println!("WS server listening at: {}", IP_ADDRESS);
         websocket.listen(IP_ADDRESS);
     });
-    
+  
     ws_thread.join().unwrap();
 }
