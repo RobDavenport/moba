@@ -28,6 +28,7 @@ impl Handler for Client {
 
     fn on_close(&mut self, code: CloseCode, _reason: &str) {
         println!("Client: Closed reason: {:?}", code);
-        self.manager_out.send(ClientMessage::Disconnected(self.out.token()));
+        self.manager_out
+            .send(ClientMessage::Disconnected(self.out.token()));
     }
 }

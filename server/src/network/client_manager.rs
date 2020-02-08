@@ -10,7 +10,7 @@ use crate::engine::game_message::GameMessage;
 
 pub struct ClientManager {
     sender: mpsc::Sender<ClientMessage>,
-    game_channel: mpsc::Sender<GameMessage>
+    game_channel: mpsc::Sender<GameMessage>,
 }
 
 impl ClientManager {
@@ -19,33 +19,33 @@ impl ClientManager {
         let my_channel = game_channel.clone();
         let mut client_outs: Vec<ws::Sender> = Vec::new();
 
-        std::thread::spawn(move || { 
-          loop {
-            match receiver.try_recv() {
-              Ok(msg) => match msg {
-                  ClientMessage::MoveCommand { x, y } => {
-                      game_channel.send(GameMessage::MoveCommand { x, y });
-                  },
-                  ClientMessage::Connected(in_client) => {
-                      client_outs.push(in_client.clone());
-                      //TODO do something with in_client??
-                      game_channel.send(GameMessage::ClientConnected);
-                  },
-                  ClientMessage::Disconnected(token) => {
-                    client_outs.retain(|client| token != client.token());
-                  }
-                  ClientMessage::ChatMessage { public, message } => {
-                    for out in client_outs.iter() {
-                      out.send(message.clone());
-                    }
-                  }
-                  _ => {
-                    println!("ClientManager: Unhandled message!");
-                  },
-              },
-              Err(e) => (),
+        std::thread::spawn(move || {
+            loop {
+                match receiver.try_recv() {
+                    Ok(msg) => match msg {
+                        ClientMessage::MoveCommand { x, y } => {
+                            game_channel.send(GameMessage::MoveCommand { x, y });
+                        }
+                        ClientMessage::Connected(in_client) => {
+                            client_outs.push(in_client.clone());
+                            //TODO do something with in_client??
+                            game_channel.send(GameMessage::ClientConnected);
+                        }
+                        ClientMessage::Disconnected(token) => {
+                            client_outs.retain(|client| token != client.token());
+                        }
+                        ClientMessage::ChatMessage { public, message } => {
+                            for out in client_outs.iter() {
+                                out.send(message.clone());
+                            }
+                        }
+                        _ => {
+                            println!("ClientManager: Unhandled message!");
+                        }
+                    },
+                    Err(e) => (),
+                }
             }
-          }
         });
 
         Self {

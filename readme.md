@@ -23,3 +23,7 @@ Run the Server with:
 Run the Client with:
 
 > npm run dev
+
+#### Other stuff:
+
+> cargo fmt
