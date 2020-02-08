@@ -1,6 +1,10 @@
-pub enum ClientMessage {
-  Connected,
-  Disconnected,
+extern crate ws;
+use ws::*;
 
-  ChatMessage { public: bool, message: String },
+pub enum ClientMessage {
+    Connected(ws::Sender),
+    Disconnected(ws::util::Token),
+
+    MoveCommand { x: f32, y: f32 },
+    ChatMessage { public: bool, message: String },
 }

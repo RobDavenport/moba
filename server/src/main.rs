@@ -20,6 +20,6 @@ fn main() {
         println!("WS server listening at: {}", IP_ADDRESS);
         websocket.listen(IP_ADDRESS);
     });
-  
+
     ws_thread.join().unwrap();
 }

@@ -2,11 +2,19 @@
 
 ## An HTML5 Moba game for Web & Mobile
 
-Game server written in Rust.
+Game server written in Rust (latest, stable)
 
 Game client in Typescript using Phaser.io.
 
-## To test...
+### Dependencies:
+
+Server: cargo-watch
+
+> cargo install cargo-watch
+
+Client: node, npm
+
+### To test:
 
 Run the Server with:
 
@@ -14,4 +22,4 @@ Run the Server with:
 
 Run the Client with:
 
-> $npm run dev
+> npm run dev

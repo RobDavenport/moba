@@ -1,4 +1,2 @@
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct AIControlled {
-  
-}
+pub struct AIControlled {}

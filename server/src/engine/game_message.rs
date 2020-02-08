@@ -1,4 +1,4 @@
 pub enum GameMessage {
-  ClientConnected,
-  MoveCommand { x: f32, y: f32 }
+    ClientConnected,
+    MoveCommand { x: f32, y: f32 },
 }
