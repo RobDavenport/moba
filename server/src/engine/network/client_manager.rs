@@ -76,9 +76,6 @@ impl ClientManager {
                             }
                         }
                     },
-                                                    // for out in client_outs.iter() {
-                                //     out.send(output).unwrap();
-                                // }
                     Err(e) => {
                         match e {
                             TryRecvError::Empty => (),

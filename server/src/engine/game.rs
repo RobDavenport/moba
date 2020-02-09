@@ -65,8 +65,8 @@ impl Game {
         let mut query = <Write<Transform>>::query();
 
         for mut transform in query.iter(&mut self.world) {
-            transform.position.x = (self.game_time.cos() * 25.) + 100.;
-            transform.position.y = (self.game_time.sin() * 25.) + 100.;
+            transform.position.x = (self.game_time.cos() * 50.) + 125.;
+            transform.position.y = (self.game_time.sin() * 50.) + 125.;
         }
     }
 

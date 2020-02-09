@@ -1,5 +1,7 @@
-function onUpdateTick({x, y}) {
-  console.log("UPDATE!: X:" + x + ", Y: " + y);
+import MobaWindow from '../MobaWindow'
+
+function onUpdateTick({x, y}, dst: MobaWindow) {
+  dst.setCharacterPosition(x, y)
 }
 
 

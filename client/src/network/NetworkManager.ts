@@ -1,4 +1,5 @@
 import { ServerMessageMap } from './ServerMessages'
+import MobaWindow from '../MobaWindow'
 
 interface IServerMessage {
   t: string,
@@ -7,8 +8,10 @@ interface IServerMessage {
 
 export default class NetworkManager {
   private ws: WebSocket
+  private gameWindow: MobaWindow
 
-  constructor () {
+  constructor(gameWindow: MobaWindow) {
+    this.gameWindow = gameWindow
     const address: string = prompt('Enter game server address.', 'ws://localhost:8000')
 
     console.log('connecting to: ' + address)
@@ -23,16 +26,20 @@ export default class NetworkManager {
     }
 
     this.ws.onmessage = (event) => {
-      this.handleServerMessage(JSON.parse(event.data));
+      const json = JSON.parse(event.data);
+      if (!this.handleServerMessage(json)) {
+        console.log("Unhandled Message: ")
+        console.log(event.data)
+      }
     }
   }
 
-  sendMoveCommand (x: number, y: number, isAttackMove: boolean) {
-    console.log('sending move command: ' + { x, y }.toString())
+  sendMoveCommand(x: number, y: number, isAttackMove: boolean) {
+    console.log('SEND move: x:' + x + ' y:' + y)
     this.ws.send(JSON.stringify({ x, y }))
   }
 
-  sendTryActivateAbility (index: number) {
+  sendTryActivateAbility(index: number) {
     alert('todo')
   }
 
@@ -40,8 +47,10 @@ export default class NetworkManager {
     if (event) {
       let func = ServerMessageMap.get(event.t)
       if (func) {
-        func(event.d)
+        func(event.d, this.gameWindow)
+        return true
       }
     }
+    return false
   }
 }

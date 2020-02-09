@@ -3,132 +3,137 @@ import MobaWindow from './MobaWindow'
 import * as GM from './helpers/GameMath'
 import { InputCommand } from './Constants'
 
-const net = new NetworkManager()
+export default class MobaEngine {
+  private net: NetworkManager
+  private gameWindow: Phaser.Scene
 
-const pointer = (src: MobaWindow) => src.input.activePointer
+  constructor(gameWindow: MobaWindow) {
+    this.net = new NetworkManager(gameWindow)
+    this.gameWindow = gameWindow
+  }
 
-function onMove(src: MobaWindow) {
-  const { worldX, worldY } = pointer(src)
-  const { x, y } = GM.worldToGame2d(worldX, worldY)
-  net.sendMoveCommand(x, y, false)
-  console.log('move x:' + x + ', y:' + y)
+  onMove() {
+    const { worldX, worldY } = this.gameWindow.input.activePointer
+    const { x, y } = GM.worldToGame2d(worldX, worldY)
+    this.net.sendMoveCommand(x, y, false)
+  }
+  
+  onAttackMove() {
+    console.log('amove')
+  }
+  
+   onRecall() {
+    console.log('b')
+  }
+  
+   onStop() {
+    console.log('stop')
+  }
+  
+   onUseSlot1() {
+    console.log('q')
+  }
+  
+   onUseSlot2() {
+    console.log('w')
+  }
+  
+   onUseSlot3() {
+    console.log('e')
+  }
+  
+   onUseSlot4() {
+    console.log('r')
+  }
+  
+   onZoomIn() {
+    console.log('z-in')
+  }
+  
+   onZoomOut() {
+    console.log('z-out')
+  }
+  
+   onScrollUp() {
+    console.log('up')
+  }
+  
+   onScrollDown() {
+    console.log('down')
+  }
+  
+   onScrollLeft() {
+    console.log('left')
+  }
+  
+   onScrollRight() {
+    console.log('right')
+  }
+  
+   onLockCamera() {
+    console.log('lock camera')
+  }
+  
+   onFocusHero() {
+    console.log('focus hero')
+  }
+  
+   onFocusAlly1() {
+    console.log('focus ally 1')
+  }
+  
+   onFocusAlly2() {
+    console.log('focus ally 2')
+  }
+  
+   onFocusAlly3() {
+    console.log('focus ally 3')
+  }
+  
+   onFocusAlly4() {
+    console.log('focus ally 4')
+  }
+  
+   onToggleMenu() {
+    console.log('toggle menu')
+  }
+  
+   onToggleScoreboard() {
+    console.log('toggle scoreboard')
+  }
+  
+   onToggleHeroDetailView() {
+    console.log('toggle hero detail view')
+  }
+  
+   onGameClick() {
+    console.log('click')
+  }
+
+  CommandMap = new Map<InputCommand, Function>([
+    [InputCommand.Move, this.onMove],
+    [InputCommand.AttackMove, this.onAttackMove],
+    [InputCommand.Stop, this.onStop],
+    [InputCommand.Recall, this.onRecall],
+    [InputCommand.UseSlot1, this.onUseSlot1],
+    [InputCommand.UseSlot2, this.onUseSlot2],
+    [InputCommand.UseSlot3, this.onUseSlot3],
+    [InputCommand.UseSlot4, this.onUseSlot4],
+    [InputCommand.ZoomIn, this.onZoomIn],
+    [InputCommand.ZoomOut, this.onZoomOut],
+    [InputCommand.ScrollUp, this.onScrollUp],
+    [InputCommand.ScrollDown, this.onScrollDown],
+    [InputCommand.ScrollLeft, this.onScrollLeft],
+    [InputCommand.ScrollRight, this.onScrollRight],
+    [InputCommand.LockCamera, this.onLockCamera],
+    [InputCommand.FocusHero, this.onFocusHero],
+    [InputCommand.FocusAlly1, this.onFocusAlly1],
+    [InputCommand.FocusAlly2, this.onFocusAlly2],
+    [InputCommand.FocusAlly3, this.onFocusAlly3],
+    [InputCommand.FocusAlly4, this.onFocusAlly4],
+    [InputCommand.ToggleMenu, this.onToggleMenu],
+    [InputCommand.ToggleScoreboard, this.onToggleScoreboard],
+    [InputCommand.ToggleHeroDetailView, this.onToggleHeroDetailView],
+    [InputCommand.Click, this.onGameClick],
+  ])
 }
-
-function onAttackMove(src: MobaWindow) {
-  console.log('amove')
-}
-
-function onRecall(src: MobaWindow) {
-  console.log('b')
-}
-
-function onStop(src: MobaWindow) {
-  console.log('stop')
-}
-
-function onUseSlot1(src: MobaWindow) {
-  console.log('q')
-}
-
-function onUseSlot2(src: MobaWindow) {
-  console.log('w')
-}
-
-function onUseSlot3(src: MobaWindow) {
-  console.log('e')
-}
-
-function onUseSlot4(src: MobaWindow) {
-  console.log('r')
-}
-
-function onZoomIn(src: MobaWindow) {
-  console.log('z-in')
-}
-
-function onZoomOut(src: MobaWindow) {
-  console.log('z-out')
-}
-
-function onScrollUp(src: MobaWindow) {
-  console.log('up')
-}
-
-function onScrollDown(src: MobaWindow) {
-  console.log('down')
-}
-
-function onScrollLeft(src: MobaWindow) {
-  console.log('left')
-}
-
-function onScrollRight(src: MobaWindow) {
-  console.log('right')
-}
-
-function onLockCamera(src: MobaWindow) {
-  console.log('lock camera')
-}
-
-function onFocusHero(src: MobaWindow) {
-  console.log('focus hero')
-}
-
-function onFocusAlly1(src: MobaWindow) {
-  console.log('focus ally 1')
-}
-
-function onFocusAlly2(src: MobaWindow) {
-  console.log('focus ally 2')
-}
-
-function onFocusAlly3(src: MobaWindow) {
-  console.log('focus ally 3')
-}
-
-function onFocusAlly4(src: MobaWindow) {
-  console.log('focus ally 4')
-}
-
-function onToggleMenu(src: MobaWindow) {
-  console.log('toggle menu')
-}
-
-function onToggleScoreboard(src: MobaWindow) {
-  console.log('toggle scoreboard')
-}
-
-function onToggleHeroDetailView(src: MobaWindow) {
-  console.log('toggle hero detail view')
-}
-
-function onGameClick(src: MobaWindow) {
-  console.log('click')
-}
-
-export const CommandMap = new Map<InputCommand, Function>([
-  [InputCommand.Move, onMove],
-  [InputCommand.AttackMove, onAttackMove],
-  [InputCommand.Stop, onStop],
-  [InputCommand.Recall, onRecall],
-  [InputCommand.UseSlot1, onUseSlot1],
-  [InputCommand.UseSlot2, onUseSlot2],
-  [InputCommand.UseSlot3, onUseSlot3],
-  [InputCommand.UseSlot4, onUseSlot4],
-  [InputCommand.ZoomIn, onZoomIn],
-  [InputCommand.ZoomOut, onZoomOut],
-  [InputCommand.ScrollUp, onScrollUp],
-  [InputCommand.ScrollDown, onScrollDown],
-  [InputCommand.ScrollLeft, onScrollLeft],
-  [InputCommand.ScrollRight, onScrollRight],
-  [InputCommand.LockCamera, onLockCamera],
-  [InputCommand.FocusHero, onFocusHero],
-  [InputCommand.FocusAlly1, onFocusAlly1],
-  [InputCommand.FocusAlly2, onFocusAlly2],
-  [InputCommand.FocusAlly3, onFocusAlly3],
-  [InputCommand.FocusAlly4, onFocusAlly4],
-  [InputCommand.ToggleMenu, onToggleMenu],
-  [InputCommand.ToggleScoreboard, onToggleScoreboard],
-  [InputCommand.ToggleHeroDetailView, onToggleHeroDetailView],
-  [InputCommand.Click, onGameClick],
-])
