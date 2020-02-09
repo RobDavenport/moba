@@ -99,10 +99,14 @@ impl Game {
         );
     }
 
-    fn broadcast_state(&self) {
-        self.client_out.send(OutMessage::UpdateTick {
-            x: 5.,
-            y: 10.
-        });
+    fn broadcast_state(&mut self) {
+        let query = <Read<Transform>>::query();
+
+        for transform in query.iter(&mut self.world) {
+            self.client_out.send(OutMessage::UpdateTick {
+                x: transform.position.x,
+                y: transform.position.y,
+            });
+        }
     }
 }

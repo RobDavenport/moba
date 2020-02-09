@@ -4,6 +4,9 @@ use std::sync::mpsc::*;
 extern crate ws;
 use ws::*;
 
+extern crate serde_json;
+use serde_json::*;
+
 use super::client;
 use super::client_message::ClientMessage;
 use crate::engine::game_message::GameMessage;
@@ -62,13 +65,17 @@ impl ClientManager {
                 match out_receiver.try_recv() {
                     Ok(msg) => {
                         match msg {
-                            OutMessage::UpdateTick {x, y} => {
+                            OutMessage::UpdateTick { .. } => {
+                                let output = serde_json::to_string(&msg).unwrap();
                                 for out in client_outs.iter() {
-                                    out.send("TICK").unwrap();
+                                    out.send(output.clone()).unwrap();
                                 }
                             }
                         }
                     },
+                                                    // for out in client_outs.iter() {
+                                //     out.send(output).unwrap();
+                                // }
                     Err(e) => {
                         match e {
                             TryRecvError::Empty => (),

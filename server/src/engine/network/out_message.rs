@@ -1,7 +1,7 @@
-// use serde::{Serialize, Deserialize};
+use serde::{Serialize, Deserialize};
 
-// #[derive(Serialize, Deserialize)]
-// #[serde(untagged)]
+#[derive(Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum OutMessage {
   UpdateTick {x: f32, y: f32},
 }
