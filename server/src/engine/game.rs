@@ -9,20 +9,24 @@ use nalgebra::Vector2;
 use super::components::all::*;
 use super::game_message::GameMessage;
 
+use super::network::out_message::OutMessage;
+
 pub struct Game {
     receiver: Receiver<GameMessage>,
     tick_time: f32,
     world: World,
     game_time: f32,
+    client_out: Sender<OutMessage>
 }
 
 impl Game {
-    pub fn new(receiver: Receiver<GameMessage>, tick_time: f32) -> Self {
+    pub fn new(client_out: Sender<OutMessage>, receiver: Receiver<GameMessage>, tick_time: f32) -> Self {
         Self {
             receiver,
             tick_time,
             world: Universe::new().create_world(),
             game_time: 0.,
+            client_out,
         }
     }
 
@@ -63,12 +67,12 @@ impl Game {
 
     fn check_messages(&mut self) {
         match self.receiver.try_recv() {
-            Ok(msg) => self.handle_game_message(msg),
+            Ok(msg) => self.handle_message(msg),
             Err(e) => self.handle_error(e),
         }
     }
 
-    fn handle_game_message(&mut self, msg: GameMessage) {
+    fn handle_message(&mut self, msg: GameMessage) {
         match msg {
             GameMessage::ClientConnected => {
                 println!("Game: Create new player");
@@ -95,5 +99,10 @@ impl Game {
         );
     }
 
-    fn broadcast_state(&self) {}
+    fn broadcast_state(&self) {
+        self.client_out.send(OutMessage::UpdateTick {
+            x: 5.,
+            y: 10.
+        });
+    }
 }

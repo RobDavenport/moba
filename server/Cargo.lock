@@ -553,6 +553,7 @@ dependencies = [
  "ncollide2d",
  "nphysics2d",
  "pretty_env_logger",
+ "serde",
  "ws",
 ]
 
