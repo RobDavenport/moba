@@ -3,7 +3,6 @@ use std::sync::mpsc;
 extern crate ws;
 use ws::*;
 
-use super::client_manager::ClientManager;
 use super::client_message::ClientMessage;
 
 pub struct Client {

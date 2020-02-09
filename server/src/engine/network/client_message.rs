@@ -1,5 +1,4 @@
 extern crate ws;
-use ws::*;
 
 pub enum ClientMessage {
     Connected(ws::Sender),
