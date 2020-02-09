@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
-import { CommandMap } from './MobaEngine'
 import { InputCommand, defaultKeyBindings, PointerButtons, defaultPointerBindings } from './Constants'
+import { CommandMap } from './MobaEngine'
 
 export default class MobaWindow extends Phaser.Scene {
   private keyMapping: Map<Phaser.Input.Keyboard.Key, InputCommand>

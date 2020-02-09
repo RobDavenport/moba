@@ -11,6 +11,8 @@ use super::game_message::GameMessage;
 
 use super::network::out_message::OutMessage;
 
+const SLEEP_NANO_SECONDS: u64 = 1;
+
 pub struct Game {
     receiver: Receiver<GameMessage>,
     tick_time: f32,
@@ -32,6 +34,7 @@ impl Game {
 
     pub fn start_loop(&mut self) {
         let mut world = Universe::new().create_world();
+        let sleep_duration = std::time::Duration::from_nanos(SLEEP_NANO_SECONDS);
 
         let mut timer = Instant::now();
         let mut accumulator = 0.;
@@ -53,6 +56,8 @@ impl Game {
                 }
                 self.broadcast_state();
             }
+
+            std::thread::sleep(sleep_duration);
         }
     }
 

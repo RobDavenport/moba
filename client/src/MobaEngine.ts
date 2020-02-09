@@ -1,10 +1,11 @@
-import { InputCommand } from './Constants'
-import NetworkManager from './NetworkManager'
+import NetworkManager from './network/NetworkManager'
 import MobaWindow from './MobaWindow'
 import * as GM from './helpers/GameMath'
+import { InputCommand } from './Constants'
+
+const net = new NetworkManager()
 
 const pointer = (src: MobaWindow) => src.input.activePointer
-const net = new NetworkManager()
 
 function onMove(src: MobaWindow) {
   const { worldX, worldY } = pointer(src)
@@ -42,11 +43,11 @@ function onUseSlot4(src: MobaWindow) {
 }
 
 function onZoomIn(src: MobaWindow) {
-  console.log('zin')
+  console.log('z-in')
 }
 
 function onZoomOut(src: MobaWindow) {
-  console.log('zout')
+  console.log('z-out')
 }
 
 function onScrollUp(src: MobaWindow) {

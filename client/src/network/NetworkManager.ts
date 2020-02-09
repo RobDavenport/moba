@@ -1,3 +1,9 @@
+import { ServerMessageMap } from './ServerMessages'
+
+interface IServerMessage {
+  t: string,
+  d: any
+}
 
 export default class NetworkManager {
   private ws: WebSocket
@@ -17,7 +23,7 @@ export default class NetworkManager {
     }
 
     this.ws.onmessage = (event) => {
-      console.log('Got message: ' + event.data)
+      this.handleServerMessage(JSON.parse(event.data));
     }
   }
 
@@ -28,5 +34,14 @@ export default class NetworkManager {
 
   sendTryActivateAbility (index: number) {
     alert('todo')
+  }
+
+  handleServerMessage(event: IServerMessage) {
+    if (event) {
+      let func = ServerMessageMap.get(event.t)
+      if (func) {
+        func(event.d)
+      }
+    }
   }
 }

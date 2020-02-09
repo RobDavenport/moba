@@ -13,6 +13,8 @@ use crate::engine::game_message::GameMessage;
 
 use super::out_message::OutMessage;
 
+const SLEEP_NANO_SECONDS: u64 = 1;
+
 pub struct ClientManager {
     client_sender: mpsc::Sender<ClientMessage>,
     game_channel: mpsc::Sender<GameMessage>,
@@ -25,6 +27,7 @@ impl ClientManager {
         let mut client_outs: Vec<ws::Sender> = Vec::new();
 
         std::thread::spawn(move || {
+            let sleep_duration = std::time::Duration::from_nanos(SLEEP_NANO_SECONDS);
             loop {
                 //Match client messages...
                 match client_receiver.try_recv() {
@@ -83,6 +86,8 @@ impl ClientManager {
                         }
                     }
                 }
+
+                std::thread::sleep(sleep_duration);
             }
         });
 
