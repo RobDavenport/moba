@@ -54,12 +54,12 @@ impl ClientManagerLooper {
 
     fn handle_client_message(&mut self, msg: &ClientMessage) {
         match msg {
-            ClientMessage::MoveCommand { x, y } => {
-                println!("GOT MOVE COMMAND!");
-                self.game_channel
-                    .send(GameMessage::MoveCommand { x: *x, y: *y })
-                    .unwrap();
-            }
+            // ClientMessage::MoveCommand { x, y } => {
+            //     println!("GOT MOVE COMMAND!");
+            //     self.game_channel
+            //         .send(GameMessage::MoveCommand { x: *x, y: *y })
+            //         .unwrap();
+            // }
             ClientMessage::Connected(in_client) => {
                 self.client_outs.push(in_client.clone());
                 //TODO do something with in_client??
@@ -69,6 +69,14 @@ impl ClientManagerLooper {
             }
             ClientMessage::Disconnected(token) => {
                 self.client_outs.retain(|client| *token != client.token());
+            }
+            ClientMessage::GameMessage(game_message) => {
+              //TODO Pull the value out of game_message somewhere?
+              //Find out difference between copy/clone here
+              self.game_channel
+                //.send(game_message.clone())
+                .send(GameMessage::MoveCommand {x: 5., y: 5.,})
+                .unwrap();
             }
             ClientMessage::ChatMessage { public: _, message } => {
                 //TODO make "broadcast function"

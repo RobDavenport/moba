@@ -18,6 +18,7 @@ pub struct Game {
     tick_time: f32,
     world: World,
     game_time: f32,
+    game_frame: u32,
     client_out: Sender<OutMessage>,
     game_message_listener: MessageListener<GameMessage>,
 }
@@ -33,6 +34,7 @@ impl Game {
             world: Universe::new().create_world(),
             game_time: 0.,
             client_out,
+            game_frame: 0,
             game_message_listener: MessageListener::new(receiver),
         }
     }
@@ -58,9 +60,10 @@ impl Game {
 
             if accumulator > self.tick_time {
                 while accumulator > self.tick_time {
-                    self.update();
-                    accumulator -= self.tick_time;
+                    self.game_frame += 1;
                     self.game_time += self.tick_time;
+                    self.update(self.tick_time);
+                    accumulator -= self.tick_time;
                 }
                 self.broadcast_state();
             }
@@ -69,7 +72,7 @@ impl Game {
         }
     }
 
-    fn update(&mut self) {
+    fn update(&mut self, dt: f32) {
         let query = <Write<Transform>>::query();
 
         for mut transform in query.iter(&mut self.world) {
@@ -104,6 +107,7 @@ impl Game {
         for transform in query.iter(&mut self.world) {
             self.client_out
                 .send(OutMessage::UpdateTick {
+                    frame: self.game_frame,
                     x: transform.position.x,
                     y: transform.position.y,
                 })

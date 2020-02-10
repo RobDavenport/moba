@@ -1,9 +1,11 @@
 extern crate ws;
 
+use crate::engine::game_message::GameMessage;
+
+// For messages from a Client Socket to the Client Manager
 pub enum ClientMessage {
     Connected(ws::Sender),
     Disconnected(ws::util::Token),
-
-    MoveCommand { x: f32, y: f32 },
+    GameMessage(GameMessage),
     ChatMessage { public: bool, message: String },
 }
