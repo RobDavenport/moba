@@ -17,10 +17,13 @@ impl Handler for Client {
     }
 
     fn on_message(&mut self, msg: Message) -> Result<()> {
-        self.manager_out.send(ClientMessage::ChatMessage {
-            public: false,
-            message: msg.to_string(),
-        });
+        //TODO Translate messages into usable ClientMessage format...
+        self.manager_out
+            .send(ClientMessage::ChatMessage {
+                public: false,
+                message: msg.to_string(),
+            })
+            .unwrap();
 
         Ok(())
     }
@@ -28,6 +31,7 @@ impl Handler for Client {
     fn on_close(&mut self, code: CloseCode, _reason: &str) {
         println!("Client: Closed reason: {:?}", code);
         self.manager_out
-            .send(ClientMessage::Disconnected(self.out.token()));
+            .send(ClientMessage::Disconnected(self.out.token()))
+            .unwrap();
     }
 }
