@@ -35,15 +35,15 @@ impl ClientManagerLooper {
         let sleep_duration = std::time::Duration::from_nanos(SLEEP_NANO_SECONDS);
         loop {
             //Match client messages...
-            if let Some(client_messages) = self.client_listener.check_messages() {
-                for client_message in client_messages.iter() {
+            if let Some(mut client_messages) = self.client_listener.check_messages() {
+                for client_message in client_messages.drain(..) {
                     self.handle_client_message(client_message)
                 }
             }
 
             //Match mesages from game
-            if let Some(game_out_messages) = self.game_out_listener.check_messages() {
-                for game_out_message in game_out_messages.iter() {
+            if let Some(mut game_out_messages) = self.game_out_listener.check_messages() {
+                for game_out_message in game_out_messages.drain(..) {
                     self.handle_game_out_message(game_out_message)
                 }
             }
@@ -52,7 +52,7 @@ impl ClientManagerLooper {
         }
     }
 
-    fn handle_client_message(&mut self, msg: &ClientMessage) {
+    fn handle_client_message(&mut self, msg: ClientMessage) {
         match msg {
             // ClientMessage::MoveCommand { x, y } => {
             //     println!("GOT MOVE COMMAND!");
@@ -68,7 +68,7 @@ impl ClientManagerLooper {
                     .unwrap();
             }
             ClientMessage::Disconnected(token) => {
-                self.client_outs.retain(|client| *token != client.token());
+                self.client_outs.retain(|client| token != client.token());
             }
             ClientMessage::GameMessage(game_message) => {
               //TODO Pull the value out of game_message somewhere?
@@ -87,7 +87,7 @@ impl ClientManagerLooper {
         }
     }
 
-    fn handle_game_out_message(&self, msg: &OutMessage) {
+    fn handle_game_out_message(&self, msg: OutMessage) {
         match msg {
             OutMessage::UpdateTick { .. } => {
                 let output = serde_json::to_string(&msg).unwrap();

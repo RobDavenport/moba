@@ -46,8 +46,8 @@ impl Game {
         let mut accumulator = 0.;
 
         loop {
-            if let Some(game_messages) = self.game_message_listener.check_messages() {
-                for msg in game_messages.iter() {
+            if let Some(mut game_messages) = self.game_message_listener.check_messages() {
+                for msg in game_messages.drain(..) {
                     self.handle_message(msg)
                 }
             }
@@ -81,7 +81,7 @@ impl Game {
         }
     }
 
-    fn handle_message(&mut self, msg: &GameMessage) {
+    fn handle_message(&mut self, msg: GameMessage) {
         match msg {
             GameMessage::ClientConnected => {
                 println!("Game: Create new player");
