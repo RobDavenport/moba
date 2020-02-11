@@ -17,8 +17,8 @@ export default class MobaWindow extends Phaser.Scene {
   }
 
   preload () {
-    this.load.image('background', './assets/backgrounds/background.png')
-    this.load.image('character', './assets/characters/character.png')
+    this.load.image('background', './assets/art/backgrounds/background.png')
+    this.load.image('character', './assets/art/characters/character.png')
   }
 
   create () {

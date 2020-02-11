@@ -7,7 +7,7 @@ use engine::engine_builder::*;
 
 use crate::engine::network::client_factory::ClientFactory;
 
-const IP_ADDRESS: &str = "127.0.0.1:8000";
+const IP_ADDRESS: &str = "192.168.1.150:8000";
 const TICKS_PER_SECOND: u8 = 30;
 
 fn main() {
