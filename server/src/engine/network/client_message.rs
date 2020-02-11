@@ -1,11 +1,16 @@
 extern crate ws;
 
+use super::client_data::ClientData;
 use crate::engine::game_message::GameMessage;
 
 // For messages from a Client Socket to the Client Manager
 pub enum ClientMessage {
-    Connected(ws::Sender),
-    Disconnected(ws::util::Token),
+    Connected(ClientData),
+    Disconnected(u32),
     GameMessage(GameMessage),
-    ChatMessage { public: bool, message: String },
+    ChatMessage {
+        id: u32,
+        public: bool,
+        message: String,
+    },
 }

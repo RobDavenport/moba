@@ -72,7 +72,7 @@ impl Game {
         }
     }
 
-    fn update(&mut self, dt: f32) {
+    fn update(&mut self, _dt: f32) {
         let query = <Write<Transform>>::query();
 
         for mut transform in query.iter(&mut self.world) {

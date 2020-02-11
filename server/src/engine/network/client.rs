@@ -7,7 +7,7 @@ use super::client_message::ClientMessage;
 
 pub struct Client {
     pub manager_out: mpsc::Sender<ClientMessage>,
-    pub out: Sender,
+    pub id: u32,
 }
 
 impl Handler for Client {
@@ -20,6 +20,7 @@ impl Handler for Client {
         //TODO Translate messages into usable ClientMessage format...
         self.manager_out
             .send(ClientMessage::ChatMessage {
+                id: self.id,
                 public: false,
                 message: msg.to_string(),
             })
@@ -31,7 +32,7 @@ impl Handler for Client {
     fn on_close(&mut self, code: CloseCode, _reason: &str) {
         println!("Client: Closed reason: {:?}", code);
         self.manager_out
-            .send(ClientMessage::Disconnected(self.out.token()))
+            .send(ClientMessage::Disconnected(self.id))
             .unwrap();
     }
 }
