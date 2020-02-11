@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
+//Messages that are broadcasted from the Server to Game Clients only
 #[derive(Serialize, Deserialize)]
 #[serde(tag = "t", content = "d")]
 pub enum OutMessage {
-    UpdateTick { frame: u32, x: f32, y: f32 },
+    UpdateTick { f: u32, x: f32, y: f32 },
 }

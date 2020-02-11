@@ -7,6 +7,7 @@ use legion::world::World;
 use nalgebra::Vector2;
 
 use super::components::all::*;
+use super::input_command::InputCommand;
 use crate::engine::messaging::message_listener::MessageListener;
 use crate::engine::messaging::messages::{GameMessage, OutMessage};
 
@@ -84,8 +85,16 @@ impl Game {
             GameMessage::ClientConnected => {
                 println!("Game: Create new player");
                 self.on_client_connected();
-            }
-            GameMessage::MoveCommand { x, y } => println!("Move to x:{}, y:{}", x, y),
+            },
+            GameMessage::InputCommand {id, command } => self.handle_input_command(id, command),
+            _ => panic!("Unhandled GameMessage!"),
+        }
+    }
+
+    fn handle_input_command(&mut self, id: u32, command: InputCommand) {
+        match command {
+            InputCommand::Move(target) => println!("User-{}: Move to: {}", id, target),
+            _ => panic!("Unhaled Input Command!"),
         }
     }
 
@@ -102,10 +111,11 @@ impl Game {
     fn broadcast_state(&mut self) {
         let query = <Read<Transform>>::query();
 
+        //Todo only send 'dirty' components
         for transform in query.iter(&mut self.world) {
             self.client_out
                 .send(OutMessage::UpdateTick {
-                    frame: self.game_frame,
+                    f: self.game_frame,
                     x: transform.position.x,
                     y: transform.position.y,
                 })
