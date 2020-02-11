@@ -8,7 +8,7 @@ Game client in Typescript using Phaser.io.
 
 ### Dependencies:
 
-Server: cargo-watch
+Server: cargo-watch, OpenSSL
 
 > cargo install cargo-watch
 

@@ -1,3 +1,4 @@
+mod abilities;
 mod ai_controlled;
 mod animation;
 mod attacks;
@@ -15,6 +16,7 @@ mod velocity;
 mod walks;
 
 pub mod all {
+    pub use super::abilities::Abilities;
     pub use super::ai_controlled::AIControlled;
     pub use super::animation::Animation;
     pub use super::attacks::Attacks;
