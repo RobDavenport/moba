@@ -4,10 +4,8 @@ use std::sync::mpsc::*;
 extern crate ws;
 
 use super::client_data::ClientData;
-use super::client_message::ClientMessage;
-use super::out_message::OutMessage;
-use crate::engine::game_message::GameMessage;
-use crate::engine::message_listener::MessageListener;
+use crate::engine::messaging::message_listener::MessageListener;
+use crate::engine::messaging::messages::{ClientMessage, GameMessage, OutMessage};
 
 const SLEEP_NANO_SECONDS: u64 = 1;
 

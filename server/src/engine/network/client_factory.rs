@@ -7,11 +7,9 @@ extern crate serde_json;
 
 use super::client::Client;
 use super::client_data::ClientData;
-use super::client_message::ClientMessage;
-use crate::engine::game_message::GameMessage;
-
 use super::client_manager_looper::ClientManagerLooper;
-use super::out_message::OutMessage;
+
+use crate::engine::messaging::messages::{ClientMessage, GameMessage, OutMessage};
 
 pub struct ClientFactory {
     client_sender: mpsc::Sender<ClientMessage>,

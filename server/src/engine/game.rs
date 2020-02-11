@@ -7,10 +7,8 @@ use legion::world::World;
 use nalgebra::Vector2;
 
 use super::components::all::*;
-use super::game_message::GameMessage;
-use super::message_listener::MessageListener;
-
-use super::network::out_message::OutMessage;
+use crate::engine::messaging::messages::{GameMessage, OutMessage};
+use crate::engine::messaging::message_listener::MessageListener;
 
 const SLEEP_NANO_SECONDS: u64 = 1;
 

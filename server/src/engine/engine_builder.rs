@@ -1,9 +1,8 @@
 use std::sync::mpsc;
 
 use super::game::Game;
-use super::game_message::GameMessage;
 use super::network::client_factory::ClientFactory;
-use super::network::out_message::OutMessage;
+use crate::engine::messaging::messages::{GameMessage, OutMessage};
 
 pub fn build_engine(ticks_per_second: u8) -> ClientFactory {
     let (game_sender, game_receiver) = mpsc::channel::<GameMessage>();
