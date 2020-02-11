@@ -1,7 +1,7 @@
 extern crate ws;
 
-use crate::engine::network::client_data::ClientData;
 use super::messages::GameMessage;
+use crate::engine::network::client_data::ClientData;
 
 // For messages from a Client Socket to the Client Manager
 pub enum ClientMessage {
