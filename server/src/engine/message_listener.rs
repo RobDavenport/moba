@@ -1,4 +1,3 @@
-use std::collections::VecDeque;
 use std::sync::mpsc::*;
 
 pub struct MessageListener<T> {
@@ -10,13 +9,13 @@ impl<T> MessageListener<T> {
         Self { receiver }
     }
 
-    pub fn check_messages(&self) -> Option<VecDeque<T>> {
-        let mut out: VecDeque<T> = VecDeque::new();
+    pub fn check_messages(&self) -> Option<Vec<T>> {
+        let mut out: Vec<T> = Vec::new();
 
         loop {
             match self.receiver.try_recv() {
                 Ok(msg) => {
-                    out.push_back(msg);
+                    out.push(msg);
                 }
                 Err(e) => match e {
                     TryRecvError::Empty => break,
