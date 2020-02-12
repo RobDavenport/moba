@@ -85,8 +85,8 @@ impl Game {
             GameMessage::ClientConnected => {
                 println!("Game: Create new player");
                 self.on_client_connected();
-            },
-            GameMessage::InputCommand {id, command } => self.handle_input_command(id, command),
+            }
+            GameMessage::InputCommand { id, command } => self.handle_input_command(id, command),
             _ => panic!("Unhandled GameMessage!"),
         }
     }

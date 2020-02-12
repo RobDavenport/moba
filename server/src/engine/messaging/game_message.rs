@@ -4,5 +4,5 @@ use crate::engine::input_command::InputCommand;
 pub enum GameMessage {
     ClientConnected,
     ClientDisconnected,
-    InputCommand {id: u32, command: InputCommand}
+    InputCommand { id: u32, command: InputCommand },
 }
