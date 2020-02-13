@@ -18,23 +18,29 @@ pub struct Game {
     world: World,
     game_time: f32,
     game_frame: u32,
-    client_out: Sender<OutMessage>,
-    game_message_listener: MessageListener<GameMessage>,
+    client_out_reliable: Sender<OutMessage>,
+    client_out_unreliable: Sender<OutMessage>,
+    game_message_listener_reliable: MessageListener<GameMessage>,
+    game_message_listener_unreliable: MessageListener<GameMessage>,
 }
 
 impl Game {
     pub fn new(
-        client_out: Sender<OutMessage>,
-        receiver: Receiver<GameMessage>,
         tick_time: f32,
+        client_out_reliable: Sender<OutMessage>,
+        client_out_unreliable: Sender<OutMessage>,
+        receiver_reliable: Receiver<GameMessage>,
+        receiver_unreliable: Receiver<GameMessage>,
     ) -> Self {
         Self {
             tick_time,
             world: Universe::new().create_world(),
             game_time: 0.,
-            client_out,
             game_frame: 0,
-            game_message_listener: MessageListener::new(receiver),
+            client_out_reliable,
+            client_out_unreliable,
+            game_message_listener_reliable: MessageListener::new(receiver_reliable),
+            game_message_listener_unreliable: MessageListener::new(receiver_unreliable),
         }
     }
 
@@ -45,7 +51,14 @@ impl Game {
         let mut accumulator = 0.;
 
         loop {
-            if let Some(mut game_messages) = self.game_message_listener.check_messages() {
+            if let Some(mut game_messages) = self.game_message_listener_reliable.check_messages() {
+                for msg in game_messages.drain(..) {
+                    self.handle_message(msg)
+                }
+            }
+
+            if let Some(mut game_messages) = self.game_message_listener_unreliable.check_messages()
+            {
                 for msg in game_messages.drain(..) {
                     self.handle_message(msg)
                 }
@@ -113,13 +126,13 @@ impl Game {
 
         //Todo only send 'dirty' components
         for transform in query.iter(&mut self.world) {
-            self.client_out
-                .send(OutMessage::UpdateTick {
-                    f: self.game_frame,
-                    x: transform.position.x,
-                    y: transform.position.y,
-                })
-                .unwrap();
+            let output = OutMessage::UpdateTick {
+                f: self.game_frame,
+                x: transform.position.x,
+                y: transform.position.y,
+            };
+            self.client_out_reliable.send(output).unwrap();
+            self.client_out_unreliable.send(output).unwrap();
         }
     }
 }
