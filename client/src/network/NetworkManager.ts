@@ -1,5 +1,6 @@
 import { ServerMessageMap } from './ServerMessages'
 import MobaWindow from '../MobaWindow'
+import * as msgpack from '@msgpack/msgpack'
 
 interface IServerMessage {
   t: string,
