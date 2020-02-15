@@ -96,13 +96,13 @@ fn start_game_thread(
 }
 
 async fn start_rtc_server(listen_addr: String, public_addr: String) -> RtcServer {
-    let mut rtc_server = tokio::spawn(RtcServer::new(
+    let rtc_server = tokio::spawn(RtcServer::new(
         listen_addr.parse().unwrap(),
         public_addr.parse().unwrap(),
     ))
     .await
     .unwrap()
-    .expect("rtc server boom");
+    .expect("rtc server failed to start");
 
     rtc_server
 }
@@ -111,7 +111,7 @@ fn start_rtc_listener(
     rtc_server: RtcServer,
     game_sender_unreliable: Sender<GameMessage>,
     out_receiver_unreliable: Receiver<OutMessage>,
-) -> thread::JoinHandle<()> {
+) -> std::thread::JoinHandle<()> {
     thread::spawn(move || {
         RtcClientManager::new(rtc_server, game_sender_unreliable, out_receiver_unreliable)
             .start_looping()

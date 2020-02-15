@@ -9,6 +9,10 @@ impl<T> MessageListener<T> {
         Self { receiver }
     }
 
+    pub async fn get_next_message(&self) -> Result<T, RecvError> {
+        self.receiver.recv()
+    }
+
     pub fn check_messages(&self) -> Option<Vec<T>> {
         let mut out: Vec<T> = Vec::new();
 

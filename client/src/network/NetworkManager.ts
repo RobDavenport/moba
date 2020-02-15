@@ -18,7 +18,7 @@ export default class NetworkManager {
   constructor(gameWindow: MobaWindow) {
     this.gameWindow = gameWindow
 
-    //this.initWebsocket()
+    this.initWebsocket()
     this.initWebRTC()
 
   }
@@ -40,11 +40,10 @@ export default class NetworkManager {
       console.log('data channel open')
     }
 
-    // this.channel.onmessage = (evt) => {
-    //   console.log('rtcMsg: ' + evt)
-    // }
-
-    this.channel.onmessage = this.handleServerMessage;
+    this.channel.onmessage = (evt) => {
+      console.log('rtcMsg: ' + evt)
+      this.handleServerMessage(evt)
+    }
 
     this.channel.onerror = (err) => {
       console.log("rtc err", err)
@@ -97,11 +96,9 @@ export default class NetworkManager {
       console.log('Websocket closed. Reason: ' + event.reason)
     }
 
-    this.ws.onmessage = this.handleServerMessage
-
-    // this.ws.onmessage = (event) => {
-    //   this.handleServerMessage(event)
-    // }
+    this.ws.onmessage = (event) => {
+      this.handleServerMessage(event)
+    }
   }
 
   sendMoveCommand(x: number, y: number, isAttackMove: boolean) {
@@ -126,7 +123,8 @@ export default class NetworkManager {
       if (func) {
         func(json.d, this.gameWindow)
       }
+    } else {
+      console.log('unreadable message received from server')
     }
-    console.log('unreadable message received from server')
   }
 }
