@@ -16,7 +16,7 @@ module.exports = (env, args) => {
       filename: isProductionMode ? '[name].[contenthash].js' : '[name].[hash].js',
     },
     devServer: {
-      host: '192.168.1.150',
+      host: '0.0.0.0',
       disableHostCheck: true
     },
     plugins: [

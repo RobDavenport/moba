@@ -26,7 +26,7 @@ export default class NetworkManager {
 
   }
 
-  initWebRTC() {
+  private initWebRTC() {
     this.peer = new RTCPeerConnection({
       iceServers: [{
           urls: ["stun:stun.l.google.com:19302"]
@@ -43,9 +43,11 @@ export default class NetworkManager {
       console.log('data channel open')
     }
 
-    this.channel.onmessage = (evt) => {
-      console.log('rtcMsg: ' + evt)
-    }
+    // this.channel.onmessage = (evt) => {
+    //   console.log('rtcMsg: ' + evt)
+    // }
+
+    this.channel.onmessage = this.handleServerMessage;
 
     this.channel.onerror = (err) => {
       console.log("rtc err", err)
@@ -85,7 +87,7 @@ export default class NetworkManager {
     })
   }
 
-  initWebsocket() {
+  private initWebsocket() {
 
     console.log('connecting to: ' + wsAddress)
     this.ws = new WebSocket(wsAddress)
@@ -98,13 +100,11 @@ export default class NetworkManager {
       console.log('Websocket closed. Reason: ' + event.reason)
     }
 
-    this.ws.onmessage = (event) => {
-      const json = JSON.parse(event.data);
-      if (!this.handleServerMessage(json)) {
-        console.log("Unhandled Message: ")
-        console.log(event.data)
-      }
-    }
+    this.ws.onmessage = this.handleServerMessage
+
+    // this.ws.onmessage = (event) => {
+    //   this.handleServerMessage(event)
+    // }
   }
 
   sendMoveCommand(x: number, y: number, isAttackMove: boolean) {
@@ -114,18 +114,22 @@ export default class NetworkManager {
     this.channel.send("HELLO FROM WEBRTC?" + x + ', ' + y)
   }
 
-  sendTryActivateAbility(index: number) {
-    alert('todo')
+  sendReliable() {
+    //this.ws.send()
   }
 
-  handleServerMessage(event: IServerMessage) {
-    if (event) {
-      let func = ServerMessageMap.get(event.t)
+  sendUnreliable() {
+    //this.channel.send()
+  }
+
+  private handleServerMessage(event: MessageEvent) {
+    let json: IServerMessage = JSON.parse(event.data)
+    if (json) {
+      let func = ServerMessageMap.get(json.t)
       if (func) {
-        func(event.d, this.gameWindow)
-        return true
+        func(json.d, this.gameWindow)
       }
     }
-    return false
+    console.log('unreadable message received from server')
   }
 }
