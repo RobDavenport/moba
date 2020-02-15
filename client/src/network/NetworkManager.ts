@@ -1,11 +1,8 @@
-import { ServerMessageMap } from './ServerMessages'
+import { ServerMessageMap, IServerMessage } from './ServerMessages'
+import { IClientMessage } from './ClientMessages'
 import MobaWindow from '../MobaWindow'
 import * as msgpack from '@msgpack/msgpack'
 
-interface IServerMessage {
-  t: string,
-  d: any
-}
 
 const address: string = prompt('Enter game server address.', document.location.hostname)
 const wsAddress = 'ws://' + address + ':8000'
@@ -114,7 +111,7 @@ export default class NetworkManager {
     this.channel.send("HELLO FROM WEBRTC?" + x + ', ' + y)
   }
 
-  sendReliable() {
+  sendReliable(msg: IClientMessage) {
     //this.ws.send()
   }
 

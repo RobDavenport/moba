@@ -9,19 +9,19 @@ export default class MobaWindow extends Phaser.Scene {
   private character: Phaser.GameObjects.Image
   private gameEngine: MobaEngine
 
-  constructor () {
+  constructor() {
     super('moba')
     this.keyMapping = new Map()
     this.pointerMapping = new Map()
     this.gameEngine = new MobaEngine(this);
   }
 
-  preload () {
+  preload() {
     this.load.image('background', './assets/art/backgrounds/background.png')
     this.load.image('character', './assets/art/characters/character.png')
   }
 
-  create () {
+  create() {
     this.add.image(0, 0, 'background')
 
     this.character = this.add.image(0, 0, 'character');
@@ -41,19 +41,19 @@ export default class MobaWindow extends Phaser.Scene {
     })
   }
 
-  update () {
+  update() {
     this.handleKeyInputs()
   }
 
   // Input Code
-  setDefaultKeyBindings () {
+  setDefaultKeyBindings() {
     defaultKeyBindings.forEach((inputCommand, keyCode, _) => {
       const inputKey = this.input.keyboard.addKey(keyCode)
       this.keyMapping.set(inputKey, inputCommand)
     })
   }
 
-  handleKeyInputs () {
+  handleKeyInputs() {
     this.keyMapping.forEach((inputCommand, key, map) => {
       if (Phaser.Input.Keyboard.JustDown(key)) {
         this.gameEngine.CommandMap.get(inputCommand)();

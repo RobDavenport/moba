@@ -1,6 +1,15 @@
 import MobaWindow from '../MobaWindow'
 
-function onUpdateTick({x, y}, dst: MobaWindow) {
+//f: Frame
+//t: Message Type
+//d: Data
+export interface IServerMessage {
+  f: number,
+  t: string,
+  d: any
+}
+
+function onUpdateTick({ x, y }, dst: MobaWindow) {
   dst.setCharacterPosition(x, y)
 }
 

@@ -17,96 +17,96 @@ export default class MobaEngine {
     const { x, y } = GM.worldToGame2d(worldX, worldY)
     this.net.sendMoveCommand(x, y, false)
   }
-  
+
   onAttackMove() {
     console.log('amove')
   }
-  
-   onRecall() {
+
+  onRecall() {
     console.log('b')
   }
-  
-   onStop() {
+
+  onStop() {
     console.log('stop')
   }
-  
-   onUseSlot1() {
+
+  onUseSlot1() {
     console.log('q')
   }
-  
-   onUseSlot2() {
+
+  onUseSlot2() {
     console.log('w')
   }
-  
-   onUseSlot3() {
+
+  onUseSlot3() {
     console.log('e')
   }
-  
-   onUseSlot4() {
+
+  onUseSlot4() {
     console.log('r')
   }
-  
-   onZoomIn() {
+
+  onZoomIn() {
     console.log('z-in')
   }
-  
-   onZoomOut() {
+
+  onZoomOut() {
     console.log('z-out')
   }
-  
-   onScrollUp() {
+
+  onScrollUp() {
     console.log('up')
   }
-  
-   onScrollDown() {
+
+  onScrollDown() {
     console.log('down')
   }
-  
-   onScrollLeft() {
+
+  onScrollLeft() {
     console.log('left')
   }
-  
-   onScrollRight() {
+
+  onScrollRight() {
     console.log('right')
   }
-  
-   onLockCamera() {
+
+  onLockCamera() {
     console.log('lock camera')
   }
-  
-   onFocusHero() {
+
+  onFocusHero() {
     console.log('focus hero')
   }
-  
-   onFocusAlly1() {
+
+  onFocusAlly1() {
     console.log('focus ally 1')
   }
-  
-   onFocusAlly2() {
+
+  onFocusAlly2() {
     console.log('focus ally 2')
   }
-  
-   onFocusAlly3() {
+
+  onFocusAlly3() {
     console.log('focus ally 3')
   }
-  
-   onFocusAlly4() {
+
+  onFocusAlly4() {
     console.log('focus ally 4')
   }
-  
-   onToggleMenu() {
+
+  onToggleMenu() {
     console.log('toggle menu')
   }
-  
-   onToggleScoreboard() {
+
+  onToggleScoreboard() {
     console.log('toggle scoreboard')
   }
-  
-   onToggleHeroDetailView() {
+
+  onToggleHeroDetailView() {
     console.log('toggle hero detail view')
   }
-  
-   onGameClick() {
+
+  onGameClick() {
     console.log('click')
   }
 
