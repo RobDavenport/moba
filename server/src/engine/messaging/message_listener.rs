@@ -1,4 +1,5 @@
-use std::sync::mpsc::*;
+//use std::sync::mpsc::*;
+use tokio::sync::mpsc::{ Receiver, error::TryRecvError };
 
 pub struct MessageListener<T> {
     receiver: Receiver<T>,
@@ -9,11 +10,11 @@ impl<T> MessageListener<T> {
         Self { receiver }
     }
 
-    pub async fn get_next_message(&self) -> Result<T, RecvError> {
-        self.receiver.recv()
+    pub async fn get_next_message(&mut self) -> Option<T> {
+        self.receiver.recv().await
     }
-
-    pub fn check_messages(&self) -> Option<Vec<T>> {
+ 
+    pub fn check_messages(&mut self) -> Option<Vec<T>> {
         let mut out: Vec<T> = Vec::new();
 
         loop {
@@ -23,7 +24,7 @@ impl<T> MessageListener<T> {
                 }
                 Err(e) => match e {
                     TryRecvError::Empty => break,
-                    TryRecvError::Disconnected => panic!("Message Listener broke!"),
+                    TryRecvError::Closed => println!("Channel closed!"),
                 },
             }
         }

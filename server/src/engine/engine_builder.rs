@@ -1,6 +1,7 @@
-use std::sync::mpsc::{channel, Receiver, Sender};
+//use std::sync::mpsc::{channel, Receiver, Sender};
 use std::thread;
 
+use tokio::sync::mpsc::{channel, Receiver, Sender};
 use webrtc_unreliable::Server as RtcServer;
 use webrtc_unreliable::SessionEndpoint;
 use ws::*;
@@ -17,6 +18,8 @@ use super::network::webrtc::rtc_client_manager::RtcClientManager;
 use super::network::ws::client_factory::ClientFactory;
 use crate::engine::messaging::messages::{GameMessage, OutMessage};
 
+const CHANNEL_BUFFER_SIZE: usize = 100;
+
 pub struct GameConfig {
     pub ticks_per_second: u8,
     pub ws_address: String,
@@ -32,11 +35,11 @@ pub async fn build_engine(
     thread::JoinHandle<()>,
     thread::JoinHandle<()>,
 ) {
-    let (game_sender_reliable, game_receiver_reliable) = channel::<GameMessage>();
-    let (game_sender_unreliable, game_receiver_unreliable) = channel::<GameMessage>();
+    let (game_sender_reliable, game_receiver_reliable) = channel::<GameMessage>(CHANNEL_BUFFER_SIZE);
+    let (game_sender_unreliable, game_receiver_unreliable) = channel::<GameMessage>(CHANNEL_BUFFER_SIZE);
 
-    let (out_sender_reliable, out_receiver_reliable) = channel::<OutMessage>();
-    let (out_sender_unreliable, out_receiver_unreliable) = channel::<OutMessage>();
+    let (out_sender_reliable, out_receiver_reliable) = channel::<OutMessage>(CHANNEL_BUFFER_SIZE);
+    let (out_sender_unreliable, out_receiver_unreliable) = channel::<OutMessage>(CHANNEL_BUFFER_SIZE);
 
     let ws_thread = start_ws_server(
         config.ws_address,
@@ -65,10 +68,10 @@ fn start_ws_server(
     game_sender: Sender<GameMessage>,
     out_receiver: Receiver<OutMessage>,
 ) -> thread::JoinHandle<()> {
-    let client_factory = ClientFactory::new(game_sender, out_receiver);
+    let client_factory = ClientFactory::new(game_sender, out_receiver, CHANNEL_BUFFER_SIZE);
 
     thread::spawn(|| {
-        let ws_server = WebSocket::<ClientFactory>::new(client_factory).unwrap();
+        let ws_server = WebSocket::<ClientFactory>::new(client_factory, ).unwrap();
         println!("New WS server active at: {}", address);
         ws_server.listen(address).unwrap();
     })

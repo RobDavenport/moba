@@ -1,7 +1,8 @@
 use std::iter::*;
-use std::sync::mpsc::*;
+// use std::sync::mpsc::*;
 use std::time::Instant;
 
+use tokio::sync::mpsc::{channel, Sender, Receiver};
 use legion::prelude::*;
 use legion::world::World;
 use nalgebra::Vector2;
@@ -131,8 +132,8 @@ impl Game {
                 x: transform.position.x,
                 y: transform.position.y,
             };
-            self.client_out_reliable.send(output).unwrap();
-            self.client_out_unreliable.send(output).unwrap();
+            self.client_out_reliable.try_send(output).unwrap();
+            self.client_out_unreliable.try_send(output).unwrap();
         }
     }
 }
