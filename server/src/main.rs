@@ -2,6 +2,7 @@
 
 use std::collections::HashMap;
 use std::thread;
+use futures::join;
 
 mod engine;
 use crate::engine::network::ws::client_factory::ClientFactory;
@@ -24,11 +25,11 @@ async fn main() {
         sdp_address: HYPER_API_ADDR.to_string(),
     };
 
-    let (t1, t2, serv) = build_engine(game_config).await;
+    let (t1, t2, rtc, sdp) = build_engine(game_config).await;
 
     println!("engine running...");
 
-    //serv.await;
+    join!(rtc, sdp);
     t1.join().unwrap();
     t2.join().unwrap();
 }

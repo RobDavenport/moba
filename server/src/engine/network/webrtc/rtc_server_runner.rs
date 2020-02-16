@@ -38,7 +38,9 @@ impl RtcServerRunner {
             //let out_msg_fut = out.recv().fuse();
             //pin_mut!(rtc_msg_fut, out_msg_fut);
             println!("STARTED WEBRTC SERVER LOOP!");
-            loop {                
+            loop {            
+                let msg = out.recv().await;
+                print!("m");    
                 // select! {
                 //     // rtc_msg = rtc_msg_fut => {
                 //     //     match rtc_msg {

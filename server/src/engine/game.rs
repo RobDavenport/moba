@@ -78,7 +78,7 @@ impl Game {
                     self.update(self.tick_time);
                     accumulator -= self.tick_time;
                 }
-                self.broadcast_state();
+                futures::executor::block_on(self.broadcast_state());
             }
 
             std::thread::sleep(sleep_duration);
@@ -122,7 +122,7 @@ impl Game {
         );
     }
 
-    fn broadcast_state(&mut self) {
+    async fn broadcast_state(&mut self) {
         let query = <Read<Transform>>::query();
 
         //Todo only send 'dirty' components
@@ -132,8 +132,8 @@ impl Game {
                 x: transform.position.x,
                 y: transform.position.y,
             };
-            self.client_out_reliable.try_send(output).unwrap();
-            self.client_out_unreliable.try_send(output).unwrap();
+            //self.client_out_reliable.send(output).await;
+            self.client_out_unreliable.send(output).await;
         }
     }
 }

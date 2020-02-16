@@ -34,6 +34,7 @@ pub async fn build_engine(
 ) -> (
     thread::JoinHandle<()>,
     thread::JoinHandle<()>,
+    tokio::task::JoinHandle<()>,
     tokio::task::JoinHandle<()>
 ) {
     let (game_sender_reliable, game_receiver_reliable) = channel::<GameMessage>(CHANNEL_BUFFER_SIZE);
@@ -49,7 +50,7 @@ pub async fn build_engine(
     );
 
     let rtc_server = start_rtc_server(config.rtc_listen, config.rtc_public).await;
-    start_sdp_listener(config.sdp_address, rtc_server.session_endpoint()).await;
+    let listener = start_sdp_listener(config.sdp_address, rtc_server.session_endpoint()).await;
     let serv_handle = start_rtc_listener(rtc_server, game_sender_unreliable, out_receiver_unreliable).await;
 
     let game_thread = start_game_thread(
@@ -60,7 +61,7 @@ pub async fn build_engine(
         game_receiver_unreliable,
     );
 
-    (ws_thread, game_thread, serv_handle)
+    (ws_thread, game_thread, serv_handle, listener)
 }
 
 fn start_ws_server(
@@ -118,7 +119,7 @@ async fn start_rtc_listener(
     RtcServerRunner::run_rtc_server(rtc_server, out_receiver_unreliable).await
 }
 
-async fn start_sdp_listener(sdp_addr: String, endpoint: SessionEndpoint) {
+async fn start_sdp_listener(sdp_addr: String, endpoint: SessionEndpoint) -> tokio::task::JoinHandle<()> {
     println!("start sdp listener");
     let make_svc = make_service_fn(move |addr_stream: &AddrStream| {
         let session_endpoint = endpoint.clone();
@@ -157,5 +158,5 @@ async fn start_sdp_listener(sdp_addr: String, endpoint: SessionEndpoint) {
             .serve(make_svc)
             .await
             .expect("HTTP session server has died");
-    });
+    })
 }
