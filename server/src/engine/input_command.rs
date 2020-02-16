@@ -1,5 +1,6 @@
 use nalgebra::Vector2;
 
+#[derive(Debug)]
 pub enum InputCommand {
     Move(Vector2<f32>),
     AttackMove(Vector2<f32>),

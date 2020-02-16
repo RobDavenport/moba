@@ -1,6 +1,7 @@
-use std::sync::mpsc::{channel, Receiver, Sender};
+//use std::sync::mpsc::{channel, Receiver, Sender};
 use std::thread;
 
+use tokio::sync::mpsc::{channel, Receiver, Sender};
 use webrtc_unreliable::Server as RtcServer;
 use webrtc_unreliable::SessionEndpoint;
 use ws::*;
@@ -13,9 +14,12 @@ use hyper::{
 };
 
 use super::game::Game;
-use super::network::webrtc::rtc_client_manager::RtcClientManager;
+use super::network::webrtc::rtc_server_runner::RtcServerRunner;
 use super::network::ws::client_factory::ClientFactory;
-use crate::engine::messaging::messages::{GameMessage, OutMessage};
+use super::network::ws::client_manager_looper::ClientManagerLooper;
+use crate::engine::messaging::messages::*;
+
+const CHANNEL_BUFFER_SIZE: usize = 100;
 
 pub struct GameConfig {
     pub ticks_per_second: u8,
@@ -29,27 +33,32 @@ pub async fn build_engine(
     config: GameConfig,
 ) -> (
     thread::JoinHandle<()>,
-    thread::JoinHandle<()>,
-    thread::JoinHandle<()>,
+    tokio::task::JoinHandle<()>,
+    tokio::task::JoinHandle<()>,
+    tokio::task::JoinHandle<()>,
+    tokio::task::JoinHandle<()>,
 ) {
-    let (game_sender_reliable, game_receiver_reliable) = channel::<GameMessage>();
-    let (game_sender_unreliable, game_receiver_unreliable) = channel::<GameMessage>();
+    let (game_sender_reliable, game_receiver_reliable) =
+        channel::<GameMessage>(CHANNEL_BUFFER_SIZE);
+    let (game_sender_unreliable, game_receiver_unreliable) =
+        channel::<GameMessage>(CHANNEL_BUFFER_SIZE);
 
-    let (out_sender_reliable, out_receiver_reliable) = channel::<OutMessage>();
-    let (out_sender_unreliable, out_receiver_unreliable) = channel::<OutMessage>();
+    let (out_sender_reliable, out_receiver_reliable) = channel::<OutMessage>(CHANNEL_BUFFER_SIZE);
+    let (out_sender_unreliable, out_receiver_unreliable) =
+        channel::<OutMessage>(CHANNEL_BUFFER_SIZE);
 
-    let ws_thread = start_ws_server(
+    let (ws_thread, ws_looper) = start_ws_server(
         config.ws_address,
         game_sender_reliable,
         out_receiver_reliable,
     );
 
     let rtc_server = start_rtc_server(config.rtc_listen, config.rtc_public).await;
-    start_sdp_listener(config.sdp_address, rtc_server.session_endpoint()).await;
-    let rtc_thread =
+    let listener = start_sdp_listener(config.sdp_address, rtc_server.session_endpoint()).await;
+    let serv_handle =
         start_rtc_listener(rtc_server, game_sender_unreliable, out_receiver_unreliable);
 
-    let game_thread = start_game_thread(
+    let game_handle = start_game_thread(
         config.ticks_per_second,
         out_sender_reliable,
         out_sender_unreliable,
@@ -57,21 +66,27 @@ pub async fn build_engine(
         game_receiver_unreliable,
     );
 
-    (ws_thread, rtc_thread, game_thread)
+    (ws_thread, game_handle, serv_handle, listener, ws_looper)
 }
 
 fn start_ws_server(
     address: String,
     game_sender: Sender<GameMessage>,
     out_receiver: Receiver<OutMessage>,
-) -> thread::JoinHandle<()> {
-    let client_factory = ClientFactory::new(game_sender, out_receiver);
+) -> (thread::JoinHandle<()>, tokio::task::JoinHandle<()>) {
 
-    thread::spawn(|| {
+    let (client_sender, client_receiver) = channel::<ClientMessage>(CHANNEL_BUFFER_SIZE);
+
+    let task_handle = ClientManagerLooper::spawn_client_looper(client_receiver, out_receiver, game_sender);
+
+    let ws_thread = thread::spawn(|| {
+        let client_factory = ClientFactory::new(client_sender);
         let ws_server = WebSocket::<ClientFactory>::new(client_factory).unwrap();
         println!("New WS server active at: {}", address);
         ws_server.listen(address).unwrap();
-    })
+    });
+
+    (ws_thread, task_handle)
 }
 
 fn start_game_thread(
@@ -80,18 +95,17 @@ fn start_game_thread(
     out_sender_unreliable: Sender<OutMessage>,
     game_receiver_reliable: Receiver<GameMessage>,
     game_receiver_unreliable: Receiver<GameMessage>,
-) -> thread::JoinHandle<()> {
+) -> tokio::task::JoinHandle<()> {
     let tick_time = 1. / ticks_per_second as f32;
 
-    thread::spawn(move || {
+    tokio::spawn(async move {
         Game::new(
             tick_time,
             out_sender_reliable,
             out_sender_unreliable,
             game_receiver_reliable,
             game_receiver_unreliable,
-        )
-        .start_loop();
+        ).start_game().await
     })
 }
 
@@ -111,14 +125,14 @@ fn start_rtc_listener(
     rtc_server: RtcServer,
     game_sender_unreliable: Sender<GameMessage>,
     out_receiver_unreliable: Receiver<OutMessage>,
-) -> std::thread::JoinHandle<()> {
-    thread::spawn(move || {
-        RtcClientManager::new(rtc_server, game_sender_unreliable, out_receiver_unreliable)
-            .start_looping()
-    })
+) -> tokio::task::JoinHandle<()> {
+    RtcServerRunner::run_rtc_server(rtc_server, out_receiver_unreliable)
 }
 
-async fn start_sdp_listener(sdp_addr: String, endpoint: SessionEndpoint) {
+async fn start_sdp_listener(
+    sdp_addr: String,
+    endpoint: SessionEndpoint,
+) -> tokio::task::JoinHandle<()> {
     println!("start sdp listener");
     let make_svc = make_service_fn(move |addr_stream: &AddrStream| {
         let session_endpoint = endpoint.clone();
@@ -157,5 +171,5 @@ async fn start_sdp_listener(sdp_addr: String, endpoint: SessionEndpoint) {
             .serve(make_svc)
             .await
             .expect("HTTP session server has died");
-    });
+    })
 }

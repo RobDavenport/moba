@@ -1,14 +1,18 @@
 use std::iter::*;
-use std::sync::mpsc::*;
+use std::time::Duration;
+// use std::sync::mpsc::*;
 use std::time::Instant;
+
+use futures::join;
 
 use legion::prelude::*;
 use legion::world::World;
 use nalgebra::Vector2;
+use tokio::sync::mpsc::{ Receiver, Sender};
+use tokio::time::delay_for;
 
 use super::components::all::*;
 use super::input_command::InputCommand;
-use crate::engine::messaging::message_listener::MessageListener;
 use crate::engine::messaging::messages::{GameMessage, OutMessage};
 
 const SLEEP_NANO_SECONDS: u64 = 1;
@@ -20,8 +24,8 @@ pub struct Game {
     game_frame: u32,
     client_out_reliable: Sender<OutMessage>,
     client_out_unreliable: Sender<OutMessage>,
-    game_message_listener_reliable: MessageListener<GameMessage>,
-    game_message_listener_unreliable: MessageListener<GameMessage>,
+    game_message_listener_reliable: Receiver<GameMessage>,
+    game_message_listener_unreliable: Receiver<GameMessage>,
 }
 
 impl Game {
@@ -39,29 +43,26 @@ impl Game {
             game_frame: 0,
             client_out_reliable,
             client_out_unreliable,
-            game_message_listener_reliable: MessageListener::new(receiver_reliable),
-            game_message_listener_unreliable: MessageListener::new(receiver_unreliable),
+            game_message_listener_reliable: receiver_reliable,
+            game_message_listener_unreliable: receiver_unreliable,
         }
     }
 
-    pub fn start_loop(&mut self) {
-        let sleep_duration = std::time::Duration::from_nanos(SLEEP_NANO_SECONDS);
-
+    pub async fn start_game(&mut self) {    
         let mut timer = Instant::now();
         let mut accumulator = 0.;
+        let mut updated: bool;
+
+        println!("GAME LOOP INITIATED");
 
         loop {
-            if let Some(mut game_messages) = self.game_message_listener_reliable.check_messages() {
-                for msg in game_messages.drain(..) {
-                    self.handle_message(msg)
-                }
+            
+            if let Ok(game_message) = self.game_message_listener_reliable.try_recv() {
+                self.handle_message(game_message);
             }
 
-            if let Some(mut game_messages) = self.game_message_listener_unreliable.check_messages()
-            {
-                for msg in game_messages.drain(..) {
-                    self.handle_message(msg)
-                }
+            if let Ok(game_message) = self.game_message_listener_unreliable.try_recv() {
+                self.handle_message(game_message);
             }
 
             let dt = timer.elapsed();
@@ -77,10 +78,17 @@ impl Game {
                     self.update(self.tick_time);
                     accumulator -= self.tick_time;
                 }
-                self.broadcast_state();
+                updated = true;
+            } else {
+                updated = false;
             }
 
-            std::thread::sleep(sleep_duration);
+            if updated {
+                let time = self.tick_time;
+                join!(self.broadcast_state(), delay_for(Duration::from_secs_f32(time)));
+            } else {
+                delay_for(Duration::from_secs_f32(self.tick_time)).await;
+            }
         }
     }
 
@@ -119,20 +127,37 @@ impl Game {
                 Team { id: 1 },
             )),
         );
+
+        self.world.insert(
+            (),
+            once((
+                Transform::new(Vector2::<f32>::new(1., 1.), None, None),
+                Team { id: 2 },
+            )),
+        );
     }
 
-    fn broadcast_state(&mut self) {
-        let query = <Read<Transform>>::query();
+    async fn broadcast_state(&mut self) {
+        let query = <(Read<Transform>, Read<Team>)>::query();
 
         //Todo only send 'dirty' components
-        for transform in query.iter(&mut self.world) {
+        for (transform, team) in query.iter(&mut self.world) {
             let output = OutMessage::UpdateTick {
                 f: self.game_frame,
-                x: transform.position.x,
+                x: transform.position.x + ( 100. * team.id as f32),
                 y: transform.position.y,
+                n: team.id as u32,
             };
-            self.client_out_reliable.send(output).unwrap();
-            self.client_out_unreliable.send(output).unwrap();
+
+            if (team.id == 1) {
+                self.client_out_reliable.send(output).await;
+            } else if (team.id == 2) {
+                self.client_out_unreliable.send(output).await;
+            }
+            
+            // let f1 = self.client_out_reliable.send(output);
+            // let f2 = self.client_out_unreliable.send(output);
+            //join!(f1, f2);
         }
     }
 }

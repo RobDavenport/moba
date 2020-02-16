@@ -3,11 +3,9 @@ import { IClientMessage } from './ClientMessages'
 import MobaWindow from '../MobaWindow'
 import * as msgpack from '@msgpack/msgpack'
 
-
 const address: string = prompt('Enter game server address.', document.location.hostname)
 const wsAddress = 'ws://' + address + ':8000'
 const rtcAddress = 'http://' + address + ':8001/sdp'
-
 
 export default class NetworkManager {
   private ws: WebSocket
@@ -37,7 +35,8 @@ export default class NetworkManager {
     this.channel.binaryType = "arraybuffer"
 
     this.channel.onopen = () => {
-      console.log('data channel open')
+      console.log('RTC DATA Channel OPEN')
+      console.log(this.peer.localDescription.sdp.toString())
     }
 
     this.channel.onmessage = (evt) => {
@@ -104,7 +103,7 @@ export default class NetworkManager {
   sendMoveCommand(x: number, y: number, isAttackMove: boolean) {
     //console.log('SEND move: x:' + x + ' y:' + y)
     //this.ws.send(JSON.stringify({ x, y }))
-
+    console.log("sending RTC message...")
     this.channel.send("HELLO FROM WEBRTC?" + x + ', ' + y)
   }
 
@@ -112,7 +111,7 @@ export default class NetworkManager {
     //this.ws.send()
   }
 
-  sendUnreliable() {
+  sendUnreliable(msg: IClientMessage) {
     //this.channel.send()
   }
 

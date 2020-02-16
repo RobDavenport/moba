@@ -1,47 +1,63 @@
-use std::sync::{Arc, Mutex};
-
 use webrtc_unreliable::Server as RtcServer;
+use webrtc_unreliable::MessageType;
+
+use tokio::sync::mpsc::Receiver;
+
+use crate::engine::messaging::messages::OutMessage;
+use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 
 use futures::{
-    future::{Fuse, FusedFuture, FutureExt},
-    pin_mut, select,
-    stream::{FusedStream, FuturesUnordered, Stream, StreamExt},
+    future::FutureExt,
+    select,
+    stream::StreamExt,
 };
 
-use std::sync::mpsc::Receiver;
 
-use crate::engine::messaging::message_listener::MessageListener;
-use crate::engine::messaging::messages::{ OutMessage };
-
-pub struct RtcServerRunner {
-    //server_ptr: Arc<Mutex<RtcServer>>,
-//rtc_server: RtcServer,
-}
+pub struct RtcServerRunner { }
 
 impl RtcServerRunner {
-    // pub fn new(rtc_server: RtcServer) -> Self {
-    //     Self {
-    //         server_ptr: Arc::new(Mutex::new(rtc_server)),
-    //     }
-    //     // Self {
-    //     //     rtc_server
-    //     // }
-    // }
-
-    //TODO: Add way to read "out messages" from game_out_unreliable...
-    pub async fn run_server(mut rtc_server: RtcServer) {
-        let mut msg_buf = vec![0; 0x10000];
+    pub fn run_rtc_server(
+        mut rtc_server: RtcServer,
+        mut out: Receiver<OutMessage>,
+    ) -> tokio::task::JoinHandle<()> {
         tokio::spawn(async move {
+            let mut msg_buf = vec![0; 0x10000];
+            let mut targets = Vec::<SocketAddr>::new();
+            println!("STARTED WEBRTC SERVER LOOP!");
             loop {
-                match rtc_server.recv(&mut msg_buf).await {
-                    Ok(msg) => println!("got rtc message"), //parse the message
-                    Err(e) => println!("error: {}", e),
-                }
+                select! {
+                    msg = out.recv().fuse() => {
+                        match msg {
+                            Some(out_msg) => RtcServerRunner::handle_out_message(&mut rtc_server, out_msg, &mut targets).await,
+                            None => panic!("received none!"),
+                        };
+                    },
+                    rtc_msg = rtc_server.recv(&mut msg_buf).fuse() => {
+                        match rtc_msg {
+                            Ok(msg) => {
+                                println!("got rtc message from: {}", msg.remote_addr);
+                                targets.push(msg.remote_addr);
+                            },
+                            Err(e) => println!("error: {}", e),
+                        }
+                    },
+                };
             }
-        }).await.unwrap();
+        })
     }
 
-    // pub async fn send(&mut self, msg: String) {
-    //     self.rtc_server.send().await
-    // }
+    async fn handle_out_message(rtc_server: &mut RtcServer, out_msg: OutMessage, mut targets: &Vec<SocketAddr>) {
+        match out_msg {
+            OutMessage::UpdateTick { .. } => {
+                let output = serde_json::to_string(&out_msg).unwrap();
+                for addr in targets {
+                    rtc_server.send(
+                        &output.as_bytes(),
+                        MessageType::Text,
+                        addr
+                    ).await;
+                }
+             }
+        }
+    }
 }
