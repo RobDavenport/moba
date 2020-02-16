@@ -1,5 +1,3 @@
-
-
 use tokio::sync::mpsc::Sender;
 use ws::*;
 
@@ -18,12 +16,11 @@ impl Handler for Client {
 
     fn on_message(&mut self, msg: Message) -> Result<()> {
         //TODO Translate messages into usable ClientMessage format...
-        self.manager_out
-            .try_send(ClientMessage::ChatMessage {
-                id: self.id,
-                public: false,
-                message: msg.to_string(),
-            });
+        self.manager_out.try_send(ClientMessage::ChatMessage {
+            id: self.id,
+            public: false,
+            message: msg.to_string(),
+        });
 
         Ok(())
     }

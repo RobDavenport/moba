@@ -1,5 +1,4 @@
-// use std::sync::mpsc;
-use tokio::sync::mpsc::{Receiver, Sender, channel};
+use tokio::sync::mpsc::Sender;
 
 use ws;
 
@@ -7,9 +6,8 @@ extern crate serde_json;
 
 use super::client::Client;
 use super::client_data::ClientData;
-use super::client_manager_looper::ClientManagerLooper;
 
-use crate::engine::messaging::messages::{ClientMessage, GameMessage, OutMessage};
+use crate::engine::messaging::messages::ClientMessage;
 
 pub struct ClientFactory {
     client_sender: Sender<ClientMessage>,
@@ -18,15 +16,8 @@ pub struct ClientFactory {
 
 impl ClientFactory {
     pub fn new(
-        game_channel: Sender<GameMessage>,
-        out_receiver: Receiver<OutMessage>,
-        channel_size: usize
+        client_sender: Sender<ClientMessage>,
     ) -> Self {
-        let (client_sender, client_receiver) = channel::<ClientMessage>(channel_size);
-
-        std::thread::spawn(move || {
-            ClientManagerLooper::new(client_receiver, out_receiver, game_channel).start_loop();
-        });
 
         Self {
             client_sender,

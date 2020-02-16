@@ -1,85 +1,89 @@
-// use std::sync::mpsc;
-// use std::sync::mpsc::*;
-
 extern crate ws;
-use tokio::sync::mpsc::{channel, Sender, Receiver};
+use tokio::sync::mpsc::{Receiver, Sender};
+use tokio::task::JoinHandle;
 
 use super::client_data::ClientData;
-use crate::engine::messaging::message_listener::MessageListener;
 use crate::engine::messaging::messages::{ClientMessage, GameMessage, OutMessage};
+
+use futures::{
+    future::FutureExt,
+    select,
+    stream::StreamExt,
+};
 
 const SLEEP_NANO_SECONDS: u64 = 1;
 
 pub struct ClientManagerLooper {
-    client_listener: MessageListener<ClientMessage>,
-    game_out_listener: MessageListener<OutMessage>,
+    client_listener: Receiver<ClientMessage>,
+    game_out_listener: Receiver<OutMessage>,
     game_channel: Sender<GameMessage>,
     client_data: Vec<ClientData>,
 }
 
 impl ClientManagerLooper {
-    pub fn new(
-        client_receiver: Receiver<ClientMessage>,
-        out_receiver: Receiver<OutMessage>,
-        game_channel: Sender<GameMessage>,
-    ) -> Self {
-        Self {
-            client_listener: MessageListener::new(client_receiver),
-            game_out_listener: MessageListener::new(out_receiver),
-            game_channel,
-            client_data: Vec::new(),
-        }
-    }
+    pub fn spawn_client_looper(
+        client_listener: Receiver<ClientMessage>,
+        game_out_listener: Receiver<OutMessage>,
+        mut game_channel: Sender<GameMessage>
+    ) -> JoinHandle<()> {
+        tokio::spawn(async move {
+            let mut manager = ClientManagerLooper {
+                client_listener,
+                game_out_listener,
+                game_channel,
+                client_data: Vec::new(),
+            };
 
-    pub fn start_loop(&mut self) {
-        let sleep_duration = std::time::Duration::from_nanos(SLEEP_NANO_SECONDS);
-
-        loop {
-            //Match client messages...
-            if let Some(mut client_messages) = self.client_listener.check_messages() {
-                for client_message in client_messages.drain(..) {
-                    self.handle_client_message(client_message)
+            loop {
+                select! {
+                    client_msg = manager.client_listener.recv().fuse() => {
+                        manager.handle_client_message(client_msg);
+                    }
+                    game_out = manager.game_out_listener.recv().fuse() => {
+                        manager.handle_game_out_message(game_out);
+                    }
                 }
             }
+        })
+    }
 
-            //Match mesages from game
-            if let Some(mut game_out_messages) = self.game_out_listener.check_messages() {
-                for game_out_message in game_out_messages.drain(..) {
-                    self.handle_game_out_message(game_out_message)
+    fn handle_client_message(&mut self, msg: Option<ClientMessage>) {
+        match msg {
+            None => print!("invalid client message received"),
+            Some(client_msg) => {
+                match client_msg {
+                    ClientMessage::Connected(in_client_data) => {
+                        self.client_data.push(in_client_data);
+                        self.game_channel
+                            .try_send(GameMessage::ClientConnected)
+                            .unwrap();
+                    }
+                    ClientMessage::Disconnected(disconnect_id) => {
+                        self.client_data.retain(|client| disconnect_id != client.id);
+                    }
+                    ClientMessage::GameMessage(game_message) => {
+                        self.game_channel.try_send(game_message).unwrap();
+                    }
+                    ClientMessage::ChatMessage {
+                        id,
+                        public: _,
+                        message,
+                    } => self.broadcast_message(message),
                 }
             }
-
-            std::thread::sleep(sleep_duration);
         }
     }
 
-    fn handle_client_message(&mut self, msg: ClientMessage) {
+    fn handle_game_out_message(&self, msg: Option<OutMessage>) {
         match msg {
-            ClientMessage::Connected(in_client_data) => {
-                self.client_data.push(in_client_data);
-                self.game_channel
-                    .try_send(GameMessage::ClientConnected)
-                    .unwrap();
-            }
-            ClientMessage::Disconnected(disconnect_id) => {
-                self.client_data.retain(|client| disconnect_id != client.id);
-            }
-            ClientMessage::GameMessage(game_message) => {
-                self.game_channel.try_send(game_message).unwrap();
-            }
-            ClientMessage::ChatMessage {
-                id,
-                public: _,
-                message,
-            } => self.broadcast_message(message),
-        }
-    }
-
-    fn handle_game_out_message(&self, msg: OutMessage) {
-        match msg {
-            OutMessage::UpdateTick { .. } => {
-                let output = serde_json::to_string(&msg).unwrap();
-                self.broadcast_message(output);
+            None => println!("invalid out message received"),
+            Some(out_msg) => {
+                match out_msg {
+                    OutMessage::UpdateTick { .. } => {
+                        let output = serde_json::to_string(&out_msg).unwrap();
+                        self.broadcast_message(output);
+                    }
+                }
             }
         }
     }
