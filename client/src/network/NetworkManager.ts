@@ -36,6 +36,7 @@ export default class NetworkManager {
 
     this.channel.onopen = () => {
       console.log('RTC DATA Channel OPEN')
+      console.log(this.peer.localDescription.sdp.toString())
     }
 
     this.channel.onmessage = (evt) => {

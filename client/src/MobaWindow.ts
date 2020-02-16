@@ -6,7 +6,8 @@ export default class MobaWindow extends Phaser.Scene {
   private keyMapping: Map<Phaser.Input.Keyboard.Key, InputCommand>
   private pointerMapping: Map<PointerButtons, InputCommand>
 
-  private character: Phaser.GameObjects.Image
+  private character1: Phaser.GameObjects.Image
+  private character2: Phaser.GameObjects.Image
   private gameEngine: MobaEngine
 
   constructor() {
@@ -24,7 +25,8 @@ export default class MobaWindow extends Phaser.Scene {
   create() {
     this.add.image(0, 0, 'background')
 
-    this.character = this.add.image(0, 0, 'character');
+    this.character1 = this.add.image(0, 0, 'character');
+    this.character2 = this.add.image(0, 0, 'character');
 
     this.input.mouse.disableContextMenu()
     this.setDefaultKeyBindings()
@@ -67,8 +69,13 @@ export default class MobaWindow extends Phaser.Scene {
     })
   }
 
-  setCharacterPosition(x: number, y: number) {
-    this.character.x = x;
-    this.character.y = y;
+  setCharacterPosition(x: number, y: number, index: number) {
+    if (index === 1) {
+      this.character1.x = x;
+      this.character1.y = y;
+    } else if (index === 2) {
+      this.character2.x = x;
+      this.character2.y = y;
+    }
   }
 }

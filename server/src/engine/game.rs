@@ -127,21 +127,37 @@ impl Game {
                 Team { id: 1 },
             )),
         );
+
+        self.world.insert(
+            (),
+            once((
+                Transform::new(Vector2::<f32>::new(1., 1.), None, None),
+                Team { id: 2 },
+            )),
+        );
     }
 
     async fn broadcast_state(&mut self) {
-        let query = <Read<Transform>>::query();
+        let query = <(Read<Transform>, Read<Team>)>::query();
 
         //Todo only send 'dirty' components
-        for transform in query.iter(&mut self.world) {
+        for (transform, team) in query.iter(&mut self.world) {
             let output = OutMessage::UpdateTick {
                 f: self.game_frame,
-                x: transform.position.x,
+                x: transform.position.x + ( 100. * team.id as f32),
                 y: transform.position.y,
+                n: team.id as u32,
             };
-            let f1 = self.client_out_reliable.send(output);
-            let f2 = self.client_out_unreliable.send(output);
-            join!(f1, f2);
+
+            if (team.id == 1) {
+                self.client_out_reliable.send(output).await;
+            } else if (team.id == 2) {
+                self.client_out_unreliable.send(output).await;
+            }
+            
+            // let f1 = self.client_out_reliable.send(output);
+            // let f2 = self.client_out_unreliable.send(output);
+            //join!(f1, f2);
         }
     }
 }

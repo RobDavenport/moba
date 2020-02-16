@@ -4,5 +4,5 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(tag = "t", content = "d")]
 pub enum OutMessage {
-    UpdateTick { f: u32, x: f32, y: f32 },
+    UpdateTick { f: u32, x: f32, y: f32, n: u32 },
 }
