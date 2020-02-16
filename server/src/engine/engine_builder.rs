@@ -15,6 +15,7 @@ use hyper::{
 
 use super::game::Game;
 use super::network::webrtc::rtc_client_manager::RtcClientManager;
+use super::network::webrtc::rtc_server_runner::RtcServerRunner;
 use super::network::ws::client_factory::ClientFactory;
 use crate::engine::messaging::messages::{GameMessage, OutMessage};
 
@@ -33,7 +34,7 @@ pub async fn build_engine(
 ) -> (
     thread::JoinHandle<()>,
     thread::JoinHandle<()>,
-    thread::JoinHandle<()>,
+    tokio::task::JoinHandle<()>
 ) {
     let (game_sender_reliable, game_receiver_reliable) = channel::<GameMessage>(CHANNEL_BUFFER_SIZE);
     let (game_sender_unreliable, game_receiver_unreliable) = channel::<GameMessage>(CHANNEL_BUFFER_SIZE);
@@ -49,8 +50,7 @@ pub async fn build_engine(
 
     let rtc_server = start_rtc_server(config.rtc_listen, config.rtc_public).await;
     start_sdp_listener(config.sdp_address, rtc_server.session_endpoint()).await;
-    let rtc_thread =
-        start_rtc_listener(rtc_server, game_sender_unreliable, out_receiver_unreliable);
+    let serv_handle = start_rtc_listener(rtc_server, game_sender_unreliable, out_receiver_unreliable).await;
 
     let game_thread = start_game_thread(
         config.ticks_per_second,
@@ -60,7 +60,7 @@ pub async fn build_engine(
         game_receiver_unreliable,
     );
 
-    (ws_thread, rtc_thread, game_thread)
+    (ws_thread, game_thread, serv_handle)
 }
 
 fn start_ws_server(
@@ -110,15 +110,12 @@ async fn start_rtc_server(listen_addr: String, public_addr: String) -> RtcServer
     rtc_server
 }
 
-fn start_rtc_listener(
+async fn start_rtc_listener(
     rtc_server: RtcServer,
     game_sender_unreliable: Sender<GameMessage>,
     out_receiver_unreliable: Receiver<OutMessage>,
-) -> std::thread::JoinHandle<()> {
-    thread::spawn(move || {
-        RtcClientManager::new(rtc_server, game_sender_unreliable, out_receiver_unreliable)
-            .start_looping()
-    })
+) -> tokio::task::JoinHandle<()> {
+    RtcServerRunner::run_rtc_server(rtc_server, out_receiver_unreliable).await
 }
 
 async fn start_sdp_listener(sdp_addr: String, endpoint: SessionEndpoint) {

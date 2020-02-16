@@ -24,7 +24,7 @@ impl<T> MessageListener<T> {
                 }
                 Err(e) => match e {
                     TryRecvError::Empty => break,
-                    TryRecvError::Closed => println!("Channel closed!"),
+                    TryRecvError::Closed => break, //TODO: is this correct?
                 },
             }
         }
