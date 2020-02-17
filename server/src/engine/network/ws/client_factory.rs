@@ -5,9 +5,9 @@ use ws;
 extern crate serde_json;
 
 use super::client::Client;
-use super::client_data::ClientData;
 
 use crate::engine::messaging::messages::ClientMessage;
+use crate::engine::network::client_data::ClientData;
 
 pub struct ClientFactory {
     client_sender: Sender<ClientMessage>,
@@ -15,10 +15,7 @@ pub struct ClientFactory {
 }
 
 impl ClientFactory {
-    pub fn new(
-        client_sender: Sender<ClientMessage>,
-    ) -> Self {
-
+    pub fn new(client_sender: Sender<ClientMessage>) -> Self {
         Self {
             client_sender,
             next_client_id: 0,
@@ -39,7 +36,8 @@ impl ws::Factory for ClientFactory {
         self.client_sender
             .try_send(ClientMessage::Connected(ClientData {
                 id: new_client.id,
-                client_out: out.clone(),
+                ws_client_out: out.clone(),
+                socket_addr: None,
             }));
 
         new_client

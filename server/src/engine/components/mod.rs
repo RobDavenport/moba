@@ -9,6 +9,7 @@ mod health;
 mod player_controlled;
 mod receive_input;
 mod render;
+mod replicated;
 mod status_effects;
 mod team;
 mod transform;
@@ -27,6 +28,7 @@ pub mod all {
     pub use super::player_controlled::PlayerControlled;
     pub use super::receive_input::ReceiveInput;
     pub use super::render::Render;
+    pub use super::replicated::Replicated;
     pub use super::status_effects::StatusEffects;
     pub use super::team::Team;
     pub use super::transform::Transform;

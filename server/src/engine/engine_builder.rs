@@ -74,10 +74,10 @@ fn start_ws_server(
     game_sender: Sender<GameMessage>,
     out_receiver: Receiver<OutMessage>,
 ) -> (thread::JoinHandle<()>, tokio::task::JoinHandle<()>) {
-
     let (client_sender, client_receiver) = channel::<ClientMessage>(CHANNEL_BUFFER_SIZE);
 
-    let task_handle = ClientManagerLooper::spawn_client_looper(client_receiver, out_receiver, game_sender);
+    let task_handle =
+        ClientManagerLooper::spawn_client_looper(client_receiver, out_receiver, game_sender);
 
     let ws_thread = thread::spawn(|| {
         let client_factory = ClientFactory::new(client_sender);
@@ -105,7 +105,9 @@ fn start_game_thread(
             out_sender_unreliable,
             game_receiver_reliable,
             game_receiver_unreliable,
-        ).start_game().await
+        )
+        .start_game()
+        .await
     })
 }
 

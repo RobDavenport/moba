@@ -1,19 +1,14 @@
-use webrtc_unreliable::Server as RtcServer;
 use webrtc_unreliable::MessageType;
+use webrtc_unreliable::Server as RtcServer;
 
 use tokio::sync::mpsc::Receiver;
 
 use crate::engine::messaging::messages::OutMessage;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 
-use futures::{
-    future::FutureExt,
-    select,
-    stream::StreamExt,
-};
+use futures::{future::FutureExt, select, stream::StreamExt};
 
-
-pub struct RtcServerRunner { }
+pub struct RtcServerRunner {}
 
 impl RtcServerRunner {
     pub fn run_rtc_server(
@@ -46,18 +41,20 @@ impl RtcServerRunner {
         })
     }
 
-    async fn handle_out_message(rtc_server: &mut RtcServer, out_msg: OutMessage, mut targets: &Vec<SocketAddr>) {
+    async fn handle_out_message(
+        rtc_server: &mut RtcServer,
+        out_msg: OutMessage,
+        mut targets: &Vec<SocketAddr>,
+    ) {
         match out_msg {
             OutMessage::UpdateTick { .. } => {
                 let output = serde_json::to_string(&out_msg).unwrap();
                 for addr in targets {
-                    rtc_server.send(
-                        &output.as_bytes(),
-                        MessageType::Text,
-                        addr
-                    ).await;
+                    rtc_server
+                        .send(&output.as_bytes(), MessageType::Text, addr)
+                        .await;
                 }
-             }
+            }
         }
     }
 }

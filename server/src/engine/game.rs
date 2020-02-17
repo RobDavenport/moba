@@ -8,7 +8,7 @@ use futures::join;
 use legion::prelude::*;
 use legion::world::World;
 use nalgebra::Vector2;
-use tokio::sync::mpsc::{ Receiver, Sender};
+use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::time::delay_for;
 
 use super::components::all::*;
@@ -48,7 +48,7 @@ impl Game {
         }
     }
 
-    pub async fn start_game(&mut self) {    
+    pub async fn start_game(&mut self) {
         let mut timer = Instant::now();
         let mut accumulator = 0.;
         let mut updated: bool;
@@ -56,7 +56,6 @@ impl Game {
         println!("GAME LOOP INITIATED");
 
         loop {
-            
             if let Ok(game_message) = self.game_message_listener_reliable.try_recv() {
                 self.handle_message(game_message);
             }
@@ -85,7 +84,10 @@ impl Game {
 
             if updated {
                 let time = self.tick_time;
-                join!(self.broadcast_state(), delay_for(Duration::from_secs_f32(time)));
+                join!(
+                    self.broadcast_state(),
+                    delay_for(Duration::from_secs_f32(time))
+                );
             } else {
                 delay_for(Duration::from_secs_f32(self.tick_time)).await;
             }
@@ -144,7 +146,7 @@ impl Game {
         for (transform, team) in query.iter(&mut self.world) {
             let output = OutMessage::UpdateTick {
                 f: self.game_frame,
-                x: transform.position.x + ( 100. * team.id as f32),
+                x: transform.position.x + (100. * team.id as f32),
                 y: transform.position.y,
                 n: team.id as u32,
             };
@@ -154,7 +156,7 @@ impl Game {
             } else if (team.id == 2) {
                 self.client_out_unreliable.send(output).await;
             }
-            
+
             // let f1 = self.client_out_reliable.send(output);
             // let f2 = self.client_out_unreliable.send(output);
             //join!(f1, f2);
