@@ -14,7 +14,7 @@ use crate::engine::messaging::messages::{ClientMessage, GameMessage, OutMessage}
 //into this file isntead
 pub struct NetworkManager {
     clients: Vec<ClientData>,
-    client_in: Receiver<Vec<u8>>,
+    ws_in: Receiver<(u32, Vec<u8>)>,
     game_sender: Sender<GameMessage>,
     reliable_out_queue: Receiver<(u32, OutMessage)>,
     unreliable_out_queue: Receiver<(u32, OutMessage)>,
@@ -23,7 +23,7 @@ pub struct NetworkManager {
 
 impl NetworkManager {
     pub fn new(
-        client_in: Receiver<Vec<u8>>,
+        ws_in: Receiver<(u32, Vec<u8>)>,
         game_sender: Sender<GameMessage>,
         reliable_out_queue: Receiver<(u32, OutMessage)>,
         unreliable_out_queue: Receiver<(u32, OutMessage)>,
@@ -31,7 +31,7 @@ impl NetworkManager {
     ) -> Self {
         Self {
             clients: Vec::new(),
-            client_in,
+            ws_in,
             game_sender,
             reliable_out_queue,
             unreliable_out_queue,
@@ -43,8 +43,8 @@ impl NetworkManager {
         let mut msg_buf = vec![0; 0x10000];
         loop {
             select! {
-                in_result = self.client_in.recv().fuse() => match in_result {
-                    Some(in_bytes) => handle_in_msg(in_bytes, &mut self.clients),
+                ws_result = self.ws_in.recv().fuse() => match in_result {
+                    Some((id, in_bytes)) => handle_in_msg(id, in_bytes, &mut self.clients),
                     None => (),
                 },
                 reliable_result = self.reliable_out_queue.recv().fuse() => match reliable_result {
@@ -64,7 +64,7 @@ impl NetworkManager {
     }
 }
 
-fn handle_in_msg(in_bytes: Vec<u8>, clients: &mut Vec<ClientData>) {
+fn handle_in_msg(id: u32, in_bytes: Vec<u8>, clients: &mut Vec<ClientData>) {
     //unpack the message
     //process it
 }
