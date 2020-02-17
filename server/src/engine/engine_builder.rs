@@ -6,8 +6,8 @@ use webrtc_unreliable::SessionEndpoint;
 use ws::*;
 
 use super::game::Game;
-use super::network::webrtc::sdp_listener;
 use super::network::webrtc::rtc_server_runner::RtcServerRunner;
+use super::network::webrtc::sdp_listener;
 use super::network::ws::client_factory::ClientFactory;
 use super::network::ws::client_manager_looper::ClientManagerLooper;
 use crate::engine::messaging::messages::*;
@@ -47,7 +47,8 @@ pub async fn build_engine(
     );
 
     let rtc_server = start_rtc_server(config.rtc_listen, config.rtc_public).await;
-    let listener = sdp_listener::start_sdp_listener(config.sdp_address, rtc_server.session_endpoint()).await;
+    let listener =
+        sdp_listener::start_sdp_listener(config.sdp_address, rtc_server.session_endpoint()).await;
     let serv_handle =
         start_rtc_listener(rtc_server, game_sender_unreliable, out_receiver_unreliable);
 

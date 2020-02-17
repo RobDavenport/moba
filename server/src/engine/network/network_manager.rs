@@ -1,12 +1,12 @@
 use std::net::SocketAddr;
 
-use tokio::sync::mpsc::{ Sender, Receiver };
+use tokio::sync::mpsc::{Receiver, Sender};
 
 use futures::{future::FutureExt, select, stream::StreamExt};
 
 use super::client_data::ClientData;
-use crate::engine::messaging::messages::{ 
-    OutMessage, OutBytes, OutBytesUnreliable, InBytes, SourceIdentifier 
+use crate::engine::messaging::messages::{
+    InBytes, OutBytes, OutBytesUnreliable, OutMessage, SourceIdentifier,
 };
 
 //todo: hook up game.rs to use this instead, and engine builders
@@ -27,7 +27,7 @@ impl NetworkManager {
         reliable_out_queue: Receiver<(u32, OutMessage)>,
         unreliable_out_queue: Receiver<(u32, OutMessage)>,
         reliable_out_bytes: Sender<OutBytes>,
-        unreliable_out_bytes: Sender<OutBytesUnreliable>
+        unreliable_out_bytes: Sender<OutBytesUnreliable>,
     ) -> Self {
         Self {
             clients: Vec::new(),
@@ -65,10 +65,11 @@ fn handle_in_msg(in_msg: InBytes, clients: &mut Vec<ClientData>) {
 }
 
 fn handle_reliable_msg(
-    id: u32, 
-    out_msg: OutMessage, 
-    clients: &Vec<ClientData>, 
-    reliable_sender: &mut Sender<OutBytes>) {
+    id: u32,
+    out_msg: OutMessage,
+    clients: &Vec<ClientData>,
+    reliable_sender: &mut Sender<OutBytes>,
+) {
     match clients.iter().find(|client| client.id == id) {
         Some(client) => (), //TODO
         None => (),
@@ -76,13 +77,13 @@ fn handle_reliable_msg(
 }
 
 fn handle_unreliable_msg(
-    id: u32, 
-    out_msg: OutMessage, 
-    clients: &Vec<ClientData>, 
-    unreliable_sender: &mut Sender<OutBytesUnreliable>) {
+    id: u32,
+    out_msg: OutMessage,
+    clients: &Vec<ClientData>,
+    unreliable_sender: &mut Sender<OutBytesUnreliable>,
+) {
     match clients.iter().find(|client| client.id == id) {
         Some(client) => (), //TODO
         None => (),
     }
 }
-
