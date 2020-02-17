@@ -12,19 +12,25 @@ export default class NetworkManager {
   private gameWindow: MobaWindow
   private peer: RTCPeerConnection
   private channel: RTCDataChannel
+  private socketUuid: String
+  private rtcVerified = false
+  private verifier: NodeJS.Timeout
 
   constructor(gameWindow: MobaWindow) {
     this.gameWindow = gameWindow
 
     this.initWebsocket()
     this.initWebRTC()
+  }
 
+  private verifyWebRTC() {
+    this.channel.send("" + this.socketUuid)
   }
 
   private initWebRTC() {
     this.peer = new RTCPeerConnection({
       iceServers: [{
-          urls: ["stun:stun.l.google.com:19302"]
+        urls: ["stun:stun.l.google.com:19302"]
       }]
     })
 
@@ -36,7 +42,8 @@ export default class NetworkManager {
 
     this.channel.onopen = () => {
       console.log('RTC DATA Channel OPEN')
-      console.log(this.peer.localDescription.sdp.toString())
+      this.verifyWebRTC();
+      this.verifier = setInterval(this.verifyWebRTC.bind(this), 1000,) //verify every second
     }
 
     this.channel.onmessage = (evt) => {
@@ -49,11 +56,11 @@ export default class NetworkManager {
     }
 
     this.peer.onicecandidate = (evt) => {
-        if (evt.candidate) {
-            console.log("received ice candidate", evt.candidate);
-        } else {
-            console.log("all local candidates received");
-        }
+      if (evt.candidate) {
+        console.log("received ice candidate", evt.candidate);
+      } else {
+        console.log("all local candidates received");
+      }
     }
 
     this.peer.createOffer().then(offer => {
@@ -103,8 +110,10 @@ export default class NetworkManager {
   sendMoveCommand(x: number, y: number, isAttackMove: boolean) {
     //console.log('SEND move: x:' + x + ' y:' + y)
     //this.ws.send(JSON.stringify({ x, y }))
-    console.log("sending RTC message...")
-    this.channel.send("HELLO FROM WEBRTC?" + x + ', ' + y)
+    // console.log("sending RTC message...")
+    // this.channel.send("HELLO FROM WEBRTC?" + x + ', ' + y)
+
+    console.log("this function was disabled!")
   }
 
   sendReliable(msg: IClientMessage) {
@@ -115,15 +124,25 @@ export default class NetworkManager {
     //this.channel.send()
   }
 
-  private handleServerMessage(event: MessageEvent) {
-    let json: IServerMessage = JSON.parse(event.data)
-    if (json) {
-      let func = ServerMessageMap.get(json.t)
-      if (func) {
-        func(json.d, this.gameWindow)
+  private handleServerMessage({data}: MessageEvent) {
+    try {
+      let json: IServerMessage = JSON.parse(data)
+      if (json) {
+        let func = ServerMessageMap.get(json.t)
+        if (func) {
+          func(json.d, this.gameWindow)
+        } else {
+          if ((json as any).uuid) {
+            this.socketUuid = (json as any).uuid
+          } else if ((json as any).rtcVerified === true) {
+            clearInterval(this.verifier)
+          }
+        }
       }
-    } else {
-      console.log('unreadable message received from server')
+    } catch (e) {
+      console.log("couldn't parse json from server: ", e)
     }
   }
 }
+
+//todo move this to a web worker???

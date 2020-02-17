@@ -35,7 +35,7 @@ impl ClientManagerLooper {
                     client_msg = manager.client_listener.recv().fuse() => {
                         manager.handle_client_message(client_msg);
                     }
-                    game_out = manager.game_out_listener.recv().fuse() => {
+                    game_out = manager.game_out_listener.recv().fuse() => { // TODO remove this
                         manager.handle_game_out_message(game_out);
                     }
                 }
@@ -69,6 +69,7 @@ impl ClientManagerLooper {
     }
 
     fn handle_game_out_message(&self, msg: Option<OutMessage>) {
+        //Todo remove this
         match msg {
             None => println!("invalid out message received"),
             Some(out_msg) => match out_msg {

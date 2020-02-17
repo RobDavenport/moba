@@ -28,9 +28,11 @@ impl RtcServerRunner {
                         };
                     },
                     rtc_msg = rtc_server.recv(&mut msg_buf).fuse() => {
-                        match rtc_msg {
-                            Ok(msg) => {
+                        match rtc_msg { //todo read the message, handle deserealizing
+                            Ok(msg) => { //todo handle verified uuids
                                 println!("got rtc message from: {}", msg.remote_addr);
+                                let msg_text = &msg_buf[0..msg.message_len];
+                                println!("{}", std::str::from_utf8(&msg_text).unwrap());
                                 targets.push(msg.remote_addr);
                             },
                             Err(e) => println!("error: {}", e),

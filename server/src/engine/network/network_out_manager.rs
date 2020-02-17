@@ -34,6 +34,7 @@ impl NetworkOutManager {
         join!(
             process_reliable(&mut self.reliable_out_queue, &mut self.game_out_reliable),
             process_unreliable(
+                &self.clients,
                 &mut self.unreliable_out_queue,
                 &mut self.game_out_unreliable
             )
@@ -47,29 +48,29 @@ impl NetworkOutManager {
     pub fn send_unreliable(&mut self, target: u32, out_msg: OutMessage) {
         self.unreliable_out_queue.push_back((target, out_msg));
     }
-
-    // match self.clients.iter().find(|client| client.id == target) {
-    //   Some(out_client) => {
-    //     self.unreliable_out.push_back((out_client.socket_addr, out_msg))
-    //   },
-    //   None => println!("Unreliable client not found!")
-    // };
 }
 
 async fn process_reliable(
     out_queue: &mut VecDeque<(u32, OutMessage)>,
-    game_out: &mut Sender<OutMessage>,
+    game_out: &mut Sender<OutMessage>, // change to out raw bytes
 ) {
-    while let Some(reliable_msg) = out_queue.pop_front() {
-        game_out.send(reliable_msg.1).await; //process these correctly
+    while let Some((target, reliable_msg)) = out_queue.pop_front() {
+        game_out.send(reliable_msg).await; //change to out raw bytes
     }
 }
 
 async fn process_unreliable(
+    clients: &Vec<ClientData>,
     out_queue: &mut VecDeque<(u32, OutMessage)>,
-    game_out: &mut Sender<OutMessage>,
+    game_out: &mut Sender<OutMessage>, //change to Out raw bytes
 ) {
-    while let Some(unreliable_msg) = out_queue.pop_front() {
-        game_out.send(unreliable_msg.1).await; // process these correctly
+    while let Some((target, unreliable_msg)) = out_queue.pop_front() {
+        match clients.iter().find(|client| client.id == target) {
+            Some(out_client) => game_out.send(unreliable_msg).await.unwrap(), //ad the out_client data here
+            None => println!(
+                "Tried sending message to unknown client {}",
+                target.to_string()
+            ),
+        }
     }
 }
