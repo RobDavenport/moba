@@ -7,9 +7,8 @@ use crate::engine::network::client_data::ClientData;
 
 use futures::{future::FutureExt, select, stream::StreamExt};
 
-const SLEEP_NANO_SECONDS: u64 = 1;
-
 pub struct ClientManagerLooper {
+    //todo delete this struct, and merge into network manager
     client_listener: Receiver<ClientMessage>,
     game_out_listener: Receiver<OutMessage>,
     game_channel: Sender<GameMessage>,

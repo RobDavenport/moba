@@ -10,6 +10,8 @@ use futures::{future::FutureExt, select, stream::StreamExt};
 
 pub struct RtcServerRunner {}
 
+//TODO delete this struct
+
 impl RtcServerRunner {
     pub fn run_rtc_server(
         mut rtc_server: RtcServer,

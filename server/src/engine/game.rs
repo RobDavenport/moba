@@ -1,6 +1,5 @@
 use std::iter::*;
 use std::time::Duration;
-// use std::sync::mpsc::*;
 use std::time::Instant;
 
 use futures::join;
@@ -14,8 +13,6 @@ use tokio::time::delay_for;
 use super::components::all::*;
 use super::input_command::InputCommand;
 use crate::engine::messaging::messages::{GameMessage, OutMessage};
-
-const SLEEP_NANO_SECONDS: u64 = 1;
 
 pub struct Game {
     tick_time: f32,
