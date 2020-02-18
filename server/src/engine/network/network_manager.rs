@@ -1,3 +1,4 @@
+use std::marker::Sized;
 use std::net::SocketAddr;
 
 use tokio::sync::mpsc::{Receiver, Sender};
@@ -7,26 +8,23 @@ use webrtc_unreliable::{MessageResult, MessageType};
 use futures::{future::FutureExt, select, stream::StreamExt};
 
 use super::client_data::ClientData;
-use crate::engine::messaging::messages::{ClientMessage, GameMessage, OutMessage};
+use crate::engine::messaging::messages::*;
 
-//todo: hook up game.rs to use this instead, and engine builders
-//TODO: remove rtc_server_runner, remove client_manager_looper, merge
-//into this file isntead
 pub struct NetworkManager {
     clients: Vec<ClientData>,
-    ws_in: Receiver<(u32, Vec<u8>)>,
+    ws_in: Receiver<WSClientMessage>,
     game_sender: Sender<GameMessage>,
-    reliable_out_queue: Receiver<(u32, OutMessage)>,
-    unreliable_out_queue: Receiver<(u32, OutMessage)>,
+    reliable_out_queue: Receiver<(OutTarget, OutMessage)>,
+    unreliable_out_queue: Receiver<(OutTarget, OutMessage)>,
     rtc_server: RtcServer,
 }
 
 impl NetworkManager {
     pub fn new(
-        ws_in: Receiver<(u32, Vec<u8>)>,
+        ws_in: Receiver<WSClientMessage>,
         game_sender: Sender<GameMessage>,
-        reliable_out_queue: Receiver<(u32, OutMessage)>,
-        unreliable_out_queue: Receiver<(u32, OutMessage)>,
+        reliable_out_queue: Receiver<(OutTarget, OutMessage)>,
+        unreliable_out_queue: Receiver<(OutTarget, OutMessage)>,
         rtc_server: RtcServer,
     ) -> Self {
         Self {
@@ -43,67 +41,144 @@ impl NetworkManager {
         let mut msg_buf = vec![0; 0x10000];
         loop {
             select! {
-                ws_result = self.ws_in.recv().fuse() => match in_result {
-                    Some((id, in_bytes)) => handle_in_msg(id, in_bytes, &mut self.clients),
-                    None => (),
-                },
-                reliable_result = self.reliable_out_queue.recv().fuse() => match reliable_result {
-                    Some((target, out_reliable)) => handle_reliable_msg(target, out_reliable, &self.clients),
-                    None => (),
-                },
-                unreliable_result = self.unreliable_out_queue.recv().fuse() => match unreliable_result {
-                    Some((target, out_unreliable)) => handle_unreliable_msg(target, out_unreliable, &self.clients, &mut self.rtc_server),
+                ws_result = self.ws_in.recv().fuse() => match ws_result {
+                    Some(ws_msg) => on_ws_in_msg(ws_msg, &mut self.clients, &mut self.game_sender),
                     None => (),
                 },
                 rtc_msg = self.rtc_server.recv(&mut msg_buf).fuse() => match rtc_msg {
-                    Ok(msg) => handle_rtc_msg(msg, &msg_buf, &mut self.clients),
+                    Ok(msg) => on_rtc_in_msg(msg, &msg_buf, &mut self.clients, &mut self.game_sender),
                     Err(e) => println!("rtc server: {}", e),
                 },
+                reliable_result = self.reliable_out_queue.recv().fuse() => match reliable_result {
+                    Some((targets, out_reliable)) =>
+                        handle_reliable_out_msg(
+                            get_targets(targets, &self.clients),
+                            out_reliable,
+                            &self.clients
+                        ),
+                    None => (),
+                },
+                unreliable_result = self.unreliable_out_queue.recv().fuse() => match unreliable_result {
+                    Some((targets, out_unreliable)) =>
+                        handle_unreliable_out_msg(
+                            get_targets(targets, &self.clients),
+                            out_unreliable,
+                            &mut self.rtc_server,
+                            &self.clients
+                        ).await,
+                    None => (),
+                },
+
             }
         }
     }
 }
 
-fn handle_in_msg(id: u32, in_bytes: Vec<u8>, clients: &mut Vec<ClientData>) {
-    //unpack the message
-    //process it
-}
-
-fn handle_reliable_msg(id: u32, out_msg: OutMessage, clients: &Vec<ClientData>) {
-    //change to byte output
-    match clients.iter().find(|client| client.id == id) {
-        Some(client) => client
-            .ws_client_out
-            .send(serde_json::to_string(&out_msg).unwrap())
-            .unwrap(), // change to msgpack
-        None => (),
-    }
-}
-
-fn handle_unreliable_msg(
-    id: u32,
-    out_msg: OutMessage,
-    clients: &Vec<ClientData>,
-    rtc_server: &mut RtcServer,
+fn on_ws_in_msg(
+    in_msg: WSClientMessage,
+    clients: &mut Vec<ClientData>,
+    game_sender: &mut Sender<GameMessage>,
 ) {
-    match clients
-        .iter()
-        .find(|client| client.id == id && client.socket_addr.is_some())
-    {
-        Some(client) => {
-            rtc_server.send(
-                serde_json::to_string(&out_msg).unwrap().as_bytes(),
-                MessageType::Text,
-                &client.socket_addr.unwrap(),
-            );
+    match in_msg {
+        WSClientMessage::Connected(client) => {
+            clients.push(client);
+            game_sender.try_send(GameMessage::ClientConnected).unwrap();
         }
-        None => (),
-    }
+        WSClientMessage::Disconnected(disc_id) => {
+            clients.retain(|client| disc_id != client.id);
+            game_sender
+                .try_send(GameMessage::ClientDisconnected(disc_id))
+                .unwrap();
+        }
+        WSClientMessage::Packet(id, data) => {
+            //TODO Serealize Data and do stuff!!
+        }
+    };
 }
 
-fn handle_rtc_msg(msg: MessageResult, msg_buf: &Vec<u8>, clients: &mut Vec<ClientData>) {
+fn on_rtc_in_msg(
+    msg: MessageResult,
+    msg_buf: &Vec<u8>,
+    clients: &mut Vec<ClientData>,
+    game_out: &mut Sender<GameMessage>,
+) {
     //todo read the message, handle deserealizing
     println!("got rtc message from: {}", msg.remote_addr);
     let msg_text = &msg_buf[0..msg.message_len];
-    println!("{}", std::str::from_utf8(&msg_text).unwrap());
+    let msg_string = std::str::from_utf8(&msg_text).unwrap_or("UNKNOWN");
+    println!("{}", msg_string);
+
+    //todo remove this later
+    if let Some(client) = clients
+        .iter_mut()
+        .find(|client| client.socket_uuid == msg_string && client.socket_addr == None)
+    {
+        println!("User found!");
+        client.socket_addr = Some(msg.remote_addr);
+    }
+}
+
+fn handle_reliable_out_msg(
+    out_indexes: Vec<usize>,
+    out_msg: OutMessage,
+    clients: &Vec<ClientData>,
+) {
+    //change to byte output
+    for idx in out_indexes {
+        clients
+            .get(idx)
+            .unwrap()
+            .ws_client_out
+            .send(serde_json::to_string(&out_msg).unwrap())
+            .unwrap(); // change to msgpack
+    }
+}
+
+async fn handle_unreliable_out_msg(
+    out_indexes: Vec<usize>,
+    out_msg: OutMessage,
+    rtc_server: &mut RtcServer,
+    clients: &Vec<ClientData>,
+) {
+    for idx in out_indexes {
+        let client = clients.get(idx).unwrap();
+        if let Some(addr) = client.socket_addr {
+            rtc_server
+                .send(
+                    serde_json::to_string(&out_msg).unwrap().as_bytes(),
+                    MessageType::Text,
+                    &addr,
+                )
+                .await;
+        }
+    }
+}
+
+//todo optimize
+fn get_targets(targets: OutTarget, clients: &Vec<ClientData>) -> Vec<usize> {
+    match targets {
+        OutTarget::All => {
+            let mut out = Vec::new();
+            for (i, client) in clients.iter().enumerate() {
+                out.push(i);
+            }
+            out
+        }
+        OutTarget::Many(ids) => {
+            let mut out = Vec::new();
+
+            for (i, client) in clients
+                .iter()
+                .filter(|client| ids.iter().any(|id| id == &client.id))
+                .enumerate()
+            {
+                out.push(i);
+            }
+            out
+        }
+        OutTarget::Single(id) => match clients.iter().position(|client| client.id == id) {
+            Some(idx) => vec![idx],
+            None => Vec::new(),
+        },
+    }
 }

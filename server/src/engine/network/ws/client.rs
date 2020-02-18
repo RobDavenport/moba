@@ -1,33 +1,29 @@
 use tokio::sync::mpsc::Sender;
 use ws::*;
 
-use crate::engine::messaging::messages::ClientMessage;
+use crate::engine::messaging::messages::WSClientMessage;
 
 pub struct Client {
-    pub manager_out: Sender<ClientMessage>,
+    pub manager_out: Sender<WSClientMessage>,
     pub id: u32,
 }
 
 impl Handler for Client {
     fn on_open(&mut self, _: Handshake) -> Result<()> {
-        println!("Client: connected.");
+        println!("Client {{{}}} connected.", self.id);
         Ok(())
     }
 
     fn on_message(&mut self, msg: Message) -> Result<()> {
-        //TODO Translate messages into usable ClientMessage format...
-        self.manager_out.try_send(ClientMessage::ChatMessage {
-            id: self.id,
-            public: false,
-            message: msg.to_string(),
-        });
+        self.manager_out
+            .try_send(WSClientMessage::Packet(self.id, msg.into_data()));
 
         Ok(())
     }
 
     fn on_close(&mut self, code: CloseCode, _reason: &str) {
-        println!("Client: Closed reason: {:?}", code);
+        println!("Client {{{}}} Closed reason: {:?}", self.id, code);
         self.manager_out
-            .try_send(ClientMessage::Disconnected(self.id));
+            .try_send(WSClientMessage::Disconnected(self.id));
     }
 }

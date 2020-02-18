@@ -6,3 +6,9 @@ use serde::{Deserialize, Serialize};
 pub enum OutMessage {
     UpdateTick { f: u32, x: f32, y: f32, n: u32 },
 }
+
+pub enum OutTarget {
+    All,
+    Single(u32),
+    Many(Vec<u32>),
+}

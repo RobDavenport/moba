@@ -22,10 +22,10 @@ async fn main() {
         sdp_address: HYPER_API_ADDR.to_string(),
     };
 
-    let (t1, game, rtc, sdp, ws) = build_engine(game_config).await;
+    let (t1, game, network, sdp) = build_engine(game_config).await;
 
     println!("engine running...");
 
-    join!(game, rtc, sdp, ws);
+    join!(game, network, sdp,);
     t1.join().unwrap();
 }

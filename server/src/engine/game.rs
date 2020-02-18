@@ -12,36 +12,33 @@ use tokio::time::delay_for;
 
 use super::components::all::*;
 use super::input_command::InputCommand;
-use crate::engine::messaging::messages::{GameMessage, OutMessage};
+use crate::engine::messaging::messages::{GameMessage, OutMessage, OutTarget};
 
 pub struct Game {
     tick_time: f32,
     world: World,
     game_time: f32,
     game_frame: u32,
-    client_out_reliable: Sender<OutMessage>,
-    client_out_unreliable: Sender<OutMessage>,
-    game_message_listener_reliable: Receiver<GameMessage>,
-    game_message_listener_unreliable: Receiver<GameMessage>,
+    out_reliable: Sender<(OutTarget, OutMessage)>,
+    out_unreliable: Sender<(OutTarget, OutMessage)>,
+    game_in: Receiver<GameMessage>,
 }
 
 impl Game {
     pub fn new(
         tick_time: f32,
-        client_out_reliable: Sender<OutMessage>,
-        client_out_unreliable: Sender<OutMessage>,
-        receiver_reliable: Receiver<GameMessage>,
-        receiver_unreliable: Receiver<GameMessage>,
+        out_reliable: Sender<(OutTarget, OutMessage)>,
+        out_unreliable: Sender<(OutTarget, OutMessage)>,
+        game_in: Receiver<GameMessage>,
     ) -> Self {
         Self {
             tick_time,
             world: Universe::new().create_world(),
             game_time: 0.,
             game_frame: 0,
-            client_out_reliable,
-            client_out_unreliable,
-            game_message_listener_reliable: receiver_reliable,
-            game_message_listener_unreliable: receiver_unreliable,
+            out_reliable,
+            out_unreliable,
+            game_in,
         }
     }
 
@@ -53,19 +50,15 @@ impl Game {
         println!("GAME LOOP INITIATED");
 
         loop {
-            if let Ok(game_message) = self.game_message_listener_reliable.try_recv() {
-                self.handle_message(game_message);
-            }
-
-            if let Ok(game_message) = self.game_message_listener_unreliable.try_recv() {
-                self.handle_message(game_message);
-            }
-
             let dt = timer.elapsed();
             let frame_time = dt.as_secs_f32();
             timer = timer + dt;
 
             accumulator += frame_time;
+
+            while let Ok(game_message) = self.game_in.try_recv() {
+                self.handle_message(game_message);
+            }
 
             if accumulator > self.tick_time {
                 while accumulator > self.tick_time {
@@ -148,10 +141,10 @@ impl Game {
                 n: team.id as u32,
             };
 
-            if (team.id == 1) {
-                self.client_out_reliable.send(output).await;
-            } else if (team.id == 2) {
-                self.client_out_unreliable.send(output).await;
+            if team.id == 1 {
+                self.out_reliable.send((OutTarget::All, output)).await;
+            } else if team.id == 2 {
+                self.out_unreliable.send((OutTarget::All, output)).await;
             }
 
             // let f1 = self.client_out_reliable.send(output);

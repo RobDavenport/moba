@@ -4,6 +4,6 @@ use crate::engine::input_command::InputCommand;
 #[derive(Debug)]
 pub enum GameMessage {
     ClientConnected,
-    ClientDisconnected,
+    ClientDisconnected(u32),
     InputCommand { id: u32, command: InputCommand },
 }
