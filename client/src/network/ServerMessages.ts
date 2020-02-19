@@ -9,8 +9,8 @@ export interface IServerMessage {
   d: any
 }
 
-function onUpdateTick({ x, y, n }, dst: MobaWindow) {
-  dst.setCharacterPosition(x, y, n)
+function onUpdateTick(inObj: Uint8Array, dst: MobaWindow) {
+  dst.setCharacterPosition(inObj[1], inObj[2], inObj[3])
 }
 
 

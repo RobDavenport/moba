@@ -47,7 +47,6 @@ export default class NetworkManager {
     }
 
     this.channel.onmessage = (evt) => {
-      console.log('rtcMsg: ' + evt)
       this.handleServerMessage(evt)
     }
 
@@ -93,6 +92,7 @@ export default class NetworkManager {
 
     console.log('connecting to: ' + wsAddress)
     this.ws = new WebSocket(wsAddress)
+    this.ws.binaryType = 'arraybuffer';
 
     this.ws.onopen = (event) => {
       console.log('WebSocket connected successfully.')
@@ -124,23 +124,24 @@ export default class NetworkManager {
     //this.channel.send()
   }
 
-  private handleServerMessage({data}: MessageEvent) {
-    try {
-      let json: IServerMessage = JSON.parse(data)
-      if (json) {
-        let func = ServerMessageMap.get(json.t)
-        if (func) {
-          func(json.d, this.gameWindow)
-        } else {
-          if ((json as any).uuid) {
-            this.socketUuid = (json as any).uuid
-          } else if ((json as any).rtcVerified === true) {
-            clearInterval(this.verifier)
-          }
-        }
+  private async handleServerMessage({data}: MessageEvent) {
+    const decoded = msgpack.decode(data) 
+    const msgType = decoded[0]
+    const params = decoded[1]
+    const func = ServerMessageMap.get(msgType)
+    if (func) {
+      func(params, this.gameWindow)
+    } else {
+      console.log(decoded)
+      switch (msgType) {
+        case "VerifyUuid":
+          this.socketUuid = params;
+          console.log(params)
+          break;
+        case "VerifiedUuid":
+          clearInterval(this.verifier)
+          break;
       }
-    } catch (e) {
-      console.log("couldn't parse json from server: ", e)
     }
   }
 }

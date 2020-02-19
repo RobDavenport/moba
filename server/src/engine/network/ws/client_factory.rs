@@ -3,11 +3,9 @@ use tokio::sync::mpsc::Sender;
 use uuid::Uuid;
 use ws;
 
-extern crate serde_json;
-
 use super::client::Client;
 
-use crate::engine::messaging::messages::WSClientMessage;
+use crate::engine::messaging::messages::{OutMessage, WSClientMessage};
 use crate::engine::network::client_data::ClientData;
 
 pub struct ClientFactory {
@@ -45,7 +43,8 @@ impl ws::Factory for ClientFactory {
             }));
 
         println!("sending uuid: {}", &uuid);
-        out.send(format!("{{\"uuid\":\"{}\"}}", &uuid));
+        out.send(rmp_serde::to_vec(&OutMessage::VerifyUuid(uuid)).unwrap());
+        //out.send(format!("{{\"uuid\":\"{}\"}}", &uuid));
 
         new_client
     }

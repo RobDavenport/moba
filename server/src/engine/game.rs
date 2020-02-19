@@ -95,12 +95,12 @@ impl Game {
 
     fn handle_message(&mut self, msg: GameMessage) {
         match msg {
-            GameMessage::ClientConnected => {
+            GameMessage::ClientConnected(id) => {
                 println!("Game: Create new player");
-                self.on_client_connected();
+                self.on_client_connected(id);
             }
             GameMessage::InputCommand { id, command } => self.handle_input_command(id, command),
-            _ => panic!("Unhandled GameMessage!"),
+            _ => println!("Unhandled GameMessage!"),
         }
     }
 
@@ -111,12 +111,13 @@ impl Game {
         }
     }
 
-    fn on_client_connected(&mut self) {
+    fn on_client_connected(&mut self, player_id: u32) {
         self.world.insert(
             (),
             once((
                 Transform::new(Vector2::<f32>::new(1., 1.), None, None),
                 Team { id: 1 },
+                PlayerControlled { id: player_id },
             )),
         );
 
@@ -125,6 +126,7 @@ impl Game {
             once((
                 Transform::new(Vector2::<f32>::new(1., 1.), None, None),
                 Team { id: 2 },
+                PlayerControlled { id: player_id },
             )),
         );
     }
@@ -138,7 +140,7 @@ impl Game {
                 f: self.game_frame,
                 x: transform.position.x + (100. * team.id as f32),
                 y: transform.position.y,
-                n: team.id as u32,
+                n: team.id,
             };
 
             if team.id == 1 {

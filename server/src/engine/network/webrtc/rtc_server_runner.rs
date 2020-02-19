@@ -5,21 +5,20 @@ use hyper::{
     Body, Error, Method, Response, Server, StatusCode,
 };
 
-use webrtc_unreliable::SessionEndpoint;
 use webrtc_unreliable::Server as RtcServer;
+use webrtc_unreliable::SessionEndpoint;
 
 pub async fn start_rtc_server(listen_addr: String, public_addr: String) -> RtcServer {
-  let rtc_server = tokio::spawn(RtcServer::new(
-      listen_addr.parse().unwrap(),
-      public_addr.parse().unwrap(),
-  ))
-  .await
-  .unwrap()
-  .expect("rtc server failed to start");
+    let rtc_server = tokio::spawn(RtcServer::new(
+        listen_addr.parse().unwrap(),
+        public_addr.parse().unwrap(),
+    ))
+    .await
+    .unwrap()
+    .expect("rtc server failed to start");
 
-  rtc_server
+    rtc_server
 }
-
 
 pub async fn start_sdp_listener(
     sdp_addr: String,

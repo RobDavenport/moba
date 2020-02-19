@@ -81,8 +81,6 @@ fn start_network_manager(
     tokio::spawn(async move { network_manager.process().await })
 }
 
-
-
 fn start_game_thread(
     ticks_per_second: u8,
     out_reliable: Sender<(OutTarget, OutMessage)>,

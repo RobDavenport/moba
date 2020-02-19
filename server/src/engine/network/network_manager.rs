@@ -10,7 +10,7 @@ use super::client_data::ClientData;
 use crate::engine::messaging::messages::*;
 
 pub struct NetworkManager {
-    clients: Vec<ClientData>,
+    clients: Vec<ClientData>, //Todo: Change to a hash map?
     ws_in: Receiver<WSClientMessage>,
     game_sender: Sender<GameMessage>,
     reliable_out_queue: Receiver<(OutTarget, OutMessage)>,
@@ -80,8 +80,10 @@ fn on_ws_in_msg(
 ) {
     match in_msg {
         WSClientMessage::Connected(client) => {
+            game_sender
+                .try_send(GameMessage::ClientConnected(client.id))
+                .unwrap();
             clients.push(client);
-            game_sender.try_send(GameMessage::ClientConnected).unwrap();
         }
         WSClientMessage::Disconnected(disc_id) => {
             clients.retain(|client| disc_id != client.id);
@@ -107,13 +109,16 @@ fn on_rtc_in_msg(
     let msg_string = std::str::from_utf8(&msg_text).unwrap_or("UNKNOWN");
     println!("{}", msg_string);
 
-    //todo remove this later once i 
+    //todo remove this later once i
     if let Some(client) = clients
         .iter_mut()
         .find(|client| client.socket_uuid == msg_string && client.socket_addr == None)
     {
         println!("User found!");
         client.socket_addr = Some(msg.remote_addr);
+        client
+            .ws_client_out
+            .send(rmp_serde::to_vec(&OutMessage::VerifiedUuid).unwrap());
     }
 }
 
@@ -124,12 +129,14 @@ fn handle_reliable_out_msg(
 ) {
     //change to byte output
     for idx in out_indexes {
+        let output = rmp_serde::to_vec(&out_msg).unwrap();
+        //print!("{:?}", output);
         clients
             .get(idx)
             .unwrap()
             .ws_client_out
-            .send(serde_json::to_string(&out_msg).unwrap())
-            .unwrap(); // change to msgpack
+            .send(output)
+            .unwrap();
     }
 }
 
@@ -144,8 +151,8 @@ async fn handle_unreliable_out_msg(
         if let Some(addr) = client.socket_addr {
             rtc_server
                 .send(
-                    serde_json::to_string(&out_msg).unwrap().as_bytes(),
-                    MessageType::Text,
+                    &rmp_serde::to_vec(&out_msg).unwrap(),
+                    MessageType::Binary,
                     &addr,
                 )
                 .await;
@@ -153,7 +160,7 @@ async fn handle_unreliable_out_msg(
     }
 }
 
-//todo optimize
+//Todo: Change to a hash map to optimize
 fn get_targets(targets: OutTarget, clients: &Vec<ClientData>) -> Vec<usize> {
     match targets {
         OutTarget::All => {
