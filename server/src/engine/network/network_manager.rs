@@ -1,4 +1,3 @@
-use std::marker::Sized;
 use std::net::SocketAddr;
 
 use tokio::sync::mpsc::{Receiver, Sender};
@@ -108,7 +107,7 @@ fn on_rtc_in_msg(
     let msg_string = std::str::from_utf8(&msg_text).unwrap_or("UNKNOWN");
     println!("{}", msg_string);
 
-    //todo remove this later
+    //todo remove this later once i 
     if let Some(client) = clients
         .iter_mut()
         .find(|client| client.socket_uuid == msg_string && client.socket_addr == None)

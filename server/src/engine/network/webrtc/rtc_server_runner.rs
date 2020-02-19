@@ -6,6 +6,20 @@ use hyper::{
 };
 
 use webrtc_unreliable::SessionEndpoint;
+use webrtc_unreliable::Server as RtcServer;
+
+pub async fn start_rtc_server(listen_addr: String, public_addr: String) -> RtcServer {
+  let rtc_server = tokio::spawn(RtcServer::new(
+      listen_addr.parse().unwrap(),
+      public_addr.parse().unwrap(),
+  ))
+  .await
+  .unwrap()
+  .expect("rtc server failed to start");
+
+  rtc_server
+}
+
 
 pub async fn start_sdp_listener(
     sdp_addr: String,
