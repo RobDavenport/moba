@@ -9,6 +9,9 @@ use futures::{future::FutureExt, select, stream::StreamExt};
 use super::client_data::ClientData;
 use crate::engine::messaging::messages::*;
 
+use super::protobuf::{ClientMessage::*, ServerMessage::*};
+
+
 pub struct NetworkManager {
     clients: Vec<ClientData>, //Todo: Change to a hash map?
     ws_in: Receiver<WSClientMessage>,
@@ -106,19 +109,24 @@ fn on_rtc_in_msg(
     //todo read the message, handle deserealizing
     println!("got rtc message from: {}", msg.remote_addr);
     let msg_text = &msg_buf[0..msg.message_len];
-    let msg_string = std::str::from_utf8(&msg_text).unwrap_or("UNKNOWN");
-    println!("{}", msg_string);
-
-    //todo remove this later once i
-    if let Some(client) = clients
-        .iter_mut()
-        .find(|client| client.socket_uuid == msg_string && client.socket_addr == None)
-    {
-        println!("User found!");
-        client.socket_addr = Some(msg.remote_addr);
-        client
-            .ws_client_out
-            .send(rmp_serde::to_vec(&OutMessage::VerifiedUuid).unwrap());
+    if let Ok(protomsg) = protobuf::parse_from_bytes::<ClientMessage>(msg_text) {
+        if let Some(protomsgtype) = protomsg.msgData {
+            match protomsgtype {
+                ClientMessage_oneof_msgData::veryfiyRtc(veryfiyRtcMsg) => {
+                    println!("got uuid: {}", &veryfiyRtcMsg.uuid);
+                    if let Some(client) = clients.iter_mut().find(|client| {
+                        client.socket_uuid == veryfiyRtcMsg.uuid && client.socket_addr == None
+                    }) {
+                        println!("User found!");
+                        client.socket_addr = Some(msg.remote_addr);
+                        client
+                            .ws_client_out
+                            .send(rmp_serde::to_vec(&OutMessage::VerifiedUuid).unwrap());
+                    }
+                }
+                _ => println!("got something else.."),
+            }
+        }
     }
 }
 

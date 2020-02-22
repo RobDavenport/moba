@@ -1,10 +1,8 @@
 import { ServerMessageMap, IServerMessage } from './ServerMessages'
-//import { IClientMessage } from './ClientMessages'
+import { ClientMessage } from './protobuf/ClientMessage_pb'
+import { ServerMessage } from './protobuf/Servermessage_pb'
 import MobaWindow from '../MobaWindow'
 import * as msgpack from '@msgpack/msgpack'
-
-const ClientMessage = require("./ClientMessage_pb")
-
 
 const address: string = prompt('Enter game server address.', document.location.hostname)
 const wsAddress = 'ws://' + address + ':8000'
@@ -15,7 +13,7 @@ export default class NetworkManager {
   private gameWindow: MobaWindow
   private peer: RTCPeerConnection
   private channel: RTCDataChannel
-  private socketUuid: String
+  private socketUuid: string
   private verifier: NodeJS.Timeout
 
   constructor(gameWindow: MobaWindow) {
@@ -26,7 +24,12 @@ export default class NetworkManager {
   }
 
   private verifyWebRTC() {
-    this.channel.send("" + this.socketUuid)
+    let clientMessage = new ClientMessage()
+    clientMessage.setMsgtype(ClientMessage.ClientMessageType.VERIFYRTC)
+    let verifyRtc = new ClientMessage.VerifyRtc()
+    verifyRtc.setUuid(this.socketUuid)
+    clientMessage.setVeryfiyrtc(verifyRtc)
+    this.channel.send(clientMessage.serializeBinary())
   }
 
   private initWebRTC() {

@@ -30,4 +30,4 @@ Run the Client with:
 
 > cargo fmt
 
-> protoc --rust_out out/ --js_out=import_style=commonjs,binary:./out/ ClientMessage.proto ServerMessage.proto
+> protoc --plugin=protoc-gen-ts=D:\Development\moba\client\node_modules\.bin\protoc-gen-ts.cmd --js_out="import_style=commonjs,binary:../client/src/network/protobuf" --ts_out=../client/src/network/protobuf --rust_out ../server/src/engine/network/protobuf ClientMessage.proto ServerMessage.proto

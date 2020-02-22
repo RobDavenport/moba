@@ -9,7 +9,7 @@ message ClientMessage {
     VERIFYRTC = 100;
   }
 
-  message Move {
+  message MoveCommand {
     float x = 1;
     float y = 2;
   }
@@ -23,7 +23,7 @@ message ClientMessage {
   ClientMessageType msgType = 1;
   
   oneof msgData {
-    Move move = 2;
+    MoveCommand moveCommand = 2;
     VerifyRtc veryfiyRtc = 100;
   }
 }
