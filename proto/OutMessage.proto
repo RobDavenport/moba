@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+message OutMessage {
+  enum OutMessageType {
+    NONE = 0;
+    UPDATETICK = 1;
+    VERIFYUUID = 2;
+    VERIFIEDUUID = 3;
+  }
+
+  message UpdateTick {
+    float frame = 1;
+    uint32 entity = 2;
+    float x = 3;
+    float y = 4;
+  }
+  
+  message VerifyUuid {
+    string uuid = 1;
+  }
+  
+  message VerifiedUuid { }
+
+
+  //Define actual message Data
+  OutMessageType msgType = 1;
+  
+  oneof msgData {
+    UpdateTick updateTick = 2;
+    VerifyUuid verifyUuid = 100;
+    VerifiedUuid verifiedUuid = 101;
+  }
+}
+
+
+

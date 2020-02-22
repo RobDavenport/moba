@@ -20,3 +20,4 @@ webrtc-unreliable = "0.4.0"
 hyper = { version = "0.13.2", features = ["stream"] }
 futures = "0.3.4"
 uuid = { version = "0.8.1", features = ["v4", "serde"] }
+protobuf = "2.10.1"

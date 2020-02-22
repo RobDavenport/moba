@@ -8,7 +8,9 @@ Game client in Typescript using Phaser.io.
 
 ### Dependencies:
 
-Server: cargo-watch, OpenSSL
+Protobuf: cargo install protobuf-codegen, protoc
+
+Server: cargo-watch, OpenSSL, 
 
 > cargo install cargo-watch
 
@@ -27,3 +29,5 @@ Run the Client with:
 #### Other stuff:
 
 > cargo fmt
+
+> protoc --rust_out out/rust --js_out out/js OutMessage.proto
