@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@msgpack/msgpack": "^1.11.0",
+    "google-protobuf": "^3.11.4",
     "phaser": "^3.22.0",
     "stats.js": "^0.17.0",
     "text-encoding": "^0.7.0",

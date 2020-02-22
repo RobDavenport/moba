@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+message ClientMessage {
+  enum ClientMessageType {
+    NONE = 0;
+    MOVE = 1;
+
+
+    VERIFYRTC = 100;
+  }
+
+  message Move {
+    float x = 1;
+    float y = 2;
+  }
+
+  message VerifyRtc {
+    string uuid = 1;
+  }
+
+
+  //Define actual message Data
+  ClientMessageType msgType = 1;
+  
+  oneof msgData {
+    Move move = 2;
+    VerifyRtc veryfiyRtc = 100;
+  }
+}
+
+
+

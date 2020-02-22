@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-message OutMessage {
-  enum OutMessageType {
+message ServerMessage {
+  enum ServerMessageType {
     NONE = 0;
     UPDATETICK = 1;
     VERIFYUUID = 2;
@@ -23,7 +23,7 @@ message OutMessage {
 
 
   //Define actual message Data
-  OutMessageType msgType = 1;
+  ServerMessageType msgType = 1;
   
   oneof msgData {
     UpdateTick updateTick = 2;

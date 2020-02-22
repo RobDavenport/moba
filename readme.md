@@ -30,4 +30,4 @@ Run the Client with:
 
 > cargo fmt
 
-> protoc --rust_out out/rust --js_out out/js OutMessage.proto
+> protoc --rust_out out/ --js_out=import_style=commonjs,binary:./out/ ClientMessage.proto ServerMessage.proto

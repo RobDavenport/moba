@@ -1,7 +1,10 @@
 import { ServerMessageMap, IServerMessage } from './ServerMessages'
-import { IClientMessage } from './ClientMessages'
+//import { IClientMessage } from './ClientMessages'
 import MobaWindow from '../MobaWindow'
 import * as msgpack from '@msgpack/msgpack'
+
+const ClientMessage = require("./ClientMessage_pb")
+
 
 const address: string = prompt('Enter game server address.', document.location.hostname)
 const wsAddress = 'ws://' + address + ':8000'
@@ -13,7 +16,6 @@ export default class NetworkManager {
   private peer: RTCPeerConnection
   private channel: RTCDataChannel
   private socketUuid: String
-  private rtcVerified = false
   private verifier: NodeJS.Timeout
 
   constructor(gameWindow: MobaWindow) {
@@ -116,11 +118,11 @@ export default class NetworkManager {
     console.log("this function was disabled!")
   }
 
-  sendReliable(msg: IClientMessage) {
+  sendReliable(msg: any) {
     //this.ws.send()
   }
 
-  sendUnreliable(msg: IClientMessage) {
+  sendUnreliable(msg: any) {
     //this.channel.send()
   }
 
