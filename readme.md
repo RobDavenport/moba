@@ -1,22 +1,31 @@
 # Moba - Unnamed Game
 
-## An HTML5 Moba game for Web & Mobile
+### An HTML5 Moba game for Web & Mobile.
 
-Game server written in Rust (latest, stable)
+## Technologies used 
 
-Game client in Typescript using Phaser.io.
+### Programming Languages 
+- Rust, for the game server
+  - Tokio
+  - Legion ECS
+  - WebRTC Unreliable
+  - protobuf
+- Typescript, for the game client
+  - Phaser.io game framework
+
+### Other Frameworks & Libraries
+- Google Protocol Buffer - Network serialization and deserialization
+- NPM
 
 ### Dependencies:
 
-Protobuf: cargo install protobuf-codegen, protoc
+Protobuf: protoc, and Rust's protobuf-codegen (cargo install protobuf-codegen)
 
-Server: cargo-watch, OpenSSL, 
+Server: OpenSSL 
 
-> cargo install cargo-watch
+Client: NodeJS, npm
 
-Client: node, npm
-
-### To test:
+#### To test:
 
 Run the Server with:
 
@@ -28,6 +37,8 @@ Run the Client with:
 
 #### Other stuff:
 
+Format code with:
 > cargo fmt
 
+Rebuild protobuf schemas:
 > protoc --plugin=protoc-gen-ts=D:\Development\moba\client\node_modules\.bin\protoc-gen-ts.cmd --js_out="import_style=commonjs,binary:../client/src/network/protobuf" --ts_out=../client/src/network/protobuf --rust_out ../server/src/engine/network/protobuf ClientMessage.proto ServerMessage.proto
