@@ -1,4 +1,5 @@
 import MobaWindow from '../MobaWindow'
+import { CartesianPoint } from '../helpers/GameMath';
 
 //f: Frame
 //t: Message Type
@@ -10,7 +11,7 @@ export interface IServerMessage {
 }
 
 function onUpdateTick(inObj: Uint8Array, dst: MobaWindow) {
-  dst.setCharacterPosition(inObj[1], inObj[2], inObj[3])
+  dst.setCharacterPosition(new CartesianPoint(inObj[1], inObj[2]), inObj[3])
 }
 
 

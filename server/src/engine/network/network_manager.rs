@@ -11,7 +11,6 @@ use crate::engine::messaging::messages::*;
 
 use super::protobuf::{ClientMessage::*, ServerMessage::*};
 
-
 pub struct NetworkManager {
     clients: Vec<ClientData>, //Todo: Change to a hash map?
     ws_in: Receiver<WSClientMessage>,

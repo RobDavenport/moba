@@ -14,8 +14,7 @@ export default class MobaEngine {
 
   onMove() {
     const { worldX, worldY } = this.gameWindow.input.activePointer
-    const { x, y } = GM.worldToGame2d(worldX, worldY)
-    this.net.sendMoveCommand(x, y, false)
+    this.net.sendMoveCommand(new GM.CartesianPoint(worldX, worldY), false)
   }
 
   onAttackMove() {

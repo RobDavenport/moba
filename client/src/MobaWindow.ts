@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import { InputCommand, defaultKeyBindings, PointerButtons, defaultPointerBindings } from './Constants'
 import MobaEngine from './MobaEngine'
+import * as GM from './helpers/GameMath'
 
 export default class MobaWindow extends Phaser.Scene {
   private keyMapping: Map<Phaser.Input.Keyboard.Key, InputCommand>
@@ -69,13 +70,14 @@ export default class MobaWindow extends Phaser.Scene {
     })
   }
 
-  setCharacterPosition(x: number, y: number, index: number) {
+  setCharacterPosition(point: GM.CartesianPoint, index: number) {
+    const target = point.toIsometric();
     if (index === 1) {
-      this.character1.x = x;
-      this.character1.y = y;
+      this.character1.x = target.x;
+      this.character1.y = target.y;
     } else if (index === 2) {
-      this.character2.x = x;
-      this.character2.y = y;
+      this.character2.x = target.x;
+      this.character2.y = target.y;
     }
   }
 }

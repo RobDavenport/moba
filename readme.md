@@ -16,6 +16,8 @@
 ### Other Frameworks & Libraries
 - Google Protocol Buffer - Network serialization and deserialization
 - NPM
+- Websocket
+- WebRTC
 
 ### Dependencies:
 

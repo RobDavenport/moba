@@ -3,6 +3,7 @@ import { ClientMessage } from './protobuf/ClientMessage_pb'
 import { ServerMessage } from './protobuf/Servermessage_pb'
 import MobaWindow from '../MobaWindow'
 import * as msgpack from '@msgpack/msgpack'
+import { CartesianPoint } from '../helpers/GameMath'
 
 const address: string = prompt('Enter game server address.', document.location.hostname)
 const wsAddress = 'ws://' + address + ':8000'
@@ -48,7 +49,7 @@ export default class NetworkManager {
     this.channel.onopen = () => {
       console.log('RTC DATA Channel OPEN')
       this.verifyWebRTC();
-      this.verifier = setInterval(this.verifyWebRTC.bind(this), 1000,) //verify every second
+      this.verifier = setInterval(this.verifyWebRTC.bind(this), 1000) //verify every second
     }
 
     this.channel.onmessage = (evt) => {
@@ -112,8 +113,9 @@ export default class NetworkManager {
     }
   }
 
-  sendMoveCommand(x: number, y: number, isAttackMove: boolean) {
-    //console.log('SEND move: x:' + x + ' y:' + y)
+  sendMoveCommand(point: CartesianPoint, isAttackMove: boolean) {
+    console.log(point)
+    console.log(point.toIsometric())
     //this.ws.send(JSON.stringify({ x, y }))
     // console.log("sending RTC message...")
     // this.channel.send("HELLO FROM WEBRTC?" + x + ', ' + y)
@@ -129,8 +131,8 @@ export default class NetworkManager {
     //this.channel.send()
   }
 
-  private async handleServerMessage({data}: MessageEvent) {
-    const decoded = msgpack.decode(data) 
+  private async handleServerMessage({ data }: MessageEvent) {
+    const decoded = msgpack.decode(data)
     const msgType = decoded[0]
     const params = decoded[1]
     const func = ServerMessageMap.get(msgType)
