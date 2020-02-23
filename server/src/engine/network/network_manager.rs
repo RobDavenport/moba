@@ -134,15 +134,16 @@ fn handle_reliable_out_msg(
     out_msg: OutMessage,
     clients: &Vec<ClientData>,
 ) {
+    let output = ws::Message::binary(rmp_serde::to_vec(&out_msg).unwrap());
+
     //change to byte output
     for idx in out_indexes {
-        let output = rmp_serde::to_vec(&out_msg).unwrap();
         //print!("{:?}", output);
         clients
             .get(idx)
             .unwrap()
             .ws_client_out
-            .send(output)
+            .send(output.clone())
             .unwrap();
     }
 }
@@ -153,16 +154,12 @@ async fn handle_unreliable_out_msg(
     rtc_server: &mut RtcServer,
     clients: &Vec<ClientData>,
 ) {
+    let output = &rmp_serde::to_vec(&out_msg).unwrap();
+
     for idx in out_indexes {
         let client = clients.get(idx).unwrap();
         if let Some(addr) = client.socket_addr {
-            rtc_server
-                .send(
-                    &rmp_serde::to_vec(&out_msg).unwrap(),
-                    MessageType::Binary,
-                    &addr,
-                )
-                .await;
+            rtc_server.send(output, MessageType::Binary, &addr).await;
         }
     }
 }
