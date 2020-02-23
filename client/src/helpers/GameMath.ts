@@ -32,3 +32,6 @@ export const isometricToCartesian = (x: number, y: number) =>
 
 export const cartesianToIsometric = (x: number, y: number) =>
   new IsometricPoint(x - y, (x + y) / 2)
+
+export const tileIndexToCoordinate = (x: number, y: number, width: number, height: number) => 
+  new CartesianPoint((x - y) * (width / 2), (x + y) * (height / 2))
