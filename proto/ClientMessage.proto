@@ -3,8 +3,12 @@ syntax = "proto3";
 message ClientMessage {
   enum ClientMessageType {
     NONE = 0;
-    MOVE = 1;
-
+    MOVECOMMAND = 1;
+    MOVEDELTA = 2;
+    ATTACK = 3;
+    USEABILITY = 4;
+    USETARGETEDABILITY = 5;
+    USEAIMEDABILITY = 6;
 
     VERIFYRTC = 100;
   }
@@ -12,7 +16,21 @@ message ClientMessage {
   message MoveCommand {
     float x = 1;
     float y = 2;
+    bool isAttack = 3;
   }
+
+  message MoveDelta {
+    float x = 1;
+    float y = 2;
+  }
+
+  message Attack {} //TODO
+
+  message UseAbility {} // TODO
+
+  message UseTargettedAbility {} //TODO
+
+  message UseAimedAbility {} // TODO
 
   message VerifyRtc {
     string uuid = 1;
@@ -24,6 +42,8 @@ message ClientMessage {
   
   oneof msgData {
     MoveCommand moveCommand = 2;
+    MoveDelta moveDelta = 3;
+    //TODO add ^ messages
     VerifyRtc veryfiyRtc = 100;
   }
 }

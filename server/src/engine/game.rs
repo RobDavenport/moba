@@ -106,7 +106,7 @@ impl Game {
 
     fn handle_input_command(&mut self, id: u32, command: InputCommand) {
         match command {
-            InputCommand::Move(target) => println!("User-{}: Move to: {}", id, target),
+            InputCommand::Move(loc, _) => println!("User-{}: Move to: {}", id, loc),
             _ => panic!("Unhaled Input Command!"),
         }
     }

@@ -1,6 +1,5 @@
 import { ServerMessageMap, IServerMessage } from './ServerMessages'
-import { ClientMessage } from './protobuf/ClientMessage_pb'
-import { ServerMessage } from './protobuf/Servermessage_pb'
+import * as Serializer from './serializer'
 import MobaWindow from '../MobaWindow'
 import * as msgpack from '@msgpack/msgpack'
 import { CartesianPoint } from '../helpers/GameMath'
@@ -25,12 +24,7 @@ export default class NetworkManager {
   }
 
   private verifyWebRTC() {
-    let clientMessage = new ClientMessage()
-    clientMessage.setMsgtype(ClientMessage.ClientMessageType.VERIFYRTC)
-    let verifyRtc = new ClientMessage.VerifyRtc()
-    verifyRtc.setUuid(this.socketUuid)
-    clientMessage.setVeryfiyrtc(verifyRtc)
-    this.channel.send(clientMessage.serializeBinary())
+    this.channel.send(Serializer.createVerifyRtc(this.socketUuid))
   }
 
   private initWebRTC() {
@@ -123,15 +117,16 @@ export default class NetworkManager {
     console.log("this function was disabled!")
   }
 
-  sendReliable(msg: any) {
+  sendReliable(msg: Uint8Array) {
     //this.ws.send()
   }
 
-  sendUnreliable(msg: any) {
+  sendUnreliable(msg: Uint8Array) {
     //this.channel.send()
   }
 
   private async handleServerMessage({ data }: MessageEvent) {
+    //TODO move to protobuf
     const decoded = msgpack.decode(data)
     const msgType = decoded[0]
     const params = decoded[1]
