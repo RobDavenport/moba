@@ -45,7 +45,7 @@ impl<'a> ::std::default::Default for &'a ClientMessage {
 
 #[derive(Clone,PartialEq,Debug)]
 pub enum ClientMessage_oneof_msgData {
-    moveCommand(ClientMessage_MoveCommand),
+    command(Command),
     veryfiyRtc(ClientMessage_VerifyRtc),
 }
 
@@ -69,52 +69,52 @@ impl ClientMessage {
         self.msgType = v;
     }
 
-    // .ClientMessage.MoveCommand moveCommand = 2;
+    // .Command command = 2;
 
 
-    pub fn get_moveCommand(&self) -> &ClientMessage_MoveCommand {
+    pub fn get_command(&self) -> &Command {
         match self.msgData {
-            ::std::option::Option::Some(ClientMessage_oneof_msgData::moveCommand(ref v)) => v,
-            _ => ClientMessage_MoveCommand::default_instance(),
+            ::std::option::Option::Some(ClientMessage_oneof_msgData::command(ref v)) => v,
+            _ => Command::default_instance(),
         }
     }
-    pub fn clear_moveCommand(&mut self) {
+    pub fn clear_command(&mut self) {
         self.msgData = ::std::option::Option::None;
     }
 
-    pub fn has_moveCommand(&self) -> bool {
+    pub fn has_command(&self) -> bool {
         match self.msgData {
-            ::std::option::Option::Some(ClientMessage_oneof_msgData::moveCommand(..)) => true,
+            ::std::option::Option::Some(ClientMessage_oneof_msgData::command(..)) => true,
             _ => false,
         }
     }
 
     // Param is passed by value, moved
-    pub fn set_moveCommand(&mut self, v: ClientMessage_MoveCommand) {
-        self.msgData = ::std::option::Option::Some(ClientMessage_oneof_msgData::moveCommand(v))
+    pub fn set_command(&mut self, v: Command) {
+        self.msgData = ::std::option::Option::Some(ClientMessage_oneof_msgData::command(v))
     }
 
     // Mutable pointer to the field.
-    pub fn mut_moveCommand(&mut self) -> &mut ClientMessage_MoveCommand {
-        if let ::std::option::Option::Some(ClientMessage_oneof_msgData::moveCommand(_)) = self.msgData {
+    pub fn mut_command(&mut self) -> &mut Command {
+        if let ::std::option::Option::Some(ClientMessage_oneof_msgData::command(_)) = self.msgData {
         } else {
-            self.msgData = ::std::option::Option::Some(ClientMessage_oneof_msgData::moveCommand(ClientMessage_MoveCommand::new()));
+            self.msgData = ::std::option::Option::Some(ClientMessage_oneof_msgData::command(Command::new()));
         }
         match self.msgData {
-            ::std::option::Option::Some(ClientMessage_oneof_msgData::moveCommand(ref mut v)) => v,
+            ::std::option::Option::Some(ClientMessage_oneof_msgData::command(ref mut v)) => v,
             _ => panic!(),
         }
     }
 
     // Take field
-    pub fn take_moveCommand(&mut self) -> ClientMessage_MoveCommand {
-        if self.has_moveCommand() {
+    pub fn take_command(&mut self) -> Command {
+        if self.has_command() {
             match self.msgData.take() {
-                ::std::option::Option::Some(ClientMessage_oneof_msgData::moveCommand(v)) => v,
+                ::std::option::Option::Some(ClientMessage_oneof_msgData::command(v)) => v,
                 _ => panic!(),
             }
         } else {
-            ClientMessage_MoveCommand::new()
+            Command::new()
         }
     }
 
@@ -170,7 +170,7 @@ impl ClientMessage {
 
 impl ::protobuf::Message for ClientMessage {
     fn is_initialized(&self) -> bool {
-        if let Some(ClientMessage_oneof_msgData::moveCommand(ref v)) = self.msgData {
+        if let Some(ClientMessage_oneof_msgData::command(ref v)) = self.msgData {
             if !v.is_initialized() {
                 return false;
             }
@@ -194,7 +194,7 @@ impl ::protobuf::Message for ClientMessage {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
                         return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
                     }
-                    self.msgData = ::std::option::Option::Some(ClientMessage_oneof_msgData::moveCommand(is.read_message()?));
+                    self.msgData = ::std::option::Option::Some(ClientMessage_oneof_msgData::command(is.read_message()?));
                 },
                 100 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
@@ -219,7 +219,7 @@ impl ::protobuf::Message for ClientMessage {
         }
         if let ::std::option::Option::Some(ref v) = self.msgData {
             match v {
-                &ClientMessage_oneof_msgData::moveCommand(ref v) => {
+                &ClientMessage_oneof_msgData::command(ref v) => {
                     let len = v.compute_size();
                     my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
                 },
@@ -240,7 +240,7 @@ impl ::protobuf::Message for ClientMessage {
         }
         if let ::std::option::Option::Some(ref v) = self.msgData {
             match v {
-                &ClientMessage_oneof_msgData::moveCommand(ref v) => {
+                &ClientMessage_oneof_msgData::command(ref v) => {
                     os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited)?;
                     os.write_raw_varint32(v.get_cached_size())?;
                     v.write_to_with_cached_sizes(os)?;
@@ -299,10 +299,10 @@ impl ::protobuf::Message for ClientMessage {
                     |m: &ClientMessage| { &m.msgType },
                     |m: &mut ClientMessage| { &mut m.msgType },
                 ));
-                fields.push(::protobuf::reflect::accessor::make_singular_message_accessor::<_, ClientMessage_MoveCommand>(
-                    "moveCommand",
-                    ClientMessage::has_moveCommand,
-                    ClientMessage::get_moveCommand,
+                fields.push(::protobuf::reflect::accessor::make_singular_message_accessor::<_, Command>(
+                    "command",
+                    ClientMessage::has_command,
+                    ClientMessage::get_command,
                 ));
                 fields.push(::protobuf::reflect::accessor::make_singular_message_accessor::<_, ClientMessage_VerifyRtc>(
                     "veryfiyRtc",
@@ -345,203 +345,6 @@ impl ::std::fmt::Debug for ClientMessage {
 }
 
 impl ::protobuf::reflect::ProtobufValue for ClientMessage {
-    fn as_ref(&self) -> ::protobuf::reflect::ProtobufValueRef {
-        ::protobuf::reflect::ProtobufValueRef::Message(self)
-    }
-}
-
-#[derive(PartialEq,Clone,Default)]
-pub struct ClientMessage_MoveCommand {
-    // message fields
-    pub x: f32,
-    pub y: f32,
-    // special fields
-    pub unknown_fields: ::protobuf::UnknownFields,
-    pub cached_size: ::protobuf::CachedSize,
-}
-
-impl<'a> ::std::default::Default for &'a ClientMessage_MoveCommand {
-    fn default() -> &'a ClientMessage_MoveCommand {
-        <ClientMessage_MoveCommand as ::protobuf::Message>::default_instance()
-    }
-}
-
-impl ClientMessage_MoveCommand {
-    pub fn new() -> ClientMessage_MoveCommand {
-        ::std::default::Default::default()
-    }
-
-    // float x = 1;
-
-
-    pub fn get_x(&self) -> f32 {
-        self.x
-    }
-    pub fn clear_x(&mut self) {
-        self.x = 0.;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_x(&mut self, v: f32) {
-        self.x = v;
-    }
-
-    // float y = 2;
-
-
-    pub fn get_y(&self) -> f32 {
-        self.y
-    }
-    pub fn clear_y(&mut self) {
-        self.y = 0.;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_y(&mut self, v: f32) {
-        self.y = v;
-    }
-}
-
-impl ::protobuf::Message for ClientMessage_MoveCommand {
-    fn is_initialized(&self) -> bool {
-        true
-    }
-
-    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        while !is.eof()? {
-            let (field_number, wire_type) = is.read_tag_unpack()?;
-            match field_number {
-                1 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeFixed32 {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_float()?;
-                    self.x = tmp;
-                },
-                2 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeFixed32 {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_float()?;
-                    self.y = tmp;
-                },
-                _ => {
-                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
-                },
-            };
-        }
-        ::std::result::Result::Ok(())
-    }
-
-    // Compute sizes of nested messages
-    #[allow(unused_variables)]
-    fn compute_size(&self) -> u32 {
-        let mut my_size = 0;
-        if self.x != 0. {
-            my_size += 5;
-        }
-        if self.y != 0. {
-            my_size += 5;
-        }
-        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        self.cached_size.set(my_size);
-        my_size
-    }
-
-    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if self.x != 0. {
-            os.write_float(1, self.x)?;
-        }
-        if self.y != 0. {
-            os.write_float(2, self.y)?;
-        }
-        os.write_unknown_fields(self.get_unknown_fields())?;
-        ::std::result::Result::Ok(())
-    }
-
-    fn get_cached_size(&self) -> u32 {
-        self.cached_size.get()
-    }
-
-    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
-        &self.unknown_fields
-    }
-
-    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
-        &mut self.unknown_fields
-    }
-
-    fn as_any(&self) -> &dyn (::std::any::Any) {
-        self as &dyn (::std::any::Any)
-    }
-    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
-        self as &mut dyn (::std::any::Any)
-    }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
-        self
-    }
-
-    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
-        Self::descriptor_static()
-    }
-
-    fn new() -> ClientMessage_MoveCommand {
-        ClientMessage_MoveCommand::new()
-    }
-
-    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
-        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy {
-            lock: ::protobuf::lazy::ONCE_INIT,
-            ptr: 0 as *const ::protobuf::reflect::MessageDescriptor,
-        };
-        unsafe {
-            descriptor.get(|| {
-                let mut fields = ::std::vec::Vec::new();
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeFloat>(
-                    "x",
-                    |m: &ClientMessage_MoveCommand| { &m.x },
-                    |m: &mut ClientMessage_MoveCommand| { &mut m.x },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeFloat>(
-                    "y",
-                    |m: &ClientMessage_MoveCommand| { &m.y },
-                    |m: &mut ClientMessage_MoveCommand| { &mut m.y },
-                ));
-                ::protobuf::reflect::MessageDescriptor::new::<ClientMessage_MoveCommand>(
-                    "ClientMessage_MoveCommand",
-                    fields,
-                    file_descriptor_proto()
-                )
-            })
-        }
-    }
-
-    fn default_instance() -> &'static ClientMessage_MoveCommand {
-        static mut instance: ::protobuf::lazy::Lazy<ClientMessage_MoveCommand> = ::protobuf::lazy::Lazy {
-            lock: ::protobuf::lazy::ONCE_INIT,
-            ptr: 0 as *const ClientMessage_MoveCommand,
-        };
-        unsafe {
-            instance.get(ClientMessage_MoveCommand::new)
-        }
-    }
-}
-
-impl ::protobuf::Clear for ClientMessage_MoveCommand {
-    fn clear(&mut self) {
-        self.x = 0.;
-        self.y = 0.;
-        self.unknown_fields.clear();
-    }
-}
-
-impl ::std::fmt::Debug for ClientMessage_MoveCommand {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        ::protobuf::text_format::fmt(self, f)
-    }
-}
-
-impl ::protobuf::reflect::ProtobufValue for ClientMessage_MoveCommand {
     fn as_ref(&self) -> ::protobuf::reflect::ProtobufValueRef {
         ::protobuf::reflect::ProtobufValueRef::Message(self)
     }
@@ -719,7 +522,7 @@ impl ::protobuf::reflect::ProtobufValue for ClientMessage_VerifyRtc {
 #[derive(Clone,PartialEq,Eq,Debug,Hash)]
 pub enum ClientMessage_ClientMessageType {
     NONE = 0,
-    MOVE = 1,
+    COMMAND = 1,
     VERIFYRTC = 100,
 }
 
@@ -731,7 +534,7 @@ impl ::protobuf::ProtobufEnum for ClientMessage_ClientMessageType {
     fn from_i32(value: i32) -> ::std::option::Option<ClientMessage_ClientMessageType> {
         match value {
             0 => ::std::option::Option::Some(ClientMessage_ClientMessageType::NONE),
-            1 => ::std::option::Option::Some(ClientMessage_ClientMessageType::MOVE),
+            1 => ::std::option::Option::Some(ClientMessage_ClientMessageType::COMMAND),
             100 => ::std::option::Option::Some(ClientMessage_ClientMessageType::VERIFYRTC),
             _ => ::std::option::Option::None
         }
@@ -740,7 +543,7 @@ impl ::protobuf::ProtobufEnum for ClientMessage_ClientMessageType {
     fn values() -> &'static [Self] {
         static values: &'static [ClientMessage_ClientMessageType] = &[
             ClientMessage_ClientMessageType::NONE,
-            ClientMessage_ClientMessageType::MOVE,
+            ClientMessage_ClientMessageType::COMMAND,
             ClientMessage_ClientMessageType::VERIFYRTC,
         ];
         values
@@ -774,48 +577,2053 @@ impl ::protobuf::reflect::ProtobufValue for ClientMessage_ClientMessageType {
     }
 }
 
+#[derive(PartialEq,Clone,Default)]
+pub struct Command {
+    // message fields
+    pub commandType: Command_CommandType,
+    // message oneof groups
+    pub command: ::std::option::Option<Command_oneof_command>,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a Command {
+    fn default() -> &'a Command {
+        <Command as ::protobuf::Message>::default_instance()
+    }
+}
+
+#[derive(Clone,PartialEq,Debug)]
+pub enum Command_oneof_command {
+    moveCommand(Command_MoveCommand),
+    moveDelta(Command_MoveDelta),
+    attack(Command_Attack),
+    ability(Ability),
+}
+
+impl Command {
+    pub fn new() -> Command {
+        ::std::default::Default::default()
+    }
+
+    // .Command.CommandType commandType = 1;
+
+
+    pub fn get_commandType(&self) -> Command_CommandType {
+        self.commandType
+    }
+    pub fn clear_commandType(&mut self) {
+        self.commandType = Command_CommandType::NONE;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_commandType(&mut self, v: Command_CommandType) {
+        self.commandType = v;
+    }
+
+    // .Command.MoveCommand moveCommand = 2;
+
+
+    pub fn get_moveCommand(&self) -> &Command_MoveCommand {
+        match self.command {
+            ::std::option::Option::Some(Command_oneof_command::moveCommand(ref v)) => v,
+            _ => Command_MoveCommand::default_instance(),
+        }
+    }
+    pub fn clear_moveCommand(&mut self) {
+        self.command = ::std::option::Option::None;
+    }
+
+    pub fn has_moveCommand(&self) -> bool {
+        match self.command {
+            ::std::option::Option::Some(Command_oneof_command::moveCommand(..)) => true,
+            _ => false,
+        }
+    }
+
+    // Param is passed by value, moved
+    pub fn set_moveCommand(&mut self, v: Command_MoveCommand) {
+        self.command = ::std::option::Option::Some(Command_oneof_command::moveCommand(v))
+    }
+
+    // Mutable pointer to the field.
+    pub fn mut_moveCommand(&mut self) -> &mut Command_MoveCommand {
+        if let ::std::option::Option::Some(Command_oneof_command::moveCommand(_)) = self.command {
+        } else {
+            self.command = ::std::option::Option::Some(Command_oneof_command::moveCommand(Command_MoveCommand::new()));
+        }
+        match self.command {
+            ::std::option::Option::Some(Command_oneof_command::moveCommand(ref mut v)) => v,
+            _ => panic!(),
+        }
+    }
+
+    // Take field
+    pub fn take_moveCommand(&mut self) -> Command_MoveCommand {
+        if self.has_moveCommand() {
+            match self.command.take() {
+                ::std::option::Option::Some(Command_oneof_command::moveCommand(v)) => v,
+                _ => panic!(),
+            }
+        } else {
+            Command_MoveCommand::new()
+        }
+    }
+
+    // .Command.MoveDelta moveDelta = 3;
+
+
+    pub fn get_moveDelta(&self) -> &Command_MoveDelta {
+        match self.command {
+            ::std::option::Option::Some(Command_oneof_command::moveDelta(ref v)) => v,
+            _ => Command_MoveDelta::default_instance(),
+        }
+    }
+    pub fn clear_moveDelta(&mut self) {
+        self.command = ::std::option::Option::None;
+    }
+
+    pub fn has_moveDelta(&self) -> bool {
+        match self.command {
+            ::std::option::Option::Some(Command_oneof_command::moveDelta(..)) => true,
+            _ => false,
+        }
+    }
+
+    // Param is passed by value, moved
+    pub fn set_moveDelta(&mut self, v: Command_MoveDelta) {
+        self.command = ::std::option::Option::Some(Command_oneof_command::moveDelta(v))
+    }
+
+    // Mutable pointer to the field.
+    pub fn mut_moveDelta(&mut self) -> &mut Command_MoveDelta {
+        if let ::std::option::Option::Some(Command_oneof_command::moveDelta(_)) = self.command {
+        } else {
+            self.command = ::std::option::Option::Some(Command_oneof_command::moveDelta(Command_MoveDelta::new()));
+        }
+        match self.command {
+            ::std::option::Option::Some(Command_oneof_command::moveDelta(ref mut v)) => v,
+            _ => panic!(),
+        }
+    }
+
+    // Take field
+    pub fn take_moveDelta(&mut self) -> Command_MoveDelta {
+        if self.has_moveDelta() {
+            match self.command.take() {
+                ::std::option::Option::Some(Command_oneof_command::moveDelta(v)) => v,
+                _ => panic!(),
+            }
+        } else {
+            Command_MoveDelta::new()
+        }
+    }
+
+    // .Command.Attack attack = 4;
+
+
+    pub fn get_attack(&self) -> &Command_Attack {
+        match self.command {
+            ::std::option::Option::Some(Command_oneof_command::attack(ref v)) => v,
+            _ => Command_Attack::default_instance(),
+        }
+    }
+    pub fn clear_attack(&mut self) {
+        self.command = ::std::option::Option::None;
+    }
+
+    pub fn has_attack(&self) -> bool {
+        match self.command {
+            ::std::option::Option::Some(Command_oneof_command::attack(..)) => true,
+            _ => false,
+        }
+    }
+
+    // Param is passed by value, moved
+    pub fn set_attack(&mut self, v: Command_Attack) {
+        self.command = ::std::option::Option::Some(Command_oneof_command::attack(v))
+    }
+
+    // Mutable pointer to the field.
+    pub fn mut_attack(&mut self) -> &mut Command_Attack {
+        if let ::std::option::Option::Some(Command_oneof_command::attack(_)) = self.command {
+        } else {
+            self.command = ::std::option::Option::Some(Command_oneof_command::attack(Command_Attack::new()));
+        }
+        match self.command {
+            ::std::option::Option::Some(Command_oneof_command::attack(ref mut v)) => v,
+            _ => panic!(),
+        }
+    }
+
+    // Take field
+    pub fn take_attack(&mut self) -> Command_Attack {
+        if self.has_attack() {
+            match self.command.take() {
+                ::std::option::Option::Some(Command_oneof_command::attack(v)) => v,
+                _ => panic!(),
+            }
+        } else {
+            Command_Attack::new()
+        }
+    }
+
+    // .Ability ability = 5;
+
+
+    pub fn get_ability(&self) -> &Ability {
+        match self.command {
+            ::std::option::Option::Some(Command_oneof_command::ability(ref v)) => v,
+            _ => Ability::default_instance(),
+        }
+    }
+    pub fn clear_ability(&mut self) {
+        self.command = ::std::option::Option::None;
+    }
+
+    pub fn has_ability(&self) -> bool {
+        match self.command {
+            ::std::option::Option::Some(Command_oneof_command::ability(..)) => true,
+            _ => false,
+        }
+    }
+
+    // Param is passed by value, moved
+    pub fn set_ability(&mut self, v: Ability) {
+        self.command = ::std::option::Option::Some(Command_oneof_command::ability(v))
+    }
+
+    // Mutable pointer to the field.
+    pub fn mut_ability(&mut self) -> &mut Ability {
+        if let ::std::option::Option::Some(Command_oneof_command::ability(_)) = self.command {
+        } else {
+            self.command = ::std::option::Option::Some(Command_oneof_command::ability(Ability::new()));
+        }
+        match self.command {
+            ::std::option::Option::Some(Command_oneof_command::ability(ref mut v)) => v,
+            _ => panic!(),
+        }
+    }
+
+    // Take field
+    pub fn take_ability(&mut self) -> Ability {
+        if self.has_ability() {
+            match self.command.take() {
+                ::std::option::Option::Some(Command_oneof_command::ability(v)) => v,
+                _ => panic!(),
+            }
+        } else {
+            Ability::new()
+        }
+    }
+}
+
+impl ::protobuf::Message for Command {
+    fn is_initialized(&self) -> bool {
+        if let Some(Command_oneof_command::moveCommand(ref v)) = self.command {
+            if !v.is_initialized() {
+                return false;
+            }
+        }
+        if let Some(Command_oneof_command::moveDelta(ref v)) = self.command {
+            if !v.is_initialized() {
+                return false;
+            }
+        }
+        if let Some(Command_oneof_command::attack(ref v)) = self.command {
+            if !v.is_initialized() {
+                return false;
+            }
+        }
+        if let Some(Command_oneof_command::ability(ref v)) = self.command {
+            if !v.is_initialized() {
+                return false;
+            }
+        }
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    ::protobuf::rt::read_proto3_enum_with_unknown_fields_into(wire_type, is, &mut self.commandType, 1, &mut self.unknown_fields)?
+                },
+                2 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    self.command = ::std::option::Option::Some(Command_oneof_command::moveCommand(is.read_message()?));
+                },
+                3 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    self.command = ::std::option::Option::Some(Command_oneof_command::moveDelta(is.read_message()?));
+                },
+                4 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    self.command = ::std::option::Option::Some(Command_oneof_command::attack(is.read_message()?));
+                },
+                5 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    self.command = ::std::option::Option::Some(Command_oneof_command::ability(is.read_message()?));
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if self.commandType != Command_CommandType::NONE {
+            my_size += ::protobuf::rt::enum_size(1, self.commandType);
+        }
+        if let ::std::option::Option::Some(ref v) = self.command {
+            match v {
+                &Command_oneof_command::moveCommand(ref v) => {
+                    let len = v.compute_size();
+                    my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+                },
+                &Command_oneof_command::moveDelta(ref v) => {
+                    let len = v.compute_size();
+                    my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+                },
+                &Command_oneof_command::attack(ref v) => {
+                    let len = v.compute_size();
+                    my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+                },
+                &Command_oneof_command::ability(ref v) => {
+                    let len = v.compute_size();
+                    my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+                },
+            };
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if self.commandType != Command_CommandType::NONE {
+            os.write_enum(1, self.commandType.value())?;
+        }
+        if let ::std::option::Option::Some(ref v) = self.command {
+            match v {
+                &Command_oneof_command::moveCommand(ref v) => {
+                    os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+                    os.write_raw_varint32(v.get_cached_size())?;
+                    v.write_to_with_cached_sizes(os)?;
+                },
+                &Command_oneof_command::moveDelta(ref v) => {
+                    os.write_tag(3, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+                    os.write_raw_varint32(v.get_cached_size())?;
+                    v.write_to_with_cached_sizes(os)?;
+                },
+                &Command_oneof_command::attack(ref v) => {
+                    os.write_tag(4, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+                    os.write_raw_varint32(v.get_cached_size())?;
+                    v.write_to_with_cached_sizes(os)?;
+                },
+                &Command_oneof_command::ability(ref v) => {
+                    os.write_tag(5, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+                    os.write_raw_varint32(v.get_cached_size())?;
+                    v.write_to_with_cached_sizes(os)?;
+                },
+            };
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> Command {
+        Command::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ::protobuf::reflect::MessageDescriptor,
+        };
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeEnum<Command_CommandType>>(
+                    "commandType",
+                    |m: &Command| { &m.commandType },
+                    |m: &mut Command| { &mut m.commandType },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_message_accessor::<_, Command_MoveCommand>(
+                    "moveCommand",
+                    Command::has_moveCommand,
+                    Command::get_moveCommand,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_message_accessor::<_, Command_MoveDelta>(
+                    "moveDelta",
+                    Command::has_moveDelta,
+                    Command::get_moveDelta,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_message_accessor::<_, Command_Attack>(
+                    "attack",
+                    Command::has_attack,
+                    Command::get_attack,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_message_accessor::<_, Ability>(
+                    "ability",
+                    Command::has_ability,
+                    Command::get_ability,
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<Command>(
+                    "Command",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static Command {
+        static mut instance: ::protobuf::lazy::Lazy<Command> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const Command,
+        };
+        unsafe {
+            instance.get(Command::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for Command {
+    fn clear(&mut self) {
+        self.commandType = Command_CommandType::NONE;
+        self.command = ::std::option::Option::None;
+        self.command = ::std::option::Option::None;
+        self.command = ::std::option::Option::None;
+        self.command = ::std::option::Option::None;
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for Command {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for Command {
+    fn as_ref(&self) -> ::protobuf::reflect::ProtobufValueRef {
+        ::protobuf::reflect::ProtobufValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct Command_MoveCommand {
+    // message fields
+    pub x: f32,
+    pub y: f32,
+    pub isAttack: bool,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a Command_MoveCommand {
+    fn default() -> &'a Command_MoveCommand {
+        <Command_MoveCommand as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl Command_MoveCommand {
+    pub fn new() -> Command_MoveCommand {
+        ::std::default::Default::default()
+    }
+
+    // float x = 1;
+
+
+    pub fn get_x(&self) -> f32 {
+        self.x
+    }
+    pub fn clear_x(&mut self) {
+        self.x = 0.;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_x(&mut self, v: f32) {
+        self.x = v;
+    }
+
+    // float y = 2;
+
+
+    pub fn get_y(&self) -> f32 {
+        self.y
+    }
+    pub fn clear_y(&mut self) {
+        self.y = 0.;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_y(&mut self, v: f32) {
+        self.y = v;
+    }
+
+    // bool isAttack = 3;
+
+
+    pub fn get_isAttack(&self) -> bool {
+        self.isAttack
+    }
+    pub fn clear_isAttack(&mut self) {
+        self.isAttack = false;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_isAttack(&mut self, v: bool) {
+        self.isAttack = v;
+    }
+}
+
+impl ::protobuf::Message for Command_MoveCommand {
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeFixed32 {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    let tmp = is.read_float()?;
+                    self.x = tmp;
+                },
+                2 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeFixed32 {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    let tmp = is.read_float()?;
+                    self.y = tmp;
+                },
+                3 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    let tmp = is.read_bool()?;
+                    self.isAttack = tmp;
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if self.x != 0. {
+            my_size += 5;
+        }
+        if self.y != 0. {
+            my_size += 5;
+        }
+        if self.isAttack != false {
+            my_size += 2;
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if self.x != 0. {
+            os.write_float(1, self.x)?;
+        }
+        if self.y != 0. {
+            os.write_float(2, self.y)?;
+        }
+        if self.isAttack != false {
+            os.write_bool(3, self.isAttack)?;
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> Command_MoveCommand {
+        Command_MoveCommand::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ::protobuf::reflect::MessageDescriptor,
+        };
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeFloat>(
+                    "x",
+                    |m: &Command_MoveCommand| { &m.x },
+                    |m: &mut Command_MoveCommand| { &mut m.x },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeFloat>(
+                    "y",
+                    |m: &Command_MoveCommand| { &m.y },
+                    |m: &mut Command_MoveCommand| { &mut m.y },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeBool>(
+                    "isAttack",
+                    |m: &Command_MoveCommand| { &m.isAttack },
+                    |m: &mut Command_MoveCommand| { &mut m.isAttack },
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<Command_MoveCommand>(
+                    "Command_MoveCommand",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static Command_MoveCommand {
+        static mut instance: ::protobuf::lazy::Lazy<Command_MoveCommand> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const Command_MoveCommand,
+        };
+        unsafe {
+            instance.get(Command_MoveCommand::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for Command_MoveCommand {
+    fn clear(&mut self) {
+        self.x = 0.;
+        self.y = 0.;
+        self.isAttack = false;
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for Command_MoveCommand {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for Command_MoveCommand {
+    fn as_ref(&self) -> ::protobuf::reflect::ProtobufValueRef {
+        ::protobuf::reflect::ProtobufValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct Command_MoveDelta {
+    // message fields
+    pub x: f32,
+    pub y: f32,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a Command_MoveDelta {
+    fn default() -> &'a Command_MoveDelta {
+        <Command_MoveDelta as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl Command_MoveDelta {
+    pub fn new() -> Command_MoveDelta {
+        ::std::default::Default::default()
+    }
+
+    // float x = 1;
+
+
+    pub fn get_x(&self) -> f32 {
+        self.x
+    }
+    pub fn clear_x(&mut self) {
+        self.x = 0.;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_x(&mut self, v: f32) {
+        self.x = v;
+    }
+
+    // float y = 2;
+
+
+    pub fn get_y(&self) -> f32 {
+        self.y
+    }
+    pub fn clear_y(&mut self) {
+        self.y = 0.;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_y(&mut self, v: f32) {
+        self.y = v;
+    }
+}
+
+impl ::protobuf::Message for Command_MoveDelta {
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeFixed32 {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    let tmp = is.read_float()?;
+                    self.x = tmp;
+                },
+                2 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeFixed32 {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    let tmp = is.read_float()?;
+                    self.y = tmp;
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if self.x != 0. {
+            my_size += 5;
+        }
+        if self.y != 0. {
+            my_size += 5;
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if self.x != 0. {
+            os.write_float(1, self.x)?;
+        }
+        if self.y != 0. {
+            os.write_float(2, self.y)?;
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> Command_MoveDelta {
+        Command_MoveDelta::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ::protobuf::reflect::MessageDescriptor,
+        };
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeFloat>(
+                    "x",
+                    |m: &Command_MoveDelta| { &m.x },
+                    |m: &mut Command_MoveDelta| { &mut m.x },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeFloat>(
+                    "y",
+                    |m: &Command_MoveDelta| { &m.y },
+                    |m: &mut Command_MoveDelta| { &mut m.y },
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<Command_MoveDelta>(
+                    "Command_MoveDelta",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static Command_MoveDelta {
+        static mut instance: ::protobuf::lazy::Lazy<Command_MoveDelta> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const Command_MoveDelta,
+        };
+        unsafe {
+            instance.get(Command_MoveDelta::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for Command_MoveDelta {
+    fn clear(&mut self) {
+        self.x = 0.;
+        self.y = 0.;
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for Command_MoveDelta {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for Command_MoveDelta {
+    fn as_ref(&self) -> ::protobuf::reflect::ProtobufValueRef {
+        ::protobuf::reflect::ProtobufValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct Command_Attack {
+    // message fields
+    pub target: u32,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a Command_Attack {
+    fn default() -> &'a Command_Attack {
+        <Command_Attack as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl Command_Attack {
+    pub fn new() -> Command_Attack {
+        ::std::default::Default::default()
+    }
+
+    // uint32 target = 1;
+
+
+    pub fn get_target(&self) -> u32 {
+        self.target
+    }
+    pub fn clear_target(&mut self) {
+        self.target = 0;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_target(&mut self, v: u32) {
+        self.target = v;
+    }
+}
+
+impl ::protobuf::Message for Command_Attack {
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    let tmp = is.read_uint32()?;
+                    self.target = tmp;
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if self.target != 0 {
+            my_size += ::protobuf::rt::value_size(1, self.target, ::protobuf::wire_format::WireTypeVarint);
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if self.target != 0 {
+            os.write_uint32(1, self.target)?;
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> Command_Attack {
+        Command_Attack::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ::protobuf::reflect::MessageDescriptor,
+        };
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeUint32>(
+                    "target",
+                    |m: &Command_Attack| { &m.target },
+                    |m: &mut Command_Attack| { &mut m.target },
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<Command_Attack>(
+                    "Command_Attack",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static Command_Attack {
+        static mut instance: ::protobuf::lazy::Lazy<Command_Attack> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const Command_Attack,
+        };
+        unsafe {
+            instance.get(Command_Attack::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for Command_Attack {
+    fn clear(&mut self) {
+        self.target = 0;
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for Command_Attack {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for Command_Attack {
+    fn as_ref(&self) -> ::protobuf::reflect::ProtobufValueRef {
+        ::protobuf::reflect::ProtobufValueRef::Message(self)
+    }
+}
+
+#[derive(Clone,PartialEq,Eq,Debug,Hash)]
+pub enum Command_CommandType {
+    NONE = 0,
+    MOVECOMMAND = 1,
+    MOVEDELTA = 2,
+    ATTACK = 3,
+    ABILITY = 4,
+}
+
+impl ::protobuf::ProtobufEnum for Command_CommandType {
+    fn value(&self) -> i32 {
+        *self as i32
+    }
+
+    fn from_i32(value: i32) -> ::std::option::Option<Command_CommandType> {
+        match value {
+            0 => ::std::option::Option::Some(Command_CommandType::NONE),
+            1 => ::std::option::Option::Some(Command_CommandType::MOVECOMMAND),
+            2 => ::std::option::Option::Some(Command_CommandType::MOVEDELTA),
+            3 => ::std::option::Option::Some(Command_CommandType::ATTACK),
+            4 => ::std::option::Option::Some(Command_CommandType::ABILITY),
+            _ => ::std::option::Option::None
+        }
+    }
+
+    fn values() -> &'static [Self] {
+        static values: &'static [Command_CommandType] = &[
+            Command_CommandType::NONE,
+            Command_CommandType::MOVECOMMAND,
+            Command_CommandType::MOVEDELTA,
+            Command_CommandType::ATTACK,
+            Command_CommandType::ABILITY,
+        ];
+        values
+    }
+
+    fn enum_descriptor_static() -> &'static ::protobuf::reflect::EnumDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::EnumDescriptor> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ::protobuf::reflect::EnumDescriptor,
+        };
+        unsafe {
+            descriptor.get(|| {
+                ::protobuf::reflect::EnumDescriptor::new("Command_CommandType", file_descriptor_proto())
+            })
+        }
+    }
+}
+
+impl ::std::marker::Copy for Command_CommandType {
+}
+
+impl ::std::default::Default for Command_CommandType {
+    fn default() -> Self {
+        Command_CommandType::NONE
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for Command_CommandType {
+    fn as_ref(&self) -> ::protobuf::reflect::ProtobufValueRef {
+        ::protobuf::reflect::ProtobufValueRef::Enum(self.descriptor())
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct Ability {
+    // message fields
+    pub abilityID: i32,
+    pub abilityDataType: Ability_AbilityDataType,
+    // message oneof groups
+    pub abilityData: ::std::option::Option<Ability_oneof_abilityData>,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a Ability {
+    fn default() -> &'a Ability {
+        <Ability as ::protobuf::Message>::default_instance()
+    }
+}
+
+#[derive(Clone,PartialEq,Debug)]
+pub enum Ability_oneof_abilityData {
+    targetedAbilityData(Ability_TargetedAbilityData),
+    aimedAbilityData(Ability_AimedAbilityData),
+}
+
+impl Ability {
+    pub fn new() -> Ability {
+        ::std::default::Default::default()
+    }
+
+    // int32 abilityID = 1;
+
+
+    pub fn get_abilityID(&self) -> i32 {
+        self.abilityID
+    }
+    pub fn clear_abilityID(&mut self) {
+        self.abilityID = 0;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_abilityID(&mut self, v: i32) {
+        self.abilityID = v;
+    }
+
+    // .Ability.AbilityDataType abilityDataType = 2;
+
+
+    pub fn get_abilityDataType(&self) -> Ability_AbilityDataType {
+        self.abilityDataType
+    }
+    pub fn clear_abilityDataType(&mut self) {
+        self.abilityDataType = Ability_AbilityDataType::SIMPLE;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_abilityDataType(&mut self, v: Ability_AbilityDataType) {
+        self.abilityDataType = v;
+    }
+
+    // .Ability.TargetedAbilityData targetedAbilityData = 3;
+
+
+    pub fn get_targetedAbilityData(&self) -> &Ability_TargetedAbilityData {
+        match self.abilityData {
+            ::std::option::Option::Some(Ability_oneof_abilityData::targetedAbilityData(ref v)) => v,
+            _ => Ability_TargetedAbilityData::default_instance(),
+        }
+    }
+    pub fn clear_targetedAbilityData(&mut self) {
+        self.abilityData = ::std::option::Option::None;
+    }
+
+    pub fn has_targetedAbilityData(&self) -> bool {
+        match self.abilityData {
+            ::std::option::Option::Some(Ability_oneof_abilityData::targetedAbilityData(..)) => true,
+            _ => false,
+        }
+    }
+
+    // Param is passed by value, moved
+    pub fn set_targetedAbilityData(&mut self, v: Ability_TargetedAbilityData) {
+        self.abilityData = ::std::option::Option::Some(Ability_oneof_abilityData::targetedAbilityData(v))
+    }
+
+    // Mutable pointer to the field.
+    pub fn mut_targetedAbilityData(&mut self) -> &mut Ability_TargetedAbilityData {
+        if let ::std::option::Option::Some(Ability_oneof_abilityData::targetedAbilityData(_)) = self.abilityData {
+        } else {
+            self.abilityData = ::std::option::Option::Some(Ability_oneof_abilityData::targetedAbilityData(Ability_TargetedAbilityData::new()));
+        }
+        match self.abilityData {
+            ::std::option::Option::Some(Ability_oneof_abilityData::targetedAbilityData(ref mut v)) => v,
+            _ => panic!(),
+        }
+    }
+
+    // Take field
+    pub fn take_targetedAbilityData(&mut self) -> Ability_TargetedAbilityData {
+        if self.has_targetedAbilityData() {
+            match self.abilityData.take() {
+                ::std::option::Option::Some(Ability_oneof_abilityData::targetedAbilityData(v)) => v,
+                _ => panic!(),
+            }
+        } else {
+            Ability_TargetedAbilityData::new()
+        }
+    }
+
+    // .Ability.AimedAbilityData aimedAbilityData = 4;
+
+
+    pub fn get_aimedAbilityData(&self) -> &Ability_AimedAbilityData {
+        match self.abilityData {
+            ::std::option::Option::Some(Ability_oneof_abilityData::aimedAbilityData(ref v)) => v,
+            _ => Ability_AimedAbilityData::default_instance(),
+        }
+    }
+    pub fn clear_aimedAbilityData(&mut self) {
+        self.abilityData = ::std::option::Option::None;
+    }
+
+    pub fn has_aimedAbilityData(&self) -> bool {
+        match self.abilityData {
+            ::std::option::Option::Some(Ability_oneof_abilityData::aimedAbilityData(..)) => true,
+            _ => false,
+        }
+    }
+
+    // Param is passed by value, moved
+    pub fn set_aimedAbilityData(&mut self, v: Ability_AimedAbilityData) {
+        self.abilityData = ::std::option::Option::Some(Ability_oneof_abilityData::aimedAbilityData(v))
+    }
+
+    // Mutable pointer to the field.
+    pub fn mut_aimedAbilityData(&mut self) -> &mut Ability_AimedAbilityData {
+        if let ::std::option::Option::Some(Ability_oneof_abilityData::aimedAbilityData(_)) = self.abilityData {
+        } else {
+            self.abilityData = ::std::option::Option::Some(Ability_oneof_abilityData::aimedAbilityData(Ability_AimedAbilityData::new()));
+        }
+        match self.abilityData {
+            ::std::option::Option::Some(Ability_oneof_abilityData::aimedAbilityData(ref mut v)) => v,
+            _ => panic!(),
+        }
+    }
+
+    // Take field
+    pub fn take_aimedAbilityData(&mut self) -> Ability_AimedAbilityData {
+        if self.has_aimedAbilityData() {
+            match self.abilityData.take() {
+                ::std::option::Option::Some(Ability_oneof_abilityData::aimedAbilityData(v)) => v,
+                _ => panic!(),
+            }
+        } else {
+            Ability_AimedAbilityData::new()
+        }
+    }
+}
+
+impl ::protobuf::Message for Ability {
+    fn is_initialized(&self) -> bool {
+        if let Some(Ability_oneof_abilityData::targetedAbilityData(ref v)) = self.abilityData {
+            if !v.is_initialized() {
+                return false;
+            }
+        }
+        if let Some(Ability_oneof_abilityData::aimedAbilityData(ref v)) = self.abilityData {
+            if !v.is_initialized() {
+                return false;
+            }
+        }
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    let tmp = is.read_int32()?;
+                    self.abilityID = tmp;
+                },
+                2 => {
+                    ::protobuf::rt::read_proto3_enum_with_unknown_fields_into(wire_type, is, &mut self.abilityDataType, 2, &mut self.unknown_fields)?
+                },
+                3 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    self.abilityData = ::std::option::Option::Some(Ability_oneof_abilityData::targetedAbilityData(is.read_message()?));
+                },
+                4 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    self.abilityData = ::std::option::Option::Some(Ability_oneof_abilityData::aimedAbilityData(is.read_message()?));
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if self.abilityID != 0 {
+            my_size += ::protobuf::rt::value_size(1, self.abilityID, ::protobuf::wire_format::WireTypeVarint);
+        }
+        if self.abilityDataType != Ability_AbilityDataType::SIMPLE {
+            my_size += ::protobuf::rt::enum_size(2, self.abilityDataType);
+        }
+        if let ::std::option::Option::Some(ref v) = self.abilityData {
+            match v {
+                &Ability_oneof_abilityData::targetedAbilityData(ref v) => {
+                    let len = v.compute_size();
+                    my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+                },
+                &Ability_oneof_abilityData::aimedAbilityData(ref v) => {
+                    let len = v.compute_size();
+                    my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+                },
+            };
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if self.abilityID != 0 {
+            os.write_int32(1, self.abilityID)?;
+        }
+        if self.abilityDataType != Ability_AbilityDataType::SIMPLE {
+            os.write_enum(2, self.abilityDataType.value())?;
+        }
+        if let ::std::option::Option::Some(ref v) = self.abilityData {
+            match v {
+                &Ability_oneof_abilityData::targetedAbilityData(ref v) => {
+                    os.write_tag(3, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+                    os.write_raw_varint32(v.get_cached_size())?;
+                    v.write_to_with_cached_sizes(os)?;
+                },
+                &Ability_oneof_abilityData::aimedAbilityData(ref v) => {
+                    os.write_tag(4, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+                    os.write_raw_varint32(v.get_cached_size())?;
+                    v.write_to_with_cached_sizes(os)?;
+                },
+            };
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> Ability {
+        Ability::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ::protobuf::reflect::MessageDescriptor,
+        };
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeInt32>(
+                    "abilityID",
+                    |m: &Ability| { &m.abilityID },
+                    |m: &mut Ability| { &mut m.abilityID },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeEnum<Ability_AbilityDataType>>(
+                    "abilityDataType",
+                    |m: &Ability| { &m.abilityDataType },
+                    |m: &mut Ability| { &mut m.abilityDataType },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_message_accessor::<_, Ability_TargetedAbilityData>(
+                    "targetedAbilityData",
+                    Ability::has_targetedAbilityData,
+                    Ability::get_targetedAbilityData,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_message_accessor::<_, Ability_AimedAbilityData>(
+                    "aimedAbilityData",
+                    Ability::has_aimedAbilityData,
+                    Ability::get_aimedAbilityData,
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<Ability>(
+                    "Ability",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static Ability {
+        static mut instance: ::protobuf::lazy::Lazy<Ability> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const Ability,
+        };
+        unsafe {
+            instance.get(Ability::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for Ability {
+    fn clear(&mut self) {
+        self.abilityID = 0;
+        self.abilityDataType = Ability_AbilityDataType::SIMPLE;
+        self.abilityData = ::std::option::Option::None;
+        self.abilityData = ::std::option::Option::None;
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for Ability {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for Ability {
+    fn as_ref(&self) -> ::protobuf::reflect::ProtobufValueRef {
+        ::protobuf::reflect::ProtobufValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct Ability_TargetedAbilityData {
+    // message fields
+    pub target: u32,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a Ability_TargetedAbilityData {
+    fn default() -> &'a Ability_TargetedAbilityData {
+        <Ability_TargetedAbilityData as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl Ability_TargetedAbilityData {
+    pub fn new() -> Ability_TargetedAbilityData {
+        ::std::default::Default::default()
+    }
+
+    // uint32 target = 1;
+
+
+    pub fn get_target(&self) -> u32 {
+        self.target
+    }
+    pub fn clear_target(&mut self) {
+        self.target = 0;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_target(&mut self, v: u32) {
+        self.target = v;
+    }
+}
+
+impl ::protobuf::Message for Ability_TargetedAbilityData {
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    let tmp = is.read_uint32()?;
+                    self.target = tmp;
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if self.target != 0 {
+            my_size += ::protobuf::rt::value_size(1, self.target, ::protobuf::wire_format::WireTypeVarint);
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if self.target != 0 {
+            os.write_uint32(1, self.target)?;
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> Ability_TargetedAbilityData {
+        Ability_TargetedAbilityData::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ::protobuf::reflect::MessageDescriptor,
+        };
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeUint32>(
+                    "target",
+                    |m: &Ability_TargetedAbilityData| { &m.target },
+                    |m: &mut Ability_TargetedAbilityData| { &mut m.target },
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<Ability_TargetedAbilityData>(
+                    "Ability_TargetedAbilityData",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static Ability_TargetedAbilityData {
+        static mut instance: ::protobuf::lazy::Lazy<Ability_TargetedAbilityData> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const Ability_TargetedAbilityData,
+        };
+        unsafe {
+            instance.get(Ability_TargetedAbilityData::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for Ability_TargetedAbilityData {
+    fn clear(&mut self) {
+        self.target = 0;
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for Ability_TargetedAbilityData {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for Ability_TargetedAbilityData {
+    fn as_ref(&self) -> ::protobuf::reflect::ProtobufValueRef {
+        ::protobuf::reflect::ProtobufValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct Ability_AimedAbilityData {
+    // message fields
+    pub x: f32,
+    pub y: f32,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a Ability_AimedAbilityData {
+    fn default() -> &'a Ability_AimedAbilityData {
+        <Ability_AimedAbilityData as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl Ability_AimedAbilityData {
+    pub fn new() -> Ability_AimedAbilityData {
+        ::std::default::Default::default()
+    }
+
+    // float x = 1;
+
+
+    pub fn get_x(&self) -> f32 {
+        self.x
+    }
+    pub fn clear_x(&mut self) {
+        self.x = 0.;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_x(&mut self, v: f32) {
+        self.x = v;
+    }
+
+    // float y = 2;
+
+
+    pub fn get_y(&self) -> f32 {
+        self.y
+    }
+    pub fn clear_y(&mut self) {
+        self.y = 0.;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_y(&mut self, v: f32) {
+        self.y = v;
+    }
+}
+
+impl ::protobuf::Message for Ability_AimedAbilityData {
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeFixed32 {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    let tmp = is.read_float()?;
+                    self.x = tmp;
+                },
+                2 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeFixed32 {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    let tmp = is.read_float()?;
+                    self.y = tmp;
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if self.x != 0. {
+            my_size += 5;
+        }
+        if self.y != 0. {
+            my_size += 5;
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if self.x != 0. {
+            os.write_float(1, self.x)?;
+        }
+        if self.y != 0. {
+            os.write_float(2, self.y)?;
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> Ability_AimedAbilityData {
+        Ability_AimedAbilityData::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ::protobuf::reflect::MessageDescriptor,
+        };
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeFloat>(
+                    "x",
+                    |m: &Ability_AimedAbilityData| { &m.x },
+                    |m: &mut Ability_AimedAbilityData| { &mut m.x },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeFloat>(
+                    "y",
+                    |m: &Ability_AimedAbilityData| { &m.y },
+                    |m: &mut Ability_AimedAbilityData| { &mut m.y },
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<Ability_AimedAbilityData>(
+                    "Ability_AimedAbilityData",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static Ability_AimedAbilityData {
+        static mut instance: ::protobuf::lazy::Lazy<Ability_AimedAbilityData> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const Ability_AimedAbilityData,
+        };
+        unsafe {
+            instance.get(Ability_AimedAbilityData::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for Ability_AimedAbilityData {
+    fn clear(&mut self) {
+        self.x = 0.;
+        self.y = 0.;
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for Ability_AimedAbilityData {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for Ability_AimedAbilityData {
+    fn as_ref(&self) -> ::protobuf::reflect::ProtobufValueRef {
+        ::protobuf::reflect::ProtobufValueRef::Message(self)
+    }
+}
+
+#[derive(Clone,PartialEq,Eq,Debug,Hash)]
+pub enum Ability_AbilityDataType {
+    SIMPLE = 0,
+    TARGETED = 1,
+    AIMED = 2,
+}
+
+impl ::protobuf::ProtobufEnum for Ability_AbilityDataType {
+    fn value(&self) -> i32 {
+        *self as i32
+    }
+
+    fn from_i32(value: i32) -> ::std::option::Option<Ability_AbilityDataType> {
+        match value {
+            0 => ::std::option::Option::Some(Ability_AbilityDataType::SIMPLE),
+            1 => ::std::option::Option::Some(Ability_AbilityDataType::TARGETED),
+            2 => ::std::option::Option::Some(Ability_AbilityDataType::AIMED),
+            _ => ::std::option::Option::None
+        }
+    }
+
+    fn values() -> &'static [Self] {
+        static values: &'static [Ability_AbilityDataType] = &[
+            Ability_AbilityDataType::SIMPLE,
+            Ability_AbilityDataType::TARGETED,
+            Ability_AbilityDataType::AIMED,
+        ];
+        values
+    }
+
+    fn enum_descriptor_static() -> &'static ::protobuf::reflect::EnumDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::EnumDescriptor> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ::protobuf::reflect::EnumDescriptor,
+        };
+        unsafe {
+            descriptor.get(|| {
+                ::protobuf::reflect::EnumDescriptor::new("Ability_AbilityDataType", file_descriptor_proto())
+            })
+        }
+    }
+}
+
+impl ::std::marker::Copy for Ability_AbilityDataType {
+}
+
+impl ::std::default::Default for Ability_AbilityDataType {
+    fn default() -> Self {
+        Ability_AbilityDataType::SIMPLE
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for Ability_AbilityDataType {
+    fn as_ref(&self) -> ::protobuf::reflect::ProtobufValueRef {
+        ::protobuf::reflect::ProtobufValueRef::Enum(self.descriptor())
+    }
+}
+
 static file_descriptor_proto_data: &'static [u8] = b"\
-    \n\x13ClientMessage.proto\"\xd6\x02\n\rClientMessage\x12:\n\x07msgType\
+    \n\x13ClientMessage.proto\"\x94\x02\n\rClientMessage\x12:\n\x07msgType\
     \x18\x01\x20\x01(\x0e2\x20.ClientMessage.ClientMessageTypeR\x07msgType\
-    \x12>\n\x0bmoveCommand\x18\x02\x20\x01(\x0b2\x1a.ClientMessage.MoveComma\
-    ndH\0R\x0bmoveCommand\x12:\n\nveryfiyRtc\x18d\x20\x01(\x0b2\x18.ClientMe\
-    ssage.VerifyRtcH\0R\nveryfiyRtc\x1a)\n\x0bMoveCommand\x12\x0c\n\x01x\x18\
-    \x01\x20\x01(\x02R\x01x\x12\x0c\n\x01y\x18\x02\x20\x01(\x02R\x01y\x1a\
-    \x1f\n\tVerifyRtc\x12\x12\n\x04uuid\x18\x01\x20\x01(\tR\x04uuid\"6\n\x11\
-    ClientMessageType\x12\x08\n\x04NONE\x10\0\x12\x08\n\x04MOVE\x10\x01\x12\
-    \r\n\tVERIFYRTC\x10dB\t\n\x07msgDataJ\xa6\x05\n\x06\x12\x04\0\0\x1c\x01\
-    \n\x08\n\x01\x0c\x12\x03\0\0\x12\n\n\n\x02\x04\0\x12\x04\x02\0\x1c\x01\n\
-    \n\n\x03\x04\0\x01\x12\x03\x02\x08\x15\n\x0c\n\x04\x04\0\x04\0\x12\x04\
-    \x03\x02\t\x03\n\x0c\n\x05\x04\0\x04\0\x01\x12\x03\x03\x07\x18\n\r\n\x06\
-    \x04\0\x04\0\x02\0\x12\x03\x04\x04\r\n\x0e\n\x07\x04\0\x04\0\x02\0\x01\
-    \x12\x03\x04\x04\x08\n\x0e\n\x07\x04\0\x04\0\x02\0\x02\x12\x03\x04\x0b\
-    \x0c\n\r\n\x06\x04\0\x04\0\x02\x01\x12\x03\x05\x04\r\n\x0e\n\x07\x04\0\
-    \x04\0\x02\x01\x01\x12\x03\x05\x04\x08\n\x0e\n\x07\x04\0\x04\0\x02\x01\
-    \x02\x12\x03\x05\x0b\x0c\n\r\n\x06\x04\0\x04\0\x02\x02\x12\x03\x08\x04\
-    \x14\n\x0e\n\x07\x04\0\x04\0\x02\x02\x01\x12\x03\x08\x04\r\n\x0e\n\x07\
-    \x04\0\x04\0\x02\x02\x02\x12\x03\x08\x10\x13\n\x0c\n\x04\x04\0\x03\0\x12\
-    \x04\x0b\x02\x0e\x03\n\x0c\n\x05\x04\0\x03\0\x01\x12\x03\x0b\n\x15\n\r\n\
-    \x06\x04\0\x03\0\x02\0\x12\x03\x0c\x04\x10\n\x0e\n\x07\x04\0\x03\0\x02\0\
-    \x05\x12\x03\x0c\x04\t\n\x0e\n\x07\x04\0\x03\0\x02\0\x01\x12\x03\x0c\n\
-    \x0b\n\x0e\n\x07\x04\0\x03\0\x02\0\x03\x12\x03\x0c\x0e\x0f\n\r\n\x06\x04\
-    \0\x03\0\x02\x01\x12\x03\r\x04\x10\n\x0e\n\x07\x04\0\x03\0\x02\x01\x05\
-    \x12\x03\r\x04\t\n\x0e\n\x07\x04\0\x03\0\x02\x01\x01\x12\x03\r\n\x0b\n\
-    \x0e\n\x07\x04\0\x03\0\x02\x01\x03\x12\x03\r\x0e\x0f\n\x0c\n\x04\x04\0\
-    \x03\x01\x12\x04\x10\x02\x12\x03\n\x0c\n\x05\x04\0\x03\x01\x01\x12\x03\
-    \x10\n\x13\n\r\n\x06\x04\0\x03\x01\x02\0\x12\x03\x11\x04\x14\n\x0e\n\x07\
-    \x04\0\x03\x01\x02\0\x05\x12\x03\x11\x04\n\n\x0e\n\x07\x04\0\x03\x01\x02\
-    \0\x01\x12\x03\x11\x0b\x0f\n\x0e\n\x07\x04\0\x03\x01\x02\0\x03\x12\x03\
-    \x11\x12\x13\n(\n\x04\x04\0\x02\0\x12\x03\x16\x02\x20\x1a\x1bDefine\x20a\
-    ctual\x20message\x20Data\n\n\x0c\n\x05\x04\0\x02\0\x06\x12\x03\x16\x02\
-    \x13\n\x0c\n\x05\x04\0\x02\0\x01\x12\x03\x16\x14\x1b\n\x0c\n\x05\x04\0\
-    \x02\0\x03\x12\x03\x16\x1e\x1f\n\x0c\n\x04\x04\0\x08\0\x12\x04\x18\x02\
-    \x1b\x03\n\x0c\n\x05\x04\0\x08\0\x01\x12\x03\x18\x08\x0f\n\x0b\n\x04\x04\
-    \0\x02\x01\x12\x03\x19\x04\x20\n\x0c\n\x05\x04\0\x02\x01\x06\x12\x03\x19\
-    \x04\x0f\n\x0c\n\x05\x04\0\x02\x01\x01\x12\x03\x19\x10\x1b\n\x0c\n\x05\
-    \x04\0\x02\x01\x03\x12\x03\x19\x1e\x1f\n\x0b\n\x04\x04\0\x02\x02\x12\x03\
-    \x1a\x04\x1f\n\x0c\n\x05\x04\0\x02\x02\x06\x12\x03\x1a\x04\r\n\x0c\n\x05\
-    \x04\0\x02\x02\x01\x12\x03\x1a\x0e\x18\n\x0c\n\x05\x04\0\x02\x02\x03\x12\
-    \x03\x1a\x1b\x1eb\x06proto3\
+    \x12$\n\x07command\x18\x02\x20\x01(\x0b2\x08.CommandH\0R\x07command\x12:\
+    \n\nveryfiyRtc\x18d\x20\x01(\x0b2\x18.ClientMessage.VerifyRtcH\0R\nveryf\
+    iyRtc\x1a\x1f\n\tVerifyRtc\x12\x12\n\x04uuid\x18\x01\x20\x01(\tR\x04uuid\
+    \"9\n\x11ClientMessageType\x12\x08\n\x04NONE\x10\0\x12\x0b\n\x07COMMAND\
+    \x10\x01\x12\r\n\tVERIFYRTC\x10dB\t\n\x07msgData\"\xef\x03\n\x07Command\
+    \x126\n\x0bcommandType\x18\x01\x20\x01(\x0e2\x14.Command.CommandTypeR\
+    \x0bcommandType\x128\n\x0bmoveCommand\x18\x02\x20\x01(\x0b2\x14.Command.\
+    MoveCommandH\0R\x0bmoveCommand\x122\n\tmoveDelta\x18\x03\x20\x01(\x0b2\
+    \x12.Command.MoveDeltaH\0R\tmoveDelta\x12)\n\x06attack\x18\x04\x20\x01(\
+    \x0b2\x0f.Command.AttackH\0R\x06attack\x12$\n\x07ability\x18\x05\x20\x01\
+    (\x0b2\x08.AbilityH\0R\x07ability\x1aE\n\x0bMoveCommand\x12\x0c\n\x01x\
+    \x18\x01\x20\x01(\x02R\x01x\x12\x0c\n\x01y\x18\x02\x20\x01(\x02R\x01y\
+    \x12\x1a\n\x08isAttack\x18\x03\x20\x01(\x08R\x08isAttack\x1a'\n\tMoveDel\
+    ta\x12\x0c\n\x01x\x18\x01\x20\x01(\x02R\x01x\x12\x0c\n\x01y\x18\x02\x20\
+    \x01(\x02R\x01y\x1a\x20\n\x06Attack\x12\x16\n\x06target\x18\x01\x20\x01(\
+    \rR\x06target\"P\n\x0bCommandType\x12\x08\n\x04NONE\x10\0\x12\x0f\n\x0bM\
+    OVECOMMAND\x10\x01\x12\r\n\tMOVEDELTA\x10\x02\x12\n\n\x06ATTACK\x10\x03\
+    \x12\x0b\n\x07ABILITY\x10\x04B\t\n\x07command\"\xac\x03\n\x07Ability\x12\
+    \x1c\n\tabilityID\x18\x01\x20\x01(\x05R\tabilityID\x12B\n\x0fabilityData\
+    Type\x18\x02\x20\x01(\x0e2\x18.Ability.AbilityDataTypeR\x0fabilityDataTy\
+    pe\x12P\n\x13targetedAbilityData\x18\x03\x20\x01(\x0b2\x1c.Ability.Targe\
+    tedAbilityDataH\0R\x13targetedAbilityData\x12G\n\x10aimedAbilityData\x18\
+    \x04\x20\x01(\x0b2\x19.Ability.AimedAbilityDataH\0R\x10aimedAbilityData\
+    \x1a-\n\x13TargetedAbilityData\x12\x16\n\x06target\x18\x01\x20\x01(\rR\
+    \x06target\x1a.\n\x10AimedAbilityData\x12\x0c\n\x01x\x18\x01\x20\x01(\
+    \x02R\x01x\x12\x0c\n\x01y\x18\x02\x20\x01(\x02R\x01y\"6\n\x0fAbilityData\
+    Type\x12\n\n\x06SIMPLE\x10\0\x12\x0c\n\x08TARGETED\x10\x01\x12\t\n\x05AI\
+    MED\x10\x02B\r\n\x0babilityDataJ\xb0\x12\n\x06\x12\x04\0\0Y\x01\n\x08\n\
+    \x01\x0c\x12\x03\0\0\x12\n\n\n\x02\x04\0\x12\x04\x02\0\x17\x01\n\n\n\x03\
+    \x04\0\x01\x12\x03\x02\x08\x15\n\x15\n\x04\x04\0\x04\0\x12\x04\x04\x02\
+    \x08\x03\x1a\x07Define\n\n\x0c\n\x05\x04\0\x04\0\x01\x12\x03\x04\x07\x18\
+    \n\r\n\x06\x04\0\x04\0\x02\0\x12\x03\x05\x04\r\n\x0e\n\x07\x04\0\x04\0\
+    \x02\0\x01\x12\x03\x05\x04\x08\n\x0e\n\x07\x04\0\x04\0\x02\0\x02\x12\x03\
+    \x05\x0b\x0c\n\r\n\x06\x04\0\x04\0\x02\x01\x12\x03\x06\x04\x10\n\x0e\n\
+    \x07\x04\0\x04\0\x02\x01\x01\x12\x03\x06\x04\x0b\n\x0e\n\x07\x04\0\x04\0\
+    \x02\x01\x02\x12\x03\x06\x0e\x0f\n\r\n\x06\x04\0\x04\0\x02\x02\x12\x03\
+    \x07\x04\x14\n\x0e\n\x07\x04\0\x04\0\x02\x02\x01\x12\x03\x07\x04\r\n\x0e\
+    \n\x07\x04\0\x04\0\x02\x02\x02\x12\x03\x07\x10\x13\n\x0c\n\x04\x04\0\x03\
+    \0\x12\x04\n\x02\x0c\x03\n\x0c\n\x05\x04\0\x03\0\x01\x12\x03\n\n\x13\n\r\
+    \n\x06\x04\0\x03\0\x02\0\x12\x03\x0b\x04\x14\n\x0e\n\x07\x04\0\x03\0\x02\
+    \0\x05\x12\x03\x0b\x04\n\n\x0e\n\x07\x04\0\x03\0\x02\0\x01\x12\x03\x0b\
+    \x0b\x0f\n\x0e\n\x07\x04\0\x03\0\x02\0\x03\x12\x03\x0b\x12\x13\n\x1a\n\
+    \x04\x04\0\x02\0\x12\x03\x11\x02\x20\x1a\rMessage\x20Data\n\n\x0c\n\x05\
+    \x04\0\x02\0\x06\x12\x03\x11\x02\x13\n\x0c\n\x05\x04\0\x02\0\x01\x12\x03\
+    \x11\x14\x1b\n\x0c\n\x05\x04\0\x02\0\x03\x12\x03\x11\x1e\x1f\n\x0c\n\x04\
+    \x04\0\x08\0\x12\x04\x13\x02\x16\x03\n\x0c\n\x05\x04\0\x08\0\x01\x12\x03\
+    \x13\x08\x0f\n\x0b\n\x04\x04\0\x02\x01\x12\x03\x14\x04\x18\n\x0c\n\x05\
+    \x04\0\x02\x01\x06\x12\x03\x14\x04\x0b\n\x0c\n\x05\x04\0\x02\x01\x01\x12\
+    \x03\x14\x0c\x13\n\x0c\n\x05\x04\0\x02\x01\x03\x12\x03\x14\x16\x17\n\x0b\
+    \n\x04\x04\0\x02\x02\x12\x03\x15\x04\x1f\n\x0c\n\x05\x04\0\x02\x02\x06\
+    \x12\x03\x15\x04\r\n\x0c\n\x05\x04\0\x02\x02\x01\x12\x03\x15\x0e\x18\n\
+    \x0c\n\x05\x04\0\x02\x02\x03\x12\x03\x15\x1b\x1e\n\n\n\x02\x04\x01\x12\
+    \x04\x19\0>\x01\n\n\n\x03\x04\x01\x01\x12\x03\x19\x08\x0f\n\x15\n\x04\
+    \x04\x01\x04\0\x12\x04\x1b\x02$\x03\x1a\x07Define\n\n\x0c\n\x05\x04\x01\
+    \x04\0\x01\x12\x03\x1b\x07\x12\n\r\n\x06\x04\x01\x04\0\x02\0\x12\x03\x1c\
+    \x04\r\n\x0e\n\x07\x04\x01\x04\0\x02\0\x01\x12\x03\x1c\x04\x08\n\x0e\n\
+    \x07\x04\x01\x04\0\x02\0\x02\x12\x03\x1c\x0b\x0c\n\r\n\x06\x04\x01\x04\0\
+    \x02\x01\x12\x03\x1d\x04\x14\n\x0e\n\x07\x04\x01\x04\0\x02\x01\x01\x12\
+    \x03\x1d\x04\x0f\n\x0e\n\x07\x04\x01\x04\0\x02\x01\x02\x12\x03\x1d\x12\
+    \x13\n\r\n\x06\x04\x01\x04\0\x02\x02\x12\x03\x1e\x04\x12\n\x0e\n\x07\x04\
+    \x01\x04\0\x02\x02\x01\x12\x03\x1e\x04\r\n\x0e\n\x07\x04\x01\x04\0\x02\
+    \x02\x02\x12\x03\x1e\x10\x11\n\r\n\x06\x04\x01\x04\0\x02\x03\x12\x03\x1f\
+    \x04\x0f\n\x0e\n\x07\x04\x01\x04\0\x02\x03\x01\x12\x03\x1f\x04\n\n\x0e\n\
+    \x07\x04\x01\x04\0\x02\x03\x02\x12\x03\x1f\r\x0e\n<\n\x06\x04\x01\x04\0\
+    \x02\x04\x12\x03\x20\x04\x10\"-Stop?\nHold\x20Position?\nMenu\x20/\x20Up\
+    grade\x20buttons?\n\n\x0e\n\x07\x04\x01\x04\0\x02\x04\x01\x12\x03\x20\
+    \x04\x0b\n\x0e\n\x07\x04\x01\x04\0\x02\x04\x02\x12\x03\x20\x0e\x0f\n\x0c\
+    \n\x04\x04\x01\x03\0\x12\x04&\x02*\x03\n\x0c\n\x05\x04\x01\x03\0\x01\x12\
+    \x03&\n\x15\n\r\n\x06\x04\x01\x03\0\x02\0\x12\x03'\x04\x10\n\x0e\n\x07\
+    \x04\x01\x03\0\x02\0\x05\x12\x03'\x04\t\n\x0e\n\x07\x04\x01\x03\0\x02\0\
+    \x01\x12\x03'\n\x0b\n\x0e\n\x07\x04\x01\x03\0\x02\0\x03\x12\x03'\x0e\x0f\
+    \n\r\n\x06\x04\x01\x03\0\x02\x01\x12\x03(\x04\x10\n\x0e\n\x07\x04\x01\
+    \x03\0\x02\x01\x05\x12\x03(\x04\t\n\x0e\n\x07\x04\x01\x03\0\x02\x01\x01\
+    \x12\x03(\n\x0b\n\x0e\n\x07\x04\x01\x03\0\x02\x01\x03\x12\x03(\x0e\x0f\n\
+    \r\n\x06\x04\x01\x03\0\x02\x02\x12\x03)\x04\x16\n\x0e\n\x07\x04\x01\x03\
+    \0\x02\x02\x05\x12\x03)\x04\x08\n\x0e\n\x07\x04\x01\x03\0\x02\x02\x01\
+    \x12\x03)\t\x11\n\x0e\n\x07\x04\x01\x03\0\x02\x02\x03\x12\x03)\x14\x15\n\
+    \x0c\n\x04\x04\x01\x03\x01\x12\x04,\x02/\x03\n\x0c\n\x05\x04\x01\x03\x01\
+    \x01\x12\x03,\n\x13\n\r\n\x06\x04\x01\x03\x01\x02\0\x12\x03-\x04\x10\n\
+    \x0e\n\x07\x04\x01\x03\x01\x02\0\x05\x12\x03-\x04\t\n\x0e\n\x07\x04\x01\
+    \x03\x01\x02\0\x01\x12\x03-\n\x0b\n\x0e\n\x07\x04\x01\x03\x01\x02\0\x03\
+    \x12\x03-\x0e\x0f\n\r\n\x06\x04\x01\x03\x01\x02\x01\x12\x03.\x04\x10\n\
+    \x0e\n\x07\x04\x01\x03\x01\x02\x01\x05\x12\x03.\x04\t\n\x0e\n\x07\x04\
+    \x01\x03\x01\x02\x01\x01\x12\x03.\n\x0b\n\x0e\n\x07\x04\x01\x03\x01\x02\
+    \x01\x03\x12\x03.\x0e\x0f\n\x0c\n\x04\x04\x01\x03\x02\x12\x041\x023\x03\
+    \n\x0c\n\x05\x04\x01\x03\x02\x01\x12\x031\n\x10\n\r\n\x06\x04\x01\x03\
+    \x02\x02\0\x12\x032\x04\x16\n\x0e\n\x07\x04\x01\x03\x02\x02\0\x05\x12\
+    \x032\x04\n\n\x0e\n\x07\x04\x01\x03\x02\x02\0\x01\x12\x032\x0b\x11\n\x0e\
+    \n\x07\x04\x01\x03\x02\x02\0\x03\x12\x032\x14\x15\n\x1a\n\x04\x04\x01\
+    \x02\0\x12\x037\x02\x1e\x1a\rMessage\x20Data\n\n\x0c\n\x05\x04\x01\x02\0\
+    \x06\x12\x037\x02\r\n\x0c\n\x05\x04\x01\x02\0\x01\x12\x037\x0e\x19\n\x0c\
+    \n\x05\x04\x01\x02\0\x03\x12\x037\x1c\x1d\n\x0c\n\x04\x04\x01\x08\0\x12\
+    \x048\x02=\x03\n\x0c\n\x05\x04\x01\x08\0\x01\x12\x038\x08\x0f\n\x0b\n\
+    \x04\x04\x01\x02\x01\x12\x039\x04\x20\n\x0c\n\x05\x04\x01\x02\x01\x06\
+    \x12\x039\x04\x0f\n\x0c\n\x05\x04\x01\x02\x01\x01\x12\x039\x10\x1b\n\x0c\
+    \n\x05\x04\x01\x02\x01\x03\x12\x039\x1e\x1f\n\x0b\n\x04\x04\x01\x02\x02\
+    \x12\x03:\x04\x1c\n\x0c\n\x05\x04\x01\x02\x02\x06\x12\x03:\x04\r\n\x0c\n\
+    \x05\x04\x01\x02\x02\x01\x12\x03:\x0e\x17\n\x0c\n\x05\x04\x01\x02\x02\
+    \x03\x12\x03:\x1a\x1b\n\x0b\n\x04\x04\x01\x02\x03\x12\x03;\x04\x16\n\x0c\
+    \n\x05\x04\x01\x02\x03\x06\x12\x03;\x04\n\n\x0c\n\x05\x04\x01\x02\x03\
+    \x01\x12\x03;\x0b\x11\n\x0c\n\x05\x04\x01\x02\x03\x03\x12\x03;\x14\x15\n\
+    \x0b\n\x04\x04\x01\x02\x04\x12\x03<\x04\x18\n\x0c\n\x05\x04\x01\x02\x04\
+    \x06\x12\x03<\x04\x0b\n\x0c\n\x05\x04\x01\x02\x04\x01\x12\x03<\x0c\x13\n\
+    \x0c\n\x05\x04\x01\x02\x04\x03\x12\x03<\x16\x17\n\n\n\x02\x04\x02\x12\
+    \x04@\0Y\x01\n\n\n\x03\x04\x02\x01\x12\x03@\x08\x0f\n\x15\n\x04\x04\x02\
+    \x04\0\x12\x04B\x02F\x03\x1a\x07Define\n\n\x0c\n\x05\x04\x02\x04\0\x01\
+    \x12\x03B\x07\x16\n\r\n\x06\x04\x02\x04\0\x02\0\x12\x03C\x04\x0f\n\x0e\n\
+    \x07\x04\x02\x04\0\x02\0\x01\x12\x03C\x04\n\n\x0e\n\x07\x04\x02\x04\0\
+    \x02\0\x02\x12\x03C\r\x0e\n\r\n\x06\x04\x02\x04\0\x02\x01\x12\x03D\x04\
+    \x11\n\x0e\n\x07\x04\x02\x04\0\x02\x01\x01\x12\x03D\x04\x0c\n\x0e\n\x07\
+    \x04\x02\x04\0\x02\x01\x02\x12\x03D\x0f\x10\n\r\n\x06\x04\x02\x04\0\x02\
+    \x02\x12\x03E\x04\x0e\n\x0e\n\x07\x04\x02\x04\0\x02\x02\x01\x12\x03E\x04\
+    \t\n\x0e\n\x07\x04\x02\x04\0\x02\x02\x02\x12\x03E\x0c\r\n\x0c\n\x04\x04\
+    \x02\x03\0\x12\x04H\x02J\x03\n\x0c\n\x05\x04\x02\x03\0\x01\x12\x03H\n\
+    \x1d\n\r\n\x06\x04\x02\x03\0\x02\0\x12\x03I\x04\x16\n\x0e\n\x07\x04\x02\
+    \x03\0\x02\0\x05\x12\x03I\x04\n\n\x0e\n\x07\x04\x02\x03\0\x02\0\x01\x12\
+    \x03I\x0b\x11\n\x0e\n\x07\x04\x02\x03\0\x02\0\x03\x12\x03I\x14\x15\n\x0c\
+    \n\x04\x04\x02\x03\x01\x12\x04L\x02O\x03\n\x0c\n\x05\x04\x02\x03\x01\x01\
+    \x12\x03L\n\x1a\n\r\n\x06\x04\x02\x03\x01\x02\0\x12\x03M\x04\x10\n\x0e\n\
+    \x07\x04\x02\x03\x01\x02\0\x05\x12\x03M\x04\t\n\x0e\n\x07\x04\x02\x03\
+    \x01\x02\0\x01\x12\x03M\n\x0b\n\x0e\n\x07\x04\x02\x03\x01\x02\0\x03\x12\
+    \x03M\x0e\x0f\n\r\n\x06\x04\x02\x03\x01\x02\x01\x12\x03N\x04\x10\n\x0e\n\
+    \x07\x04\x02\x03\x01\x02\x01\x05\x12\x03N\x04\t\n\x0e\n\x07\x04\x02\x03\
+    \x01\x02\x01\x01\x12\x03N\n\x0b\n\x0e\n\x07\x04\x02\x03\x01\x02\x01\x03\
+    \x12\x03N\x0e\x0f\n\x1a\n\x04\x04\x02\x02\0\x12\x03S\x02\x16\x1a\rMessag\
+    e\x20Data\n\n\x0c\n\x05\x04\x02\x02\0\x05\x12\x03S\x02\x07\n\x0c\n\x05\
+    \x04\x02\x02\0\x01\x12\x03S\x08\x11\n\x0c\n\x05\x04\x02\x02\0\x03\x12\
+    \x03S\x14\x15\n\x0b\n\x04\x04\x02\x02\x01\x12\x03T\x02&\n\x0c\n\x05\x04\
+    \x02\x02\x01\x06\x12\x03T\x02\x11\n\x0c\n\x05\x04\x02\x02\x01\x01\x12\
+    \x03T\x12!\n\x0c\n\x05\x04\x02\x02\x01\x03\x12\x03T$%\n\x0c\n\x04\x04\
+    \x02\x08\0\x12\x04U\x02X\x03\n\x0c\n\x05\x04\x02\x08\0\x01\x12\x03U\x08\
+    \x13\n\x0b\n\x04\x04\x02\x02\x02\x12\x03V\x040\n\x0c\n\x05\x04\x02\x02\
+    \x02\x06\x12\x03V\x04\x17\n\x0c\n\x05\x04\x02\x02\x02\x01\x12\x03V\x18+\
+    \n\x0c\n\x05\x04\x02\x02\x02\x03\x12\x03V./\n\x0b\n\x04\x04\x02\x02\x03\
+    \x12\x03W\x04*\n\x0c\n\x05\x04\x02\x02\x03\x06\x12\x03W\x04\x14\n\x0c\n\
+    \x05\x04\x02\x02\x03\x01\x12\x03W\x15%\n\x0c\n\x05\x04\x02\x02\x03\x03\
+    \x12\x03W()b\x06proto3\
 ";
 
 static mut file_descriptor_proto_lazy: ::protobuf::lazy::Lazy<::protobuf::descriptor::FileDescriptorProto> = ::protobuf::lazy::Lazy {

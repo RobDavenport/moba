@@ -1,16 +1,39 @@
 syntax = "proto3";
 
 message ClientMessage {
+  //Define
   enum ClientMessageType {
+    NONE = 0;
+    COMMAND = 1;
+    VERIFYRTC = 100;
+  }
+
+  message VerifyRtc {
+    string uuid = 1;
+  }
+  //End Definition
+
+
+  //Message Data
+  ClientMessageType msgType = 1;
+  
+  oneof msgData {
+    Command command = 2;
+    VerifyRtc veryfiyRtc = 100;
+  }
+}
+
+message Command {
+  //Define
+  enum CommandType {
     NONE = 0;
     MOVECOMMAND = 1;
     MOVEDELTA = 2;
     ATTACK = 3;
-    USEABILITY = 4;
-    USETARGETEDABILITY = 5;
-    USEAIMEDABILITY = 6;
-
-    VERIFYRTC = 100;
+    ABILITY = 4;
+    //Stop?
+    //Hold Position?
+    //Menu / Upgrade buttons?
   }
 
   message MoveCommand {
@@ -24,29 +47,44 @@ message ClientMessage {
     float y = 2;
   }
 
-  message Attack {} //TODO
-
-  message UseAbility {} // TODO
-
-  message UseTargettedAbility {} //TODO
-
-  message UseAimedAbility {} // TODO
-
-  message VerifyRtc {
-    string uuid = 1;
+  message Attack {
+    uint32 target = 1;
   }
+  //End Definition
 
-
-  //Define actual message Data
-  ClientMessageType msgType = 1;
-  
-  oneof msgData {
+  //Message Data
+  CommandType commandType = 1;
+  oneof command {
     MoveCommand moveCommand = 2;
     MoveDelta moveDelta = 3;
-    //TODO add ^ messages
-    VerifyRtc veryfiyRtc = 100;
+    Attack attack = 4;
+    Ability ability = 5;
   }
 }
 
+message Ability {
+  //Define
+  enum AbilityDataType {
+    SIMPLE = 0;
+    TARGETED = 1;
+    AIMED = 2;
+  }
 
+  message TargetedAbilityData {
+    uint32 target = 1;
+  }
 
+  message AimedAbilityData {
+    float x = 1;
+    float y = 2;
+  }
+  //End Definition
+
+  //Message Data
+  int32 abilityID = 1;
+  AbilityDataType abilityDataType = 2;
+  oneof abilityData {
+    TargetedAbilityData targetedAbilityData = 3;
+    AimedAbilityData aimedAbilityData = 4;
+  }
+}
