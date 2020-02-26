@@ -137,10 +137,10 @@ impl Game {
         //Todo only send 'dirty' components
         for (transform, team) in query.iter(&mut self.world) {
             let output = OutMessage::UpdateTick {
-                f: self.game_frame,
+                frame: self.game_frame,
                 x: transform.position.x + (100. * team.id as f32),
                 y: transform.position.y,
-                n: team.id,
+                entity: team.id,
             };
 
             if team.id == 1 {

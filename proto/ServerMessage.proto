@@ -9,7 +9,7 @@ message ServerMessage {
   }
 
   message UpdateTick {
-    float frame = 1;
+    uint32 frame = 1;
     uint32 entity = 2;
     float x = 3;
     float y = 4;

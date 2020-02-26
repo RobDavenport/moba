@@ -8,6 +8,8 @@ use super::client::Client;
 use crate::engine::messaging::messages::{OutMessage, WSClientMessage};
 use crate::engine::network::client_data::ClientData;
 
+use crate::engine::network::out_message_builder::build_out_message;
+
 pub struct ClientFactory {
     client_sender: Sender<WSClientMessage>,
     next_client_id: u32,
@@ -43,7 +45,7 @@ impl ws::Factory for ClientFactory {
             }));
 
         println!("sending uuid: {}", &uuid);
-        out.send(rmp_serde::to_vec(&OutMessage::VerifyUuid(uuid)).unwrap());
+        out.send(build_out_message(OutMessage::VerifyUuid(uuid)));
         //out.send(format!("{{\"uuid\":\"{}\"}}", &uuid));
 
         new_client

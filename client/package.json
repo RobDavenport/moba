@@ -26,7 +26,6 @@
     "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
-    "@msgpack/msgpack": "^1.11.0",
     "google-protobuf": "^3.11.4",
     "phaser": "^3.22.0",
     "stats.js": "^0.17.0",

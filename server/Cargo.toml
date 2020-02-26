@@ -13,11 +13,9 @@ ws = "*"
 nalgebra = "0.18"
 ncollide2d = "0.20"
 nphysics2d = "0.12"
-serde = { version = "1.0.104", features = ["derive"] }
-rmp-serde = "0.14.3"
 tokio = { version="0.2.11", features = ["macros", "sync"] }
 webrtc-unreliable = "0.4.0"
 hyper = { version = "0.13.2", features = ["stream"] }
 futures = "0.3.4"
-uuid = { version = "0.8.1", features = ["v4", "serde"] }
+uuid = { version = "0.8.1", features = ["v4"] }
 protobuf = "2.10.1"

@@ -1,8 +1,9 @@
 import { ServerMessageMap, IServerMessage } from './ServerMessages'
 import * as Serializer from './serializer'
+import * as Deserializer from './Deserializer'
 import MobaWindow from '../MobaWindow'
-import * as msgpack from '@msgpack/msgpack'
 import { CartesianPoint } from '../helpers/GameMath'
+import { ServerMessage } from './protobuf/Servermessage_pb'
 
 const address: string = prompt('Enter game server address.', document.location.hostname)
 const wsAddress = 'ws://' + address + ':8000'
@@ -125,26 +126,16 @@ export default class NetworkManager {
     //this.channel.send()
   }
 
+  verifyUuid(message: ServerMessage.VerifyUuid.AsObject) {
+    this.socketUuid = message.uuid
+  }
+
+  verifiedUuid() {
+    clearInterval(this.verifier)
+  }
+
   private async handleServerMessage({ data }: MessageEvent) {
-    //TODO move to protobuf
-    const decoded = msgpack.decode(data)
-    const msgType = decoded[0]
-    const params = decoded[1]
-    const func = ServerMessageMap.get(msgType)
-    if (func) {
-      func(params, this.gameWindow)
-    } else {
-      console.log(decoded)
-      switch (msgType) {
-        case "VerifyUuid":
-          this.socketUuid = params;
-          console.log(params)
-          break;
-        case "VerifiedUuid":
-          clearInterval(this.verifier)
-          break;
-      }
-    }
+    Deserializer.handleServerMessage(data as Uint8Array, this.gameWindow, this)
   }
 }
 

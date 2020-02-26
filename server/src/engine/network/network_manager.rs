@@ -9,7 +9,8 @@ use futures::{future::FutureExt, select, stream::StreamExt};
 use super::client_data::ClientData;
 use crate::engine::messaging::messages::*;
 
-use super::protobuf::{ClientMessage::*, ServerMessage::*};
+use super::out_message_builder::build_out_message;
+use super::protobuf::ClientMessage::*; //todo cut this in favor of reader?
 
 pub struct NetworkManager {
     clients: Vec<ClientData>, //Todo: Change to a hash map?
@@ -120,7 +121,7 @@ fn on_rtc_in_msg(
                         client.socket_addr = Some(msg.remote_addr);
                         client
                             .ws_client_out
-                            .send(rmp_serde::to_vec(&OutMessage::VerifiedUuid).unwrap());
+                            .send(build_out_message(OutMessage::VerifiedUuid));
                     }
                 }
                 _ => println!("got something else.."),
@@ -134,7 +135,7 @@ fn handle_reliable_out_msg(
     out_msg: OutMessage,
     clients: &Vec<ClientData>,
 ) {
-    let output = ws::Message::binary(rmp_serde::to_vec(&out_msg).unwrap());
+    let output = build_out_message(out_msg);
 
     //change to byte output
     for idx in out_indexes {
@@ -154,12 +155,12 @@ async fn handle_unreliable_out_msg(
     rtc_server: &mut RtcServer,
     clients: &Vec<ClientData>,
 ) {
-    let output = &rmp_serde::to_vec(&out_msg).unwrap();
+    let output = build_out_message(out_msg);
 
     for idx in out_indexes {
         let client = clients.get(idx).unwrap();
         if let Some(addr) = client.socket_addr {
-            rtc_server.send(output, MessageType::Binary, &addr).await;
+            rtc_server.send(&output, MessageType::Binary, &addr).await;
         }
     }
 }

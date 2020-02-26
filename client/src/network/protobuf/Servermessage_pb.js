@@ -325,7 +325,7 @@ proto.ServerMessage.UpdateTick.prototype.toObject = function(opt_includeInstance
  */
 proto.ServerMessage.UpdateTick.toObject = function(includeInstance, msg) {
   var f, obj = {
-    frame: jspb.Message.getFloatingPointFieldWithDefault(msg, 1, 0.0),
+    frame: jspb.Message.getFieldWithDefault(msg, 1, 0),
     entity: jspb.Message.getFieldWithDefault(msg, 2, 0),
     x: jspb.Message.getFloatingPointFieldWithDefault(msg, 3, 0.0),
     y: jspb.Message.getFloatingPointFieldWithDefault(msg, 4, 0.0)
@@ -366,7 +366,7 @@ proto.ServerMessage.UpdateTick.deserializeBinaryFromReader = function(msg, reade
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readFloat());
+      var value = /** @type {number} */ (reader.readUint32());
       msg.setFrame(value);
       break;
     case 2:
@@ -411,8 +411,8 @@ proto.ServerMessage.UpdateTick.prototype.serializeBinary = function() {
 proto.ServerMessage.UpdateTick.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getFrame();
-  if (f !== 0.0) {
-    writer.writeFloat(
+  if (f !== 0) {
+    writer.writeUint32(
       1,
       f
     );
@@ -442,11 +442,11 @@ proto.ServerMessage.UpdateTick.serializeBinaryToWriter = function(message, write
 
 
 /**
- * optional float frame = 1;
+ * optional uint32 frame = 1;
  * @return {number}
  */
 proto.ServerMessage.UpdateTick.prototype.getFrame = function() {
-  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 1, 0.0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
 
@@ -455,7 +455,7 @@ proto.ServerMessage.UpdateTick.prototype.getFrame = function() {
  * @return {!proto.ServerMessage.UpdateTick} returns this
  */
 proto.ServerMessage.UpdateTick.prototype.setFrame = function(value) {
-  return jspb.Message.setProto3FloatField(this, 1, value);
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 

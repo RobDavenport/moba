@@ -2,6 +2,8 @@ import Phaser from 'phaser'
 import { InputCommand, defaultKeyBindings, PointerButtons, defaultPointerBindings } from './Constants'
 import MobaEngine from './MobaEngine'
 import * as GM from './helpers/GameMath'
+import { ServerMessage } from './network/protobuf/Servermessage_pb'
+import { CartesianPoint } from './helpers/GameMath'
 
 const mapWidth = 16
 const mapHeight = 16
@@ -102,5 +104,9 @@ export default class MobaWindow extends Phaser.Scene {
         tile.depth = tilePoint.y
       }
     }
+  }
+
+  onServerUpdateTick(data: ServerMessage.UpdateTick.AsObject) {
+    this.setCharacterPosition(new CartesianPoint(data.x, data.y), data.entity)
   }
 }
