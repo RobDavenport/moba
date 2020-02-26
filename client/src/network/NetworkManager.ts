@@ -1,4 +1,3 @@
-import { ServerMessageMap, IServerMessage } from './ServerMessages'
 import * as Serializer from './serializer'
 import * as Deserializer from './Deserializer'
 import MobaWindow from '../MobaWindow'
