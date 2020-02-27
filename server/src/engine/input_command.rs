@@ -7,6 +7,6 @@ pub enum InputCommand {
     Attack(u32),
     Stop,
     UseAbility(u8),
-    UseTargettedAbility(u32),
-    UseAimedAbility(Vector2<f32>),
+    UseTargettedAbility(u8, u32),
+    UseAimedAbility(u8, Vector2<f32>),
 }

@@ -13,7 +13,7 @@ export function createVerifyRtc(uuid: string) {
   return clientMessage.serializeBinary()
 }
 
-export function createMove(point: CartesianPoint) {
+export function createMove(point: CartesianPoint, isAttackMove: boolean) {
   let clientMessage = new ClientMessage()
   clientMessage.setMsgtype(ClientMessage.ClientMessageType.COMMAND)
 
@@ -23,6 +23,7 @@ export function createMove(point: CartesianPoint) {
   let moveCommand = new Command.MoveCommand()
   moveCommand.setX(point.x)
   moveCommand.setY(point.y)
+  moveCommand.setIsattack(isAttackMove)
 
   clientMessage.setCommand(command)
   command.setMovecommand(moveCommand)

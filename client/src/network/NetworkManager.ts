@@ -108,21 +108,15 @@ export default class NetworkManager {
   }
 
   sendMoveCommand(point: CartesianPoint, isAttackMove: boolean) {
-    console.log(point)
-    console.log(point.toIsometric())
-    //this.ws.send(JSON.stringify({ x, y }))
-    // console.log("sending RTC message...")
-    // this.channel.send("HELLO FROM WEBRTC?" + x + ', ' + y)
-
-    console.log("this function was disabled!")
+    this.sendReliable(Serializer.createMove(point, isAttackMove))
   }
 
   sendReliable(msg: Uint8Array) {
-    //this.ws.send()
+    this.ws.send(msg)
   }
 
   sendUnreliable(msg: Uint8Array) {
-    //this.channel.send()
+    this.channel.send(msg)
   }
 
   verifyUuid(message: ServerMessage.VerifyUuid.AsObject) {

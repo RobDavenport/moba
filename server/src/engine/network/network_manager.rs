@@ -9,6 +9,7 @@ use futures::{future::FutureExt, select, stream::StreamExt};
 use super::client_data::ClientData;
 use crate::engine::messaging::messages::*;
 
+use super::in_message_reader::handle_client_command;
 use super::out_message_builder::build_out_message;
 use super::protobuf::ClientMessage::*; //todo cut this in favor of reader?
 
@@ -70,7 +71,6 @@ impl NetworkManager {
                         ).await,
                     None => (),
                 },
-
             }
         }
     }
@@ -95,7 +95,18 @@ fn on_ws_in_msg(
                 .unwrap();
         }
         WSClientMessage::Packet(id, data) => {
-            //TODO Serealize Data and do stuff!!
+            if let Ok(protomsg) = protobuf::parse_from_bytes::<ClientMessage>(&data) {
+                if let Some(protomsgtype) = protomsg.msgData {
+                    match protomsgtype {
+                        ClientMessage_oneof_msgData::command(commandMsg) => {
+                            if let Some(outMsg) = handle_client_command(commandMsg, id) {
+                                game_sender.try_send(outMsg);
+                            };
+                        }
+                        ClientMessage_oneof_msgData::veryfiyRtc(..) => (),
+                    }
+                }
+            }
         }
     };
 }
@@ -124,7 +135,7 @@ fn on_rtc_in_msg(
                             .send(build_out_message(OutMessage::VerifiedUuid));
                     }
                 }
-                _ => println!("got something else.."),
+                _ => println!("Received unhandled message over WebRTC"),
             }
         }
     }
@@ -137,9 +148,7 @@ fn handle_reliable_out_msg(
 ) {
     let output = build_out_message(out_msg);
 
-    //change to byte output
     for idx in out_indexes {
-        //print!("{:?}", output);
         clients
             .get(idx)
             .unwrap()
@@ -165,7 +174,7 @@ async fn handle_unreliable_out_msg(
     }
 }
 
-//Todo: Change to a hash map to optimize
+//Todo: Change to a hash map to optimize?
 fn get_targets(targets: OutTarget, clients: &Vec<ClientData>) -> Vec<usize> {
     match targets {
         OutTarget::All => {

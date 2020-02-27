@@ -106,12 +106,13 @@ impl Game {
 
     fn handle_input_command(&mut self, id: u32, command: InputCommand) {
         match command {
-            InputCommand::Move(loc, _) => println!("User-{}: Move to: {}", id, loc),
-            _ => panic!("Unhaled Input Command!"),
+            InputCommand::Move(loc, _attacking) => println!("User-{}: Move to: {}", id, loc),
+            _ => println!("Unhaled Input Command!"),
         }
     }
 
     fn on_client_connected(&mut self, player_id: u32) {
+        //TODO: only insert a single character
         self.world.insert(
             (),
             once((

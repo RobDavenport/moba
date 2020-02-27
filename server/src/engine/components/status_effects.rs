@@ -3,6 +3,9 @@ pub struct StatusEffects {
 }
 
 pub enum StatusEffect {
-    Slow(f32),
+    MoveSpeed(f32),
+    AttackSpeed(f32),
+    DamageMod(f32),
     Stun(f32),
+    Suppression(f32),
 }
