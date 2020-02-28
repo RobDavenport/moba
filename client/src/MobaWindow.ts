@@ -48,7 +48,7 @@ export default class MobaWindow extends Phaser.Scene {
       const btn = pointer.button
       const cmd = this.pointerMapping.get(btn)
       if (cmd) {
-        this.gameEngine.CommandMap.get(cmd).call(this.gameEngine)
+        this.gameEngine.CommandMap.get(cmd)?.call(this.gameEngine)
       } else {
         console.log('cmd not found: ' + cmd)
       }
@@ -70,7 +70,7 @@ export default class MobaWindow extends Phaser.Scene {
   handleKeyInputs() {
     this.keyMapping.forEach((inputCommand, key, map) => {
       if (Phaser.Input.Keyboard.JustDown(key)) {
-        this.gameEngine.CommandMap.get(inputCommand)();
+        this.gameEngine.CommandMap.get(inputCommand)?.call(this.gameEngine)
       }
     })
   }

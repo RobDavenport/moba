@@ -109,6 +109,14 @@ export default class MobaEngine {
     console.log('click')
   }
 
+  onToggleFullscreen() {
+    if (this.gameWindow.scale.isFullscreen) {
+      this.gameWindow.scale.stopFullscreen()
+    } else {
+      this.gameWindow.scale.startFullscreen()
+    }
+  }
+
   CommandMap = new Map<InputCommand, Function>([
     [InputCommand.Move, this.onMove],
     [InputCommand.AttackMove, this.onAttackMove],
@@ -134,5 +142,6 @@ export default class MobaEngine {
     [InputCommand.ToggleScoreboard, this.onToggleScoreboard],
     [InputCommand.ToggleHeroDetailView, this.onToggleHeroDetailView],
     [InputCommand.Click, this.onGameClick],
+    [InputCommand.ToggleFullscreen, this.onToggleFullscreen]
   ])
 }

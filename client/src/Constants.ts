@@ -41,7 +41,8 @@ export const enum InputCommand {
   ToggleHeroDetailView,
 
   //Other
-  Click
+  Click,
+  ToggleFullscreen
 }
 
 export const defaultKeyBindings = new Map<number, InputCommand>([
@@ -72,10 +73,10 @@ export const defaultKeyBindings = new Map<number, InputCommand>([
   // Menu
   [KeyCodes.ESC, InputCommand.ToggleMenu],
   [KeyCodes.TAB, InputCommand.ToggleScoreboard],
-  [KeyCodes.N, InputCommand.ToggleHeroDetailView]
+  [KeyCodes.N, InputCommand.ToggleHeroDetailView],
 
   //Other
-
+  [KeyCodes.F10, InputCommand.ToggleFullscreen]
 ])
 
 export const defaultPointerBindings = new Map<number, InputCommand>([
@@ -87,5 +88,10 @@ export const defaultPointerBindings = new Map<number, InputCommand>([
 export const defaultPhaserConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.WEBGL,
   canvas: document.getElementById('gameCanvas') as HTMLCanvasElement,
-  scene: MobaWindow
+  scene: MobaWindow,
+  scale: {
+    mode: Phaser.Scale.ENVELOP,
+    width: 1920,
+    height: 1080
+  }
 }
