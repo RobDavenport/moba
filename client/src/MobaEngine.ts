@@ -13,7 +13,7 @@ export default class MobaEngine {
   }
 
   onMoveDown() {
-    const { x, y } = this.gameWindow.getPointerPosition()
+    const { x, y } = this.gameWindow.getPointerPositionWorld()
     this.net.sendMoveCommand(GM.isometricToCartesian(x, y), false)
   }
 

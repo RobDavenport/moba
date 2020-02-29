@@ -17,9 +17,8 @@ const mapHeight = 16
 export default class MobaWindow extends Phaser.Scene {
   private keyMapping: Map<Phaser.Input.Keyboard.Key, InputCommand>
   private pointerMapping: Map<PointerButtons, InputCommand>
-
-  private character1: Phaser.GameObjects.Image
-  private character2: Phaser.GameObjects.Image
+  private entities: Map<integer, Phaser.GameObjects.Sprite>
+  
   private gameEngine: MobaEngine
   private cursor: Phaser.GameObjects.Image
 
@@ -31,6 +30,8 @@ export default class MobaWindow extends Phaser.Scene {
     this.keyMapping = new Map()
     this.pointerMapping = new Map()
     this.gameEngine = new MobaEngine(this);
+
+    this.entities = new Map()
 
     this.cameraAxis = { x: 0, y: 0 }
     this.cameraScrollSpeed = cameraScrollSpeed
@@ -59,10 +60,14 @@ export default class MobaWindow extends Phaser.Scene {
     this.cursor.setScrollFactor(0, 0)
     this.cursor.setOrigin(0, 0)
 
-    this.character1 = this.add.image(0, 0, 'character');
-    this.character1.depth = 999999
-    this.character2 = this.add.image(0, 0, 'character');
-    this.character2.depth = 999999
+    const character1 = this.add.sprite(0, 0, 'character');
+    character1.depth = 999999
+
+    const character2 = this.add.sprite(0, 0, 'character');
+    character2.depth = 999999
+    
+    this.entities.set(1, character1)
+    this.entities.set(2, character2)
 
     this.input.mouse.disableContextMenu()
     this.setDefaultKeyBindings()
@@ -130,12 +135,10 @@ export default class MobaWindow extends Phaser.Scene {
 
   setCharacterPosition(point: GM.CartesianPoint, index: number) {
     const target = point.toIsometric();
-    if (index === 1) {
-      this.character1.x = target.x;
-      this.character1.y = target.y;
-    } else if (index === 2) {
-      this.character2.x = target.x;
-      this.character2.y = target.y;
+    const entity = this.entities.get(index)
+    if (entity) {
+      entity.x = target.x
+      entity.y = target.y
     }
   }
 
@@ -159,9 +162,8 @@ export default class MobaWindow extends Phaser.Scene {
 
   updateCursor() {
     this.cursor.x += this.input.activePointer.movementX
-    this.cursor.y += this.input.activePointer.movementY
-
     this.input.activePointer.movementX = 0
+    this.cursor.y += this.input.activePointer.movementY
     this.input.activePointer.movementY = 0
 
     this.cursor.x = Phaser.Math.Clamp(this.cursor.x, 0, this.game.renderer.width)
@@ -228,7 +230,17 @@ export default class MobaWindow extends Phaser.Scene {
     }
   }
 
-  getPointerPosition() {
-    return { x: this.cursor.x, y: this.cursor.y }
+  getPointerPositionScreen() {
+    return {
+      x: this.cursor.x,
+      y: this.cursor.y
+    }
+  }
+
+  getPointerPositionWorld() {
+    return { 
+      x: this.cursor.x + this.cameras.main.scrollX, 
+      y: this.cursor.y + this.cameras.main.scrollY 
+    }
   }
 }
