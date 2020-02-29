@@ -117,7 +117,7 @@ impl Game {
             (),
             once((
                 Transform::new(Vector2::<f32>::new(1., 1.), None, None),
-                Team { id: 1 },
+                Replicated { id: 1 },
                 PlayerControlled { id: player_id },
             )),
         );
@@ -126,27 +126,27 @@ impl Game {
             (),
             once((
                 Transform::new(Vector2::<f32>::new(1., 1.), None, None),
-                Team { id: 2 },
+                Replicated { id: 2 },
                 PlayerControlled { id: player_id },
             )),
         );
     }
 
     async fn broadcast_state(&mut self) {
-        let query = <(Read<Transform>, Read<Team>)>::query();
+        let query = <(Read<Transform>, Read<Replicated>)>::query();
 
         //Todo only send 'dirty' components
-        for (transform, team) in query.iter(&mut self.world) {
+        for (transform, replicated) in query.iter(&mut self.world) {
             let output = OutMessage::UpdateTick {
                 frame: self.game_frame,
-                x: transform.position.x + (100. * team.id as f32),
+                x: transform.position.x + (100. * replicated.id as f32),
                 y: transform.position.y,
-                entity: team.id,
+                entity: replicated.id,
             };
 
-            if team.id == 1 {
+            if replicated.id == 1 {
                 self.out_reliable.send((OutTarget::All, output)).await;
-            } else if team.id == 2 {
+            } else if replicated.id == 2 {
                 self.out_unreliable.send((OutTarget::All, output)).await;
             }
 
