@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::net::SocketAddr;
 
 use tokio::sync::mpsc::{Receiver, Sender};
@@ -14,7 +15,7 @@ use super::out_message_builder::build_out_message;
 use super::protobuf::ClientMessage::*; //todo cut this in favor of reader?
 
 pub struct NetworkManager {
-    clients: Vec<ClientData>, //Todo: Change to a hash map?
+    clients: HashMap<u32, ClientData>, //Todo: Change to a hash map?
     ws_in: Receiver<WSClientMessage>,
     game_sender: Sender<GameMessage>,
     reliable_out_queue: Receiver<(OutTarget, OutMessage)>,
@@ -31,7 +32,7 @@ impl NetworkManager {
         rtc_server: RtcServer,
     ) -> Self {
         Self {
-            clients: Vec::new(),
+            clients: HashMap::new(),
             ws_in,
             game_sender,
             reliable_out_queue,
@@ -78,7 +79,7 @@ impl NetworkManager {
 
 fn on_ws_in_msg(
     in_msg: WSClientMessage,
-    clients: &mut Vec<ClientData>,
+    clients: &mut HashMap<u32, ClientData>,
     game_sender: &mut Sender<GameMessage>,
 ) {
     match in_msg {
@@ -86,10 +87,10 @@ fn on_ws_in_msg(
             game_sender
                 .try_send(GameMessage::ClientConnected(client.id))
                 .unwrap();
-            clients.push(client);
+            clients.insert(client.id, client);
         }
         WSClientMessage::Disconnected(disc_id) => {
-            clients.retain(|client| disc_id != client.id);
+            clients.remove(&disc_id);
             game_sender
                 .try_send(GameMessage::ClientDisconnected(disc_id))
                 .unwrap();
@@ -114,7 +115,7 @@ fn on_ws_in_msg(
 fn on_rtc_in_msg(
     msg: MessageResult,
     msg_buf: &Vec<u8>,
-    clients: &mut Vec<ClientData>,
+    clients: &mut HashMap<u32, ClientData>,
     game_out: &mut Sender<GameMessage>,
 ) {
     //todo read the message, handle deserealizing
@@ -125,12 +126,12 @@ fn on_rtc_in_msg(
             match protomsgtype {
                 ClientMessage_oneof_msgData::veryfiyRtc(veryfiyRtcMsg) => {
                     println!("got uuid: {}", &veryfiyRtcMsg.uuid);
-                    if let Some(client) = clients.iter_mut().find(|client| {
+                    if let Some(clientData) = clients.values_mut().find(|client| {
                         client.socket_uuid == veryfiyRtcMsg.uuid && client.socket_addr == None
                     }) {
                         println!("User found!");
-                        client.socket_addr = Some(msg.remote_addr);
-                        client
+                        clientData.socket_addr = Some(msg.remote_addr);
+                        clientData
                             .ws_client_out
                             .send(build_out_message(OutMessage::VerifiedUuid));
                     }
@@ -142,15 +143,15 @@ fn on_rtc_in_msg(
 }
 
 fn handle_reliable_out_msg(
-    out_indexes: Vec<usize>,
+    out_indexes: Vec<u32>,
     out_msg: OutMessage,
-    clients: &Vec<ClientData>,
+    clients: &HashMap<u32, ClientData>,
 ) {
     let output = build_out_message(out_msg);
 
     for idx in out_indexes {
         clients
-            .get(idx)
+            .get(&idx)
             .unwrap()
             .ws_client_out
             .send(output.clone())
@@ -159,46 +160,25 @@ fn handle_reliable_out_msg(
 }
 
 async fn handle_unreliable_out_msg(
-    out_indexes: Vec<usize>,
+    out_indexes: Vec<u32>,
     out_msg: OutMessage,
     rtc_server: &mut RtcServer,
-    clients: &Vec<ClientData>,
+    clients: &HashMap<u32, ClientData>,
 ) {
     let output = build_out_message(out_msg);
 
     for idx in out_indexes {
-        let client = clients.get(idx).unwrap();
+        let client = clients.get(&idx).unwrap();
         if let Some(addr) = client.socket_addr {
             rtc_server.send(&output, MessageType::Binary, &addr).await;
         }
     }
 }
 
-//Todo: Change to a hash map to optimize?
-fn get_targets(targets: OutTarget, clients: &Vec<ClientData>) -> Vec<usize> {
+fn get_targets(targets: OutTarget, clients: &HashMap<u32, ClientData>) -> Vec<u32> {
     match targets {
-        OutTarget::All => {
-            let mut out = Vec::new();
-            for (i, client) in clients.iter().enumerate() {
-                out.push(i);
-            }
-            out
-        }
-        OutTarget::Many(ids) => {
-            let mut out = Vec::new();
-
-            for (i, client) in clients
-                .iter()
-                .filter(|client| ids.iter().any(|id| id == &client.id))
-                .enumerate()
-            {
-                out.push(i);
-            }
-            out
-        }
-        OutTarget::Single(id) => match clients.iter().position(|client| client.id == id) {
-            Some(idx) => vec![idx],
-            None => Vec::new(),
-        },
+        OutTarget::All => clients.keys().cloned().collect(),
+        OutTarget::Many(ids) => ids,
+        OutTarget::Single(id) => vec![id],
     }
 }

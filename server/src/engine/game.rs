@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::iter::*;
 use std::time::Duration;
 use std::time::Instant;
@@ -22,6 +23,8 @@ pub struct Game {
     out_reliable: Sender<(OutTarget, OutMessage)>,
     out_unreliable: Sender<(OutTarget, OutMessage)>,
     game_in: Receiver<GameMessage>,
+    player_entities: HashMap<u32, Entity>,
+    replication_counter: u32,
 }
 
 impl Game {
@@ -39,6 +42,8 @@ impl Game {
             out_reliable,
             out_unreliable,
             game_in,
+            player_entities: HashMap::new(),
+            replication_counter: 0,
         }
     }
 
@@ -107,29 +112,34 @@ impl Game {
     fn handle_input_command(&mut self, id: u32, command: InputCommand) {
         match command {
             InputCommand::Move(loc, _attacking) => {
-
-                let query = <(Read<PlayerControlled>, Write<Transform>)>::query();
-                for (player, mut transform) in query.iter(&mut self.world) {
-                    if (player.id == id) {
-                        transform.position.x = loc.x;
-                        transform.position.y = loc.y;
-                        println!("player {} moved to: {}", id, loc)
-                    }
+                //todo: change to pawn stuff
+                if let Some(mut player_data) = self
+                    .world
+                    .get_component_mut::<Transform>(*self.player_entities.get(&id).unwrap())
+                {
+                    player_data.position.x = loc.x;
+                    player_data.position.y = loc.y;
+                    println!("player {} moved to: {}", id, loc);
                 }
-            },
+            }
             _ => println!("Unhaled Input Command!"),
         }
     }
 
     fn on_client_connected(&mut self, player_id: u32) {
-        self.world.insert(
+        let replication_id = self.get_new_replication_id();
+        let entities = self.world.insert(
             (),
             once((
                 Transform::new(Vector2::<f32>::new(1., 1.), None, None),
-                Replicated { id: 0 },
+                Replicated { id: replication_id },
                 PlayerControlled { id: player_id },
             )),
         );
+
+        let player_entity = entities.first().unwrap();
+
+        self.player_entities.insert(player_id, *player_entity);
     }
 
     async fn broadcast_state(&mut self) {
@@ -146,5 +156,11 @@ impl Game {
 
             self.out_unreliable.try_send((OutTarget::All, output));
         }
+    }
+
+    fn get_new_replication_id(&mut self) -> u32 {
+        let out = self.replication_counter;
+        self.replication_counter += 1;
+        out
     }
 }
