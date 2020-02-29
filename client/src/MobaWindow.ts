@@ -60,11 +60,6 @@ export default class MobaWindow extends Phaser.Scene {
     this.cursor.setScrollFactor(0, 0)
     this.cursor.setOrigin(0, 0)
 
-    const character1 = this.add.sprite(0, 0, 'character');
-    character1.depth = 999999
-    
-    this.entities.set(0, character1)
-
     this.input.mouse.disableContextMenu()
     this.setDefaultKeyBindings()
     this.setDefaultPointerBindings()
@@ -135,6 +130,11 @@ export default class MobaWindow extends Phaser.Scene {
     if (entity) {
       entity.x = target.x
       entity.y = target.y
+    } else {
+      const character = this.add.sprite(0, 0, 'character');
+      character.depth = 999999
+      
+      this.entities.set(index, character)
     }
   }
 
