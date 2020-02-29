@@ -87,10 +87,10 @@ impl Game {
     fn update(&mut self, _dt: f32) {
         let query = <Write<Transform>>::query();
 
-        for mut transform in query.iter(&mut self.world) {
-            transform.position.x = (self.game_time.cos() * 50.) + 125.;
-            transform.position.y = (self.game_time.sin() * 50.) + 125.;
-        }
+        // for mut transform in query.iter(&mut self.world) {
+        //     transform.position.x = (self.game_time.cos() * 50.) + 125.;
+        //     transform.position.y = (self.game_time.sin() * 50.) + 125.;
+        // }
     }
 
     fn handle_message(&mut self, msg: GameMessage) {
@@ -106,27 +106,27 @@ impl Game {
 
     fn handle_input_command(&mut self, id: u32, command: InputCommand) {
         match command {
-            InputCommand::Move(loc, _attacking) => println!("User-{}: Move to: {}", id, loc),
+            InputCommand::Move(loc, _attacking) => {
+
+                let query = <(Read<PlayerControlled>, Write<Transform>)>::query();
+                for (player, mut transform) in query.iter(&mut self.world) {
+                    if (player.id == id) {
+                        transform.position.x = loc.x;
+                        transform.position.y = loc.y;
+                        println!("player {} moved to: {}", id, loc)
+                    }
+                }
+            },
             _ => println!("Unhaled Input Command!"),
         }
     }
 
     fn on_client_connected(&mut self, player_id: u32) {
-        //TODO: only insert a single character
         self.world.insert(
             (),
             once((
                 Transform::new(Vector2::<f32>::new(1., 1.), None, None),
-                Replicated { id: 1 },
-                PlayerControlled { id: player_id },
-            )),
-        );
-
-        self.world.insert(
-            (),
-            once((
-                Transform::new(Vector2::<f32>::new(1., 1.), None, None),
-                Replicated { id: 2 },
+                Replicated { id: 0 },
                 PlayerControlled { id: player_id },
             )),
         );
@@ -139,20 +139,12 @@ impl Game {
         for (transform, replicated) in query.iter(&mut self.world) {
             let output = OutMessage::UpdateTick {
                 frame: self.game_frame,
-                x: transform.position.x + (100. * replicated.id as f32),
+                x: transform.position.x,
                 y: transform.position.y,
                 entity: replicated.id,
             };
 
-            if replicated.id == 1 {
-                self.out_reliable.send((OutTarget::All, output)).await;
-            } else if replicated.id == 2 {
-                self.out_unreliable.send((OutTarget::All, output)).await;
-            }
-
-            // let f1 = self.client_out_reliable.send(output);
-            // let f2 = self.client_out_unreliable.send(output);
-            //join!(f1, f2);
+            self.out_unreliable.try_send((OutTarget::All, output));
         }
     }
 }

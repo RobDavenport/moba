@@ -62,12 +62,8 @@ export default class MobaWindow extends Phaser.Scene {
 
     const character1 = this.add.sprite(0, 0, 'character');
     character1.depth = 999999
-
-    const character2 = this.add.sprite(0, 0, 'character');
-    character2.depth = 999999
     
-    this.entities.set(1, character1)
-    this.entities.set(2, character2)
+    this.entities.set(0, character1)
 
     this.input.mouse.disableContextMenu()
     this.setDefaultKeyBindings()
