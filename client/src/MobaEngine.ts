@@ -5,111 +5,207 @@ import { InputCommand } from './Constants'
 
 export default class MobaEngine {
   private net: NetworkManager
-  private gameWindow: Phaser.Scene
+  private gameWindow: MobaWindow
 
   constructor(gameWindow: MobaWindow) {
     this.net = new NetworkManager(gameWindow)
     this.gameWindow = gameWindow
   }
 
-  onMove() {
-    const { worldX, worldY } = this.gameWindow.input.activePointer
-    this.net.sendMoveCommand(GM.isometricToCartesian(worldX, worldY), false)
+  onMoveDown() {
+    const { x, y } = this.gameWindow.getPointerPosition()
+    this.net.sendMoveCommand(GM.isometricToCartesian(x, y), false)
   }
 
-  onAttackMove() {
+  onMoveUp() {
+
+  }
+
+  onAttackMoveDown() {
     console.log('amove')
   }
 
-  onRecall() {
+  onAttackMoveUp() {
+    console.log('amove')
+  }
+
+  onRecallDown() {
     console.log('b')
   }
 
-  onStop() {
+  onRecallUp() {
+
+  }
+
+  onStopDown() {
     console.log('stop')
   }
 
-  onUseSlot1() {
+  onStopUp() {
+
+  }
+
+  onUseSlot1Down() {
     console.log('q')
   }
 
-  onUseSlot2() {
+  onUseSlot1Up() {
+
+  }
+
+  onUseSlot2Down() {
     console.log('w')
   }
 
-  onUseSlot3() {
+  onUseSlot2Up() {
+
+  }
+
+  onUseSlot3Down() {
     console.log('e')
   }
 
-  onUseSlot4() {
+  onUseSlot3Up() {
+
+  }
+
+  onUseSlot4Down() {
     console.log('r')
   }
 
-  onZoomIn() {
+  onUseSlot4Up() {
+
+  }
+
+  onZoomInDown() {
     console.log('z-in')
   }
 
-  onZoomOut() {
+  onZoomInUp() {
+
+  }
+
+  onZoomOutDown() {
     console.log('z-out')
   }
 
-  onScrollUp() {
-    console.log('up')
+  onZoomOutUp() {
+
   }
 
-  onScrollDown() {
-    console.log('down')
+  onScrollUpDown() {
+    this.gameWindow.scrollUp(true)
   }
 
-  onScrollLeft() {
-    console.log('left')
+  onScrollUpUp() {
+    this.gameWindow.scrollUp(false)
   }
 
-  onScrollRight() {
-    console.log('right')
+  onScrollDownDown() {
+    this.gameWindow.scrollDown(true)
   }
 
-  onLockCamera() {
+  onScrollDownUp() {
+    this.gameWindow.scrollDown(false)
+  }
+
+  onScrollLeftDown() {
+    this.gameWindow.scrollLeft(true)
+  }
+
+  onScrollLeftUp() {
+    this.gameWindow.scrollLeft(false)
+  }
+
+  onScrollRightDown() {
+    this.gameWindow.scrollRight(true)
+  }
+
+  onScrollRightUp() {
+    this.gameWindow.scrollRight(false)
+  }
+
+  onLockCameraDown() {
     console.log('lock camera')
   }
 
-  onFocusHero() {
-    console.log('focus hero')
+  onLockCameraUp() {
+
   }
 
-  onFocusAlly1() {
+  onFocusHeroDown() {
+    this.gameWindow.startFocusHero()
+  }
+
+  onFocusHeroUp() {
+    this.gameWindow.stopFocusHero()
+  }
+
+  onFocusAlly1Down() {
     console.log('focus ally 1')
   }
 
-  onFocusAlly2() {
+  onFocusAlly1Up() {
+
+  }
+
+  onFocusAlly2Down() {
     console.log('focus ally 2')
   }
 
-  onFocusAlly3() {
+  onFocusAlly2Up() {
+
+  }
+
+  onFocusAlly3Down() {
     console.log('focus ally 3')
   }
 
-  onFocusAlly4() {
+  onFocusAlly3Up() {
+
+  }
+
+  onFocusAlly4Down() {
     console.log('focus ally 4')
   }
 
-  onToggleMenu() {
+  onFocusAlly4Up() {
+
+  }
+
+  onToggleMenuDown() {
     console.log('toggle menu')
   }
 
-  onToggleScoreboard() {
+  onToggleMenuUp() {
+
+  }
+
+  onToggleScoreboardDown() {
     console.log('toggle scoreboard')
   }
 
-  onToggleHeroDetailView() {
+  onToggleScoreboardUp() {
+
+  }
+
+  onToggleHeroDetailViewDown() {
     console.log('toggle hero detail view')
   }
 
-  onGameClick() {
+  onToggleHeroDetailViewUp() {
+
+  }
+
+  onGameClickDown() {
     console.log('click')
   }
 
-  onToggleFullscreen() {
+  onGameClickUp() {
+
+  }
+
+  onToggleFullscreenDown() {
     if (this.gameWindow.scale.isFullscreen) {
       this.gameWindow.scale.stopFullscreen()
     } else {
@@ -117,31 +213,35 @@ export default class MobaEngine {
     }
   }
 
-  CommandMap = new Map<InputCommand, Function>([
-    [InputCommand.Move, this.onMove],
-    [InputCommand.AttackMove, this.onAttackMove],
-    [InputCommand.Stop, this.onStop],
-    [InputCommand.Recall, this.onRecall],
-    [InputCommand.UseSlot1, this.onUseSlot1],
-    [InputCommand.UseSlot2, this.onUseSlot2],
-    [InputCommand.UseSlot3, this.onUseSlot3],
-    [InputCommand.UseSlot4, this.onUseSlot4],
-    [InputCommand.ZoomIn, this.onZoomIn],
-    [InputCommand.ZoomOut, this.onZoomOut],
-    [InputCommand.ScrollUp, this.onScrollUp],
-    [InputCommand.ScrollDown, this.onScrollDown],
-    [InputCommand.ScrollLeft, this.onScrollLeft],
-    [InputCommand.ScrollRight, this.onScrollRight],
-    [InputCommand.LockCamera, this.onLockCamera],
-    [InputCommand.FocusHero, this.onFocusHero],
-    [InputCommand.FocusAlly1, this.onFocusAlly1],
-    [InputCommand.FocusAlly2, this.onFocusAlly2],
-    [InputCommand.FocusAlly3, this.onFocusAlly3],
-    [InputCommand.FocusAlly4, this.onFocusAlly4],
-    [InputCommand.ToggleMenu, this.onToggleMenu],
-    [InputCommand.ToggleScoreboard, this.onToggleScoreboard],
-    [InputCommand.ToggleHeroDetailView, this.onToggleHeroDetailView],
-    [InputCommand.Click, this.onGameClick],
-    [InputCommand.ToggleFullscreen, this.onToggleFullscreen]
+  onToggleFullscreenUp() {
+
+  }
+
+  CommandMap = new Map<InputCommand, [Function, Function]>([
+    [InputCommand.Move, [this.onMoveDown, this.onMoveUp]],
+    [InputCommand.AttackMove, [this.onAttackMoveDown, this.onAttackMoveUp]],
+    [InputCommand.Stop, [this.onStopDown, this.onStopUp]],
+    [InputCommand.Recall, [this.onRecallDown, this.onRecallUp]],
+    [InputCommand.UseSlot1, [this.onUseSlot1Down, this.onUseSlot1Up]],
+    [InputCommand.UseSlot2, [this.onUseSlot2Down, this.onUseSlot2Up]],
+    [InputCommand.UseSlot3, [this.onUseSlot3Down, this.onUseSlot3Up]],
+    [InputCommand.UseSlot4, [this.onUseSlot4Down, this.onUseSlot4Up]],
+    [InputCommand.ZoomIn, [this.onZoomInDown, this.onZoomInUp]],
+    [InputCommand.ZoomOut, [this.onZoomOutDown, this.onZoomOutUp]],
+    [InputCommand.ScrollUp, [this.onScrollUpDown, this.onScrollUpUp]],
+    [InputCommand.ScrollDown, [this.onScrollDownDown, this.onScrollDownUp]],
+    [InputCommand.ScrollLeft, [this.onScrollLeftDown, this.onScrollLeftUp]],
+    [InputCommand.ScrollRight, [this.onScrollRightDown, this.onScrollRightUp]],
+    [InputCommand.LockCamera, [this.onLockCameraDown, this.onLockCameraUp]],
+    [InputCommand.FocusHero, [this.onFocusHeroDown, this.onFocusHeroUp]],
+    [InputCommand.FocusAlly1, [this.onFocusAlly1Down, this.onFocusAlly1Up]],
+    [InputCommand.FocusAlly2, [this.onFocusAlly2Down, this.onFocusAlly2Up]],
+    [InputCommand.FocusAlly3, [this.onFocusAlly3Down, this.onFocusAlly3Up]],
+    [InputCommand.FocusAlly4, [this.onFocusAlly4Down, this.onFocusAlly4Up]],
+    [InputCommand.ToggleMenu, [this.onToggleMenuDown, this.onToggleMenuUp]],
+    [InputCommand.ToggleScoreboard, [this.onToggleScoreboardDown, this.onToggleScoreboardUp]],
+    [InputCommand.ToggleHeroDetailView, [this.onToggleHeroDetailViewDown, this.onToggleHeroDetailViewUp]],
+    [InputCommand.Click, [this.onGameClickDown, this.onGameClickUp]],
+    [InputCommand.ToggleFullscreen, [this.onToggleFullscreenDown, this.onToggleFullscreenUp]]
   ])
 }

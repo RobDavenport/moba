@@ -1,5 +1,11 @@
 import Phaser from 'phaser'
-import { InputCommand, defaultKeyBindings, PointerButtons, defaultPointerBindings } from './Constants'
+import {
+  InputCommand,
+  defaultKeyBindings,
+  PointerButtons,
+  defaultPointerBindings,
+  cameraScrollSpeed
+} from './Constants'
 import MobaEngine from './MobaEngine'
 import * as GM from './helpers/GameMath'
 import { ServerMessage } from './network/protobuf/Servermessage_pb'
@@ -15,12 +21,19 @@ export default class MobaWindow extends Phaser.Scene {
   private character1: Phaser.GameObjects.Image
   private character2: Phaser.GameObjects.Image
   private gameEngine: MobaEngine
+  private cursor: Phaser.GameObjects.Image
+
+  private cameraAxis: { x: number, y: number }
+  private cameraScrollSpeed: number
 
   constructor() {
     super('moba')
     this.keyMapping = new Map()
     this.pointerMapping = new Map()
     this.gameEngine = new MobaEngine(this);
+
+    this.cameraAxis = { x: 0, y: 0 }
+    this.cameraScrollSpeed = cameraScrollSpeed
   }
 
   preload() {
@@ -28,10 +41,23 @@ export default class MobaWindow extends Phaser.Scene {
     this.load.image('character', './assets/art/characters/character.png')
 
     this.load.image('tile', './assets/art/tiles/floor_E.png')
+
+    this.load.image('cursor', './assets/art/ui/cursorNormal.png')
+    this.load.image('cursorAttack', './assets/art/ui/cursorAttack.png')
   }
 
   create() {
     this.add.image(0, 0, 'background')
+
+    const mid = {
+      x: this.game.renderer.width / 2,
+      y: this.game.renderer.height / 2,
+    }
+
+    this.cursor = this.add.sprite(mid.x, mid.y, 'cursor')
+    this.cursor.depth = 999999999
+    this.cursor.setScrollFactor(0, 0)
+    this.cursor.setOrigin(0, 0)
 
     this.character1 = this.add.image(0, 0, 'character');
     this.character1.depth = 999999
@@ -42,21 +68,40 @@ export default class MobaWindow extends Phaser.Scene {
     this.setDefaultKeyBindings()
     this.setDefaultPointerBindings()
 
-    this.initTilemap();
+    this.initTilemap()
 
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+
+      if (!this.input.mouse.locked) {
+        this.input.mouse.requestPointerLock()
+        this.cursor.setPosition(pointer.x, pointer.y)
+      }
+
       const btn = pointer.button
       const cmd = this.pointerMapping.get(btn)
       if (cmd) {
-        this.gameEngine.CommandMap.get(cmd)?.call(this.gameEngine)
+        this.gameEngine.CommandMap.get(cmd)?.[0].call(this.gameEngine)
       } else {
         console.log('cmd not found: ' + cmd)
       }
     })
+
+    this.input.on('pointerup', (pointer: Phaser.Input.Pointer) => {
+      const btn = pointer.button
+      const cmd = this.pointerMapping.get(btn)
+      if (cmd) {
+        this.gameEngine.CommandMap.get(cmd)?.[1].call(this.gameEngine)
+      } else {
+        console.log('cmd not found: ' + cmd)
+      }
+    })
+
   }
 
-  update() {
+  update(_, dt) {
     this.handleKeyInputs()
+    this.updateCursor()
+    this.updateCamera(dt)
   }
 
   // Input Code
@@ -68,9 +113,11 @@ export default class MobaWindow extends Phaser.Scene {
   }
 
   handleKeyInputs() {
-    this.keyMapping.forEach((inputCommand, key, map) => {
+    this.keyMapping.forEach((inputCommand, key, _) => {
       if (Phaser.Input.Keyboard.JustDown(key)) {
-        this.gameEngine.CommandMap.get(inputCommand)?.call(this.gameEngine)
+        this.gameEngine.CommandMap.get(inputCommand)[0].call(this.gameEngine)
+      } else if (Phaser.Input.Keyboard.JustUp(key)) {
+        this.gameEngine.CommandMap.get(inputCommand)[1].call(this.gameEngine)
       }
     })
   }
@@ -108,5 +155,80 @@ export default class MobaWindow extends Phaser.Scene {
 
   onServerUpdateTick(data: ServerMessage.UpdateTick.AsObject) {
     this.setCharacterPosition(new CartesianPoint(data.x, data.y), data.entity)
+  }
+
+  updateCursor() {
+    this.cursor.x += this.input.activePointer.movementX
+    this.cursor.y += this.input.activePointer.movementY
+
+    this.input.activePointer.movementX = 0
+    this.input.activePointer.movementY = 0
+
+    this.cursor.x = Phaser.Math.Clamp(this.cursor.x, 0, this.game.renderer.width)
+    this.cursor.y = Phaser.Math.Clamp(this.cursor.y, 0, this.game.renderer.height)
+  }
+
+  updateCamera(dt: number) {
+    this.cameras.main.scrollX += this.cameraScrollSpeed * this.cameraAxis.x * dt
+    this.cameras.main.scrollY += this.cameraScrollSpeed * this.cameraAxis.y * dt
+
+    if (this.input.mouse.locked) {
+      if (this.cursor.x === 0) {
+        this.cameras.main.scrollX -= this.cameraScrollSpeed * dt
+      } else if (this.cursor.x === this.game.renderer.width) {
+        this.cameras.main.scrollX += this.cameraScrollSpeed * dt
+      }
+
+      if (this.cursor.y === 0) {
+        this.cameras.main.scrollY -= this.cameraScrollSpeed * dt
+      } else if (this.cursor.y === this.game.renderer.height) {
+        this.cameras.main.scrollY += this.cameraScrollSpeed * dt
+      }
+    }
+  }
+
+  startFocusHero() {
+    console.log('start focus hero')
+  }
+
+  stopFocusHero() {
+    console.log('stop focus hero')
+  }
+
+
+  scrollUp(isDown: boolean) {
+    if (isDown) {
+      this.cameraAxis.y += -1
+    } else {
+      this.cameraAxis.y += 1
+    }
+  }
+
+  scrollDown(isDown: boolean) {
+    if (isDown) {
+      this.cameraAxis.y -= -1
+    } else {
+      this.cameraAxis.y -= 1
+    }
+  }
+
+  scrollLeft(isDown: boolean) {
+    if (isDown) {
+      this.cameraAxis.x += -1
+    } else {
+      this.cameraAxis.x += 1
+    }
+  }
+
+  scrollRight(isDown: boolean) {
+    if (isDown) {
+      this.cameraAxis.x -= -1
+    } else {
+      this.cameraAxis.x -= 1
+    }
+  }
+
+  getPointerPosition() {
+    return { x: this.cursor.x, y: this.cursor.y }
   }
 }

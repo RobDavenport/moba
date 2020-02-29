@@ -1,6 +1,9 @@
 import Phaser, { Input } from 'phaser'
 import MobaWindow from './MobaWindow'
 
+//Camera
+export const cameraScrollSpeed = 2
+
 // Input
 const KeyCodes = Input.Keyboard.KeyCodes
 
