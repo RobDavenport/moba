@@ -153,7 +153,7 @@ export default class MobaWindow extends Phaser.Scene {
   }
 
   onServerUpdateTick(data: ServerMessage.UpdateTick.AsObject) {
-    this.setCharacterPosition(new CartesianPoint(data.x, data.y), data.entity)
+    this.setCharacterPosition(new CartesianPoint(data.x, data.y), data.replicationid)
   }
 
   updateCursor() {

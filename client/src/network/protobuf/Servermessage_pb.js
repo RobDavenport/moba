@@ -326,7 +326,7 @@ proto.ServerMessage.UpdateTick.prototype.toObject = function(opt_includeInstance
 proto.ServerMessage.UpdateTick.toObject = function(includeInstance, msg) {
   var f, obj = {
     frame: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    entity: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    replicationid: jspb.Message.getFieldWithDefault(msg, 2, 0),
     x: jspb.Message.getFloatingPointFieldWithDefault(msg, 3, 0.0),
     y: jspb.Message.getFloatingPointFieldWithDefault(msg, 4, 0.0)
   };
@@ -371,7 +371,7 @@ proto.ServerMessage.UpdateTick.deserializeBinaryFromReader = function(msg, reade
       break;
     case 2:
       var value = /** @type {number} */ (reader.readUint32());
-      msg.setEntity(value);
+      msg.setReplicationid(value);
       break;
     case 3:
       var value = /** @type {number} */ (reader.readFloat());
@@ -417,7 +417,7 @@ proto.ServerMessage.UpdateTick.serializeBinaryToWriter = function(message, write
       f
     );
   }
-  f = message.getEntity();
+  f = message.getReplicationid();
   if (f !== 0) {
     writer.writeUint32(
       2,
@@ -460,10 +460,10 @@ proto.ServerMessage.UpdateTick.prototype.setFrame = function(value) {
 
 
 /**
- * optional uint32 entity = 2;
+ * optional uint32 replicationId = 2;
  * @return {number}
  */
-proto.ServerMessage.UpdateTick.prototype.getEntity = function() {
+proto.ServerMessage.UpdateTick.prototype.getReplicationid = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
@@ -472,7 +472,7 @@ proto.ServerMessage.UpdateTick.prototype.getEntity = function() {
  * @param {number} value
  * @return {!proto.ServerMessage.UpdateTick} returns this
  */
-proto.ServerMessage.UpdateTick.prototype.setEntity = function(value) {
+proto.ServerMessage.UpdateTick.prototype.setReplicationid = function(value) {
   return jspb.Message.setProto3IntField(this, 2, value);
 };
 

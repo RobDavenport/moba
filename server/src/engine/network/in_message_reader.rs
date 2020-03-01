@@ -1,11 +1,12 @@
 use nalgebra::Vector2;
 
 use super::protobuf::ClientMessage::*;
+use crate::engine::components::player_controlled::PlayerId;
 use crate::engine::input_command::InputCommand;
 use crate::engine::messaging::messages::GameMessage; //todo cut this in favor of reader?
 
 //Move this to a seperate class?
-pub fn handle_client_command(commandMsg: Command, id: u32) -> Option<GameMessage> {
+pub fn handle_client_command(commandMsg: Command, id: PlayerId) -> Option<GameMessage> {
     match commandMsg.commandType {
         Command_CommandType::NONE => None,
         Command_CommandType::MOVECOMMAND => {

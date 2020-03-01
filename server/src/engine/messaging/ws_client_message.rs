@@ -1,12 +1,12 @@
 extern crate ws;
 
-use super::messages::GameMessage;
+use crate::engine::components::player_controlled::PlayerId;
 use crate::engine::network::client_data::ClientData;
 
 // Messages which come from client (Ws)
 #[derive(Debug)]
 pub enum WSClientMessage {
-    Connected(ClientData),
-    Disconnected(u32),
-    Packet(u32, Vec<u8>),
+    Connected(PlayerId, ClientData),
+    Disconnected(PlayerId),
+    Packet(PlayerId, Vec<u8>),
 }

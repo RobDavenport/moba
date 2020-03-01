@@ -8,6 +8,7 @@ use super::client::Client;
 use crate::engine::messaging::messages::{OutMessage, WSClientMessage};
 use crate::engine::network::client_data::ClientData;
 
+use crate::engine::components::player_controlled::PlayerId;
 use crate::engine::network::out_message_builder::build_out_message;
 
 pub struct ClientFactory {
@@ -28,25 +29,26 @@ impl ws::Factory for ClientFactory {
     type Handler = Client;
 
     fn connection_made(&mut self, out: ws::Sender) -> Client {
+        let new_client_id = PlayerId(self.next_client_id);
+        self.next_client_id += 1;
         let new_client = Client {
             manager_out: self.client_sender.clone(),
-            id: self.next_client_id,
+            id: new_client_id,
         };
 
         let uuid = Uuid::new_v4().to_string();
 
-        self.next_client_id += 1;
-        self.client_sender
-            .try_send(WSClientMessage::Connected(ClientData {
-                id: new_client.id,
+        self.client_sender.try_send(WSClientMessage::Connected(
+            new_client_id,
+            ClientData {
                 ws_client_out: out.clone(),
                 socket_addr: None,
                 socket_uuid: uuid.clone(),
-            }));
+            },
+        ));
 
         println!("sending uuid: {}", &uuid);
         out.send(build_out_message(OutMessage::VerifyUuid(uuid)));
-        //out.send(format!("{{\"uuid\":\"{}\"}}", &uuid));
 
         new_client
     }

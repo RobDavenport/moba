@@ -45,8 +45,8 @@ export namespace ServerMessage {
     getFrame(): number;
     setFrame(value: number): void;
 
-    getEntity(): number;
-    setEntity(value: number): void;
+    getReplicationid(): number;
+    setReplicationid(value: number): void;
 
     getX(): number;
     setX(value: number): void;
@@ -67,7 +67,7 @@ export namespace ServerMessage {
   export namespace UpdateTick {
     export type AsObject = {
       frame: number,
-      entity: number,
+      replicationid: number,
       x: number,
       y: number,
     }

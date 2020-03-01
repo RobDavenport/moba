@@ -23,7 +23,7 @@ pub struct Game {
     out_reliable: Sender<(OutTarget, OutMessage)>,
     out_unreliable: Sender<(OutTarget, OutMessage)>,
     game_in: Receiver<GameMessage>,
-    player_entities: HashMap<u32, Entity>,
+    player_entities: HashMap<PlayerId, Entity>,
     replication_counter: u32,
 }
 
@@ -52,6 +52,9 @@ impl Game {
         let mut accumulator = 0.;
         let mut updated: bool;
 
+        let mut resources = Resources::default();
+        resources.insert(self.tick_time);
+
         println!("GAME LOOP INITIATED");
 
         loop {
@@ -69,7 +72,7 @@ impl Game {
                 while accumulator > self.tick_time {
                     self.game_frame += 1;
                     self.game_time += self.tick_time;
-                    self.update(self.tick_time);
+                    self.update();
                     accumulator -= self.tick_time;
                 }
                 updated = true;
@@ -89,14 +92,7 @@ impl Game {
         }
     }
 
-    fn update(&mut self, _dt: f32) {
-        let query = <Write<Transform>>::query();
-
-        // for mut transform in query.iter(&mut self.world) {
-        //     transform.position.x = (self.game_time.cos() * 50.) + 125.;
-        //     transform.position.y = (self.game_time.sin() * 50.) + 125.;
-        // }
-    }
+    fn update(&mut self) {}
 
     fn handle_message(&mut self, msg: GameMessage) {
         match msg {
@@ -109,7 +105,7 @@ impl Game {
         }
     }
 
-    fn handle_input_command(&mut self, id: u32, command: InputCommand) {
+    fn handle_input_command(&mut self, id: PlayerId, command: InputCommand) {
         match command {
             InputCommand::Move(loc, _attacking) => {
                 //todo: change to pawn stuff
@@ -126,13 +122,15 @@ impl Game {
         }
     }
 
-    fn on_client_connected(&mut self, player_id: u32) {
+    fn on_client_connected(&mut self, player_id: PlayerId) {
         let replication_id = self.get_new_replication_id();
         let entities = self.world.insert(
             (),
             once((
                 Transform::new(Vector2::<f32>::new(1., 1.), None, None),
-                Replicated { id: replication_id },
+                Replicated {
+                    id: ReplicationId(replication_id),
+                },
                 PlayerControlled { id: player_id },
             )),
         );
@@ -151,7 +149,7 @@ impl Game {
                 frame: self.game_frame,
                 x: transform.position.x,
                 y: transform.position.y,
-                entity: replicated.id,
+                replication_id: replicated.id,
             };
 
             self.out_unreliable.try_send((OutTarget::All, output));
