@@ -52,6 +52,9 @@ impl Game {
         let mut accumulator = 0.;
         let mut updated: bool;
 
+        let mut resources = Resources::default();
+        resources.insert(self.tick_time);
+
         println!("GAME LOOP INITIATED");
 
         loop {
@@ -69,7 +72,7 @@ impl Game {
                 while accumulator > self.tick_time {
                     self.game_frame += 1;
                     self.game_time += self.tick_time;
-                    self.update(self.tick_time);
+                    self.update();
                     accumulator -= self.tick_time;
                 }
                 updated = true;
@@ -89,14 +92,7 @@ impl Game {
         }
     }
 
-    fn update(&mut self, _dt: f32) {
-        let query = <Write<Transform>>::query();
-
-        // for mut transform in query.iter(&mut self.world) {
-        //     transform.position.x = (self.game_time.cos() * 50.) + 125.;
-        //     transform.position.y = (self.game_time.sin() * 50.) + 125.;
-        // }
-    }
+    fn update(&mut self) {}
 
     fn handle_message(&mut self, msg: GameMessage) {
         match msg {

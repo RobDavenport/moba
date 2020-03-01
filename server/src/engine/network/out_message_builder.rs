@@ -1,4 +1,4 @@
-use super::protobuf::{ClientMessage::*, ServerMessage::*};
+use super::protobuf::ServerMessage::*;
 use protobuf::Message as Message_imported_for_functions;
 
 use crate::engine::messaging::messages::OutMessage;

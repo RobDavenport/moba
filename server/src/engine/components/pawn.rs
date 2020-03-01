@@ -2,8 +2,8 @@ use nalgebra::Vector2;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Pawn {
-    pub currentState: PawnState,
-    pub nextState: PawnState,
+    pub current_state: PawnState,
+    pub next_state: Option<PawnState>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
