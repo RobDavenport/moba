@@ -1,3 +1,5 @@
+use crate::engine::components::all::{PlayerId, ReplicationId};
+
 //Messages that are broadcasted from the Server to Game Clients only
 #[derive(Clone, Debug)]
 pub enum OutMessage {
@@ -5,7 +7,7 @@ pub enum OutMessage {
         frame: u32,
         x: f32,
         y: f32,
-        entity: u32,
+        replication_id: ReplicationId,
     },
     VerifyUuid(String),
     VerifiedUuid,
@@ -13,6 +15,6 @@ pub enum OutMessage {
 
 pub enum OutTarget {
     All,
-    Single(u32),
-    Many(Vec<u32>),
+    Single(PlayerId),
+    Many(Vec<PlayerId>),
 }

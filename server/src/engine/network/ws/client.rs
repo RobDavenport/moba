@@ -1,11 +1,12 @@
 use tokio::sync::mpsc::Sender;
 use ws::*;
 
+use crate::engine::components::player_controlled::PlayerId;
 use crate::engine::messaging::messages::WSClientMessage;
 
 pub struct Client {
     pub manager_out: Sender<WSClientMessage>,
-    pub id: u32,
+    pub id: PlayerId,
 }
 
 impl Handler for Client {

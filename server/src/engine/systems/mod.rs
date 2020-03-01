@@ -1,2 +1,2 @@
-pub mod pawn_state;
-pub mod pawn_update;
+pub mod pawn_attack;
+pub mod pawn_move;

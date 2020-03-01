@@ -1,4 +1,4 @@
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Walks {
+pub struct MovementData {
     pub speed: f32,
 }

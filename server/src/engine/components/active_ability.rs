@@ -1,7 +1,7 @@
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Team {
-    pub id: TeamId,
+pub struct ActiveAbility {
+    pub ability_id: AbilityId,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct TeamId(u32);
+pub struct AbilityId(u32);

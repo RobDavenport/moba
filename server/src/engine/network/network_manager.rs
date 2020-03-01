@@ -1,21 +1,22 @@
 use std::collections::HashMap;
-use std::net::SocketAddr;
 
 use tokio::sync::mpsc::{Receiver, Sender};
 use webrtc_unreliable::Server as RtcServer;
 use webrtc_unreliable::{MessageResult, MessageType};
 
-use futures::{future::FutureExt, select, stream::StreamExt};
+use futures::{future::FutureExt, select};
 
 use super::client_data::ClientData;
 use crate::engine::messaging::messages::*;
+
+use crate::engine::components::player_controlled::PlayerId;
 
 use super::in_message_reader::handle_client_command;
 use super::out_message_builder::build_out_message;
 use super::protobuf::ClientMessage::*; //todo cut this in favor of reader?
 
 pub struct NetworkManager {
-    clients: HashMap<u32, ClientData>, //Todo: Change to a hash map?
+    clients: HashMap<PlayerId, ClientData>, //Todo: Change to a hash map?
     ws_in: Receiver<WSClientMessage>,
     game_sender: Sender<GameMessage>,
     reliable_out_queue: Receiver<(OutTarget, OutMessage)>,
@@ -79,15 +80,15 @@ impl NetworkManager {
 
 fn on_ws_in_msg(
     in_msg: WSClientMessage,
-    clients: &mut HashMap<u32, ClientData>,
+    clients: &mut HashMap<PlayerId, ClientData>,
     game_sender: &mut Sender<GameMessage>,
 ) {
     match in_msg {
-        WSClientMessage::Connected(client) => {
+        WSClientMessage::Connected(client_id, client_data) => {
             game_sender
-                .try_send(GameMessage::ClientConnected(client.id))
+                .try_send(GameMessage::ClientConnected(client_id))
                 .unwrap();
-            clients.insert(client.id, client);
+            clients.insert(client_id, client_data);
         }
         WSClientMessage::Disconnected(disc_id) => {
             clients.remove(&disc_id);
@@ -115,7 +116,7 @@ fn on_ws_in_msg(
 fn on_rtc_in_msg(
     msg: MessageResult,
     msg_buf: &Vec<u8>,
-    clients: &mut HashMap<u32, ClientData>,
+    clients: &mut HashMap<PlayerId, ClientData>,
     game_out: &mut Sender<GameMessage>,
 ) {
     //todo read the message, handle deserealizing
@@ -143,9 +144,9 @@ fn on_rtc_in_msg(
 }
 
 fn handle_reliable_out_msg(
-    out_indexes: Vec<u32>,
+    out_indexes: Vec<PlayerId>,
     out_msg: OutMessage,
-    clients: &HashMap<u32, ClientData>,
+    clients: &HashMap<PlayerId, ClientData>,
 ) {
     let output = build_out_message(out_msg);
 
@@ -160,10 +161,10 @@ fn handle_reliable_out_msg(
 }
 
 async fn handle_unreliable_out_msg(
-    out_indexes: Vec<u32>,
+    out_indexes: Vec<PlayerId>,
     out_msg: OutMessage,
     rtc_server: &mut RtcServer,
-    clients: &HashMap<u32, ClientData>,
+    clients: &HashMap<PlayerId, ClientData>,
 ) {
     let output = build_out_message(out_msg);
 
@@ -175,7 +176,7 @@ async fn handle_unreliable_out_msg(
     }
 }
 
-fn get_targets(targets: OutTarget, clients: &HashMap<u32, ClientData>) -> Vec<u32> {
+fn get_targets(targets: OutTarget, clients: &HashMap<PlayerId, ClientData>) -> Vec<PlayerId> {
     match targets {
         OutTarget::All => clients.keys().cloned().collect(),
         OutTarget::Many(ids) => ids,
