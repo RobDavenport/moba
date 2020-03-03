@@ -1,6 +1,6 @@
 use nalgebra::Vector2;
 
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum InputCommand {
     Move(Vector2<f32>, bool),
     MoveDelta(Vector2<f32>),

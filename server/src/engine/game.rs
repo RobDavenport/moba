@@ -13,6 +13,7 @@ use tokio::time::delay_for;
 
 use super::components::all::*;
 use super::input_command::InputCommand;
+use super::systems::*;
 use crate::engine::messaging::messages::{GameMessage, OutMessage, OutTarget};
 
 pub struct Game {
@@ -25,6 +26,7 @@ pub struct Game {
     game_in: Receiver<GameMessage>,
     player_entities: HashMap<PlayerId, Entity>,
     replication_counter: u32,
+    systems: Vec<Box<Schedulable>>,
 }
 
 impl Game {
@@ -44,6 +46,7 @@ impl Game {
             game_in,
             player_entities: HashMap::new(),
             replication_counter: 0,
+            systems: init_systems(tick_time),
         }
     }
 
@@ -51,9 +54,6 @@ impl Game {
         let mut timer = Instant::now();
         let mut accumulator = 0.;
         let mut updated: bool;
-
-        let mut resources = Resources::default();
-        resources.insert(self.tick_time);
 
         println!("GAME LOOP INITIATED");
 
@@ -92,7 +92,11 @@ impl Game {
         }
     }
 
-    fn update(&mut self) {}
+    fn update(&mut self) {
+        for system in &mut self.systems {
+            system.run(&mut self.world);
+        }
+    }
 
     fn handle_message(&mut self, msg: GameMessage) {
         match msg {
@@ -111,10 +115,9 @@ impl Game {
                 //todo: change to pawn stuff
                 if let Some(mut player_data) = self
                     .world
-                    .get_component_mut::<Transform>(*self.player_entities.get(&id).unwrap())
+                    .get_component_mut::<Moving>(*self.player_entities.get(&id).unwrap())
                 {
-                    player_data.position.x = loc.x;
-                    player_data.position.y = loc.y;
+                    player_data.location = Some(loc);
                     println!("player {} moved to: {}", id, loc);
                 }
             }
@@ -132,6 +135,10 @@ impl Game {
                     id: ReplicationId(replication_id),
                 },
                 PlayerControlled { id: player_id },
+                Moving {
+                    base_speed: 200.,
+                    location: None,
+                },
             )),
         );
 
@@ -161,4 +168,14 @@ impl Game {
         self.replication_counter += 1;
         out
     }
+}
+
+fn init_systems(tick_time: f32) -> Vec<Box<Schedulable>> {
+    let mut out = Vec::new();
+
+    println!("Initialized game systems with tick time of {}s", tick_time);
+
+    out.push(pawn_move::pawn_move(tick_time));
+
+    out
 }

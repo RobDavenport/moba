@@ -1,4 +1,5 @@
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Respawns {
-    pub time_remaining: f32,
+pub struct Respawning {
+    pub base_time: f32,
+    pub time_remaining: Option<f32>,
 }

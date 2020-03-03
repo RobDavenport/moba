@@ -10,6 +10,7 @@ import MobaEngine from './MobaEngine'
 import * as GM from './helpers/GameMath'
 import { ServerMessage } from './network/protobuf/Servermessage_pb'
 import { CartesianPoint } from './helpers/GameMath'
+import { InterpolatedSprite } from './InterpolatedSprite'
 
 const mapWidth = 16
 const mapHeight = 16
@@ -17,8 +18,9 @@ const mapHeight = 16
 export default class MobaWindow extends Phaser.Scene {
   private keyMapping: Map<Phaser.Input.Keyboard.Key, InputCommand>
   private pointerMapping: Map<PointerButtons, InputCommand>
-  private entities: Map<integer, Phaser.GameObjects.Sprite>
-  
+  private entities: Map<integer, InterpolatedSprite>
+  private lastUpdateFrame: integer;
+
   private gameEngine: MobaEngine
   private cursor: Phaser.GameObjects.Image
 
@@ -35,6 +37,7 @@ export default class MobaWindow extends Phaser.Scene {
 
     this.cameraAxis = { x: 0, y: 0 }
     this.cameraScrollSpeed = cameraScrollSpeed
+    this.lastUpdateFrame = 0
   }
 
   preload() {
@@ -94,10 +97,12 @@ export default class MobaWindow extends Phaser.Scene {
 
   }
 
-  update(_, dt) {
+  async update(_, dt) {
     this.handleKeyInputs()
     this.updateCursor()
     this.updateCamera(dt)
+
+    this.interpolateObjects()
   }
 
   // Input Code
@@ -125,15 +130,14 @@ export default class MobaWindow extends Phaser.Scene {
   }
 
   setCharacterPosition(point: GM.CartesianPoint, index: number) {
-    const target = point.toIsometric();
     const entity = this.entities.get(index)
     if (entity) {
-      entity.x = target.x
-      entity.y = target.y
+      const target = point.toIsometric()
+      entity.setInterpolatePoint(target.x, target.y)
     } else {
-      const character = this.add.sprite(0, 0, 'character');
-      character.depth = 999999
-      
+      const character = new InterpolatedSprite(this.add.sprite(0, 0, 'character'));
+      character.sprite.depth = 999999
+
       this.entities.set(index, character)
     }
   }
@@ -153,7 +157,16 @@ export default class MobaWindow extends Phaser.Scene {
   }
 
   onServerUpdateTick(data: ServerMessage.UpdateTick.AsObject) {
-    this.setCharacterPosition(new CartesianPoint(data.x, data.y), data.replicationid)
+    if (this.lastUpdateFrame <= data.frame) {
+      this.setCharacterPosition(new CartesianPoint(data.x, data.y), data.replicationid)
+    } else {
+      console.log('out of order!')
+    }
+    this.lastUpdateFrame = data.frame
+  }
+
+  interpolateObjects() {
+    this.entities.forEach(obj => obj.interpolate())
   }
 
   updateCursor() {
@@ -234,9 +247,9 @@ export default class MobaWindow extends Phaser.Scene {
   }
 
   getPointerPositionWorld() {
-    return { 
-      x: this.cursor.x + this.cameras.main.scrollX, 
-      y: this.cursor.y + this.cameras.main.scrollY 
+    return {
+      x: this.cursor.x + this.cameras.main.scrollX,
+      y: this.cursor.y + this.cameras.main.scrollY
     }
   }
 }

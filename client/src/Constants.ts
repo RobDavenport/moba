@@ -4,6 +4,8 @@ import MobaWindow from './MobaWindow'
 //Camera
 export const cameraScrollSpeed = 2
 
+export const interpolationFrames = 4
+
 // Input
 const KeyCodes = Input.Keyboard.KeyCodes
 
