@@ -2,6 +2,7 @@ import NetworkManager from './network/NetworkManager'
 import MobaWindow from './MobaWindow'
 import * as GM from './helpers/GameMath'
 import { InputCommand } from './Constants'
+import { ServerMessage } from './network/protobuf/Servermessage_pb'
 
 export default class MobaEngine {
   private net: NetworkManager
@@ -11,6 +12,10 @@ export default class MobaEngine {
     this.net = new NetworkManager(gameWindow)
     this.gameWindow = gameWindow
   }
+
+  update(dt: number) {
+    this.net.handleMessageQueue(dt)
+  } 
 
   onMoveDown() {
     const { x, y } = this.gameWindow.getPointerPositionWorld()

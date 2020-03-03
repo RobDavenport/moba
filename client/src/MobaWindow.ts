@@ -97,11 +97,11 @@ export default class MobaWindow extends Phaser.Scene {
 
   }
 
-  async update(_, dt) {
+  update(_, dt) {
     this.handleKeyInputs()
     this.updateCursor()
     this.updateCamera(dt)
-
+    this.gameEngine.update(dt)
     this.interpolateObjects()
   }
 

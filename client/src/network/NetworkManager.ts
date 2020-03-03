@@ -15,12 +15,21 @@ export default class NetworkManager {
   private channel: RTCDataChannel
   private socketUuid: string
   private verifier: NodeJS.Timeout
+  private serverMessageQueue: Array<Uint8Array>
 
   constructor(gameWindow: MobaWindow) {
     this.gameWindow = gameWindow
-
+    this.serverMessageQueue = [];
     this.initWebsocket()
     this.initWebRTC()
+  }
+
+  handleMessageQueue(dt: number) {
+    this.serverMessageQueue.forEach(data => {
+      Deserializer.handleServerMessage(data as Uint8Array, this.gameWindow, this)
+    })
+
+    this.serverMessageQueue = []
   }
 
   private verifyWebRTC() {
@@ -48,6 +57,7 @@ export default class NetworkManager {
 
     this.channel.onmessage = (evt) => {
       this.handleServerMessage(evt)
+      //this.serverMessageQueue.push(evt.data as Uint8Array)
     }
 
     this.channel.onerror = (err) => {
@@ -102,8 +112,9 @@ export default class NetworkManager {
       console.log('Websocket closed. Reason: ' + event.reason)
     }
 
-    this.ws.onmessage = (event) => {
-      this.handleServerMessage(event)
+    this.ws.onmessage = (evt) => {
+      this.handleServerMessage(evt)
+      //this.serverMessageQueue.push(evt.data as Uint8Array)
     }
   }
 
@@ -127,8 +138,8 @@ export default class NetworkManager {
     clearInterval(this.verifier)
   }
 
-  private async handleServerMessage({ data }: MessageEvent) {
-    Deserializer.handleServerMessage(data as Uint8Array, this.gameWindow, this)
+  private handleServerMessage({ data }: MessageEvent) {
+    this.serverMessageQueue.push(data as Uint8Array);
   }
 }
 

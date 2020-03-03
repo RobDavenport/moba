@@ -136,7 +136,7 @@ impl Game {
                 },
                 PlayerControlled { id: player_id },
                 Moving {
-                    base_speed: 200.,
+                    base_speed: 125.,
                     location: None,
                 },
             )),

@@ -20,6 +20,8 @@ function verifiedUuid(_: ServerMessage.AsObject, dst: MobaWindow, net: NetworkMa
   net.verifiedUuid()
 }
 
+//TODO: Remove this, instead push deserialized messages into a centralized queue
+//inside of the game engine/window
 export function handleServerMessage(data: Uint8Array, dst: MobaWindow, net: NetworkManager) {
   const message = ServerMessage.deserializeBinary(data).toObject();
   const func = ServerMessageMap.get(message.msgtype);
