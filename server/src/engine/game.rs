@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, VecDeque};
 use std::iter::*;
 use std::time::Duration;
 use std::time::Instant;
@@ -12,6 +12,7 @@ use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::time::delay_for;
 
 use super::components::all::*;
+use super::game_events::GameEvent;
 use super::input_command::InputCommand;
 use super::systems::*;
 use crate::engine::messaging::messages::{GameMessage, OutMessage, OutTarget};
@@ -26,7 +27,7 @@ pub struct Game {
     game_in: Receiver<GameMessage>,
     player_entities: HashMap<PlayerId, Entity>,
     replication_counter: u32,
-    systems: Vec<Box<Schedulable>>,
+    game_events: VecDeque<GameEvent>,
 }
 
 impl Game {
@@ -46,7 +47,7 @@ impl Game {
             game_in,
             player_entities: HashMap::new(),
             replication_counter: 0,
-            systems: init_systems(tick_time),
+            game_events: VecDeque::new(),
         }
     }
 
@@ -56,6 +57,8 @@ impl Game {
         let mut updated: bool;
 
         println!("GAME LOOP INITIATED");
+
+        let mut executor = Executor::new(init_systems(self.tick_time));
 
         loop {
             let dt = timer.elapsed();
@@ -72,7 +75,7 @@ impl Game {
                 while accumulator > self.tick_time {
                     self.game_frame += 1;
                     self.game_time += self.tick_time;
-                    self.update();
+                    executor.execute(&mut self.world);
                     accumulator -= self.tick_time;
                 }
                 updated = true;
@@ -92,12 +95,6 @@ impl Game {
         }
     }
 
-    fn update(&mut self) {
-        for system in &mut self.systems {
-            system.run(&mut self.world);
-        }
-    }
-
     fn handle_message(&mut self, msg: GameMessage) {
         match msg {
             GameMessage::ClientConnected(id) => {
@@ -105,7 +102,11 @@ impl Game {
                 self.on_client_connected(id);
             }
             GameMessage::InputCommand { id, command } => self.handle_input_command(id, command),
-            _ => println!("Unhandled GameMessage!"),
+            GameMessage::ClientDisconnected(id) => {
+                println!("Game: Client disconnected");
+                self.on_client_disconnected(id)
+            }
+            _ => panic!("Unhandled GameMessage!"),
         }
     }
 
@@ -145,6 +146,19 @@ impl Game {
         let player_entity = entities.first().unwrap();
 
         self.player_entities.insert(player_id, *player_entity);
+    }
+
+    fn on_client_disconnected(&mut self, player_id: PlayerId) {
+        if let Some(to_remove) = self.player_entities.remove(&player_id) {
+            if let Some(replicated) = self.world.get_component_mut::<Replicated>(to_remove) {
+                self.game_events
+                    .push_back(GameEvent::EntityDestroyed(replicated.id));
+            }
+            if self.world.delete(to_remove) {
+                self.game_events
+                    .push_back(GameEvent::ClientDisconnected(player_id));
+            }
+        }
     }
 
     async fn broadcast_state(&mut self) {

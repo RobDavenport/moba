@@ -9,6 +9,7 @@ pub mod facing;
 pub mod health;
 pub mod movement_data;
 pub mod moving;
+pub mod owned;
 pub mod player_controlled;
 pub mod provides_vision;
 pub mod receive_input;
@@ -34,6 +35,7 @@ pub mod all {
     pub use super::health::*;
     pub use super::movement_data::*;
     pub use super::moving::*;
+    pub use super::owned::*;
     pub use super::player_controlled::*;
     pub use super::provides_vision::*;
     pub use super::receive_input::*;
