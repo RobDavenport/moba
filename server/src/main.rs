@@ -5,20 +5,30 @@ use futures::join;
 mod engine;
 use engine::engine_builder::*;
 
-const WEB_RTC_LISTEN: &str = "192.168.1.150:8001";
-const WEB_RTC_PUBLIC: &str = "192.168.1.150:8001";
-const HYPER_API_ADDR: &str = "192.168.1.150:8001";
+const WEB_RTC_LISTEN: &str = "0.0.0.0:8001";
+const LOCAL_IP: &str = "127.0.0.1:8001";
+const HYPER_API_ADDR: &str = "0.0.0.0:8001";
 
 const WS_ADDRESS: &str = "0.0.0.0:8000";
 const TICKS_PER_SECOND: u8 = 30;
 
 #[tokio::main]
 async fn main() {
+    let ip = match my_internet_ip::get() {
+        Ok(ip) => ip.to_string() + ":8001",
+        Err(e) => {
+            println!("Couldn't get public IP. Local only.");
+            LOCAL_IP.to_string()
+        }
+    };
+
+    println!("{}", ip);
+
     let game_config = GameConfig {
         ticks_per_second: TICKS_PER_SECOND,
         ws_address: WS_ADDRESS.to_string(),
         rtc_listen: WEB_RTC_LISTEN.to_string(),
-        rtc_public: WEB_RTC_PUBLIC.to_string(),
+        rtc_public: ip,
         sdp_address: HYPER_API_ADDR.to_string(),
     };
 

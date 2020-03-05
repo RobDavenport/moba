@@ -54,13 +54,14 @@ impl Game {
     pub async fn start_game(&mut self) {
         let mut timer = Instant::now();
         let mut accumulator = 0.;
-        let mut updated: bool;
+        let mut game_running = true;
 
         println!("GAME LOOP INITIATED");
 
         let mut executor = Executor::new(init_systems(self.tick_time));
+        let mut ticker = tokio::time::interval(Duration::from_secs_f32(self.tick_time));
 
-        loop {
+        while game_running {
             let dt = timer.elapsed();
             let frame_time = dt.as_secs_f32();
             timer = timer + dt;
@@ -78,20 +79,10 @@ impl Game {
                     executor.execute(&mut self.world);
                     accumulator -= self.tick_time;
                 }
-                updated = true;
-            } else {
-                updated = false;
+                self.broadcast_state().await;
             }
 
-            if updated {
-                let time = self.tick_time;
-                join!(
-                    self.broadcast_state(),
-                    delay_for(Duration::from_secs_f32(time))
-                );
-            } else {
-                delay_for(Duration::from_secs_f32(self.tick_time)).await;
-            }
+            ticker.tick().await;
         }
     }
 

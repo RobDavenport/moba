@@ -5,6 +5,7 @@ pub mod animation;
 pub mod attacking;
 pub mod collider;
 pub mod energy;
+pub mod entity_spawner;
 pub mod facing;
 pub mod health;
 pub mod movement_data;
@@ -31,6 +32,7 @@ pub mod all {
     pub use super::attacking::*;
     pub use super::collider::*;
     pub use super::energy::*;
+    pub use super::entity_spawner::*;
     pub use super::facing::*;
     pub use super::health::*;
     pub use super::movement_data::*;
