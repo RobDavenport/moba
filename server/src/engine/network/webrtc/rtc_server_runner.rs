@@ -1,9 +1,10 @@
-use hyper::{
-    header::{self, HeaderValue},
-    server::conn::AddrStream,
-    service::{make_service_fn, service_fn},
-    Body, Error, Method, Response, Server, StatusCode,
-};
+use bytes::Bytes;
+use futures::stream::TryStreamExt;
+use futures::{FutureExt, StreamExt};
+use std::net::SocketAddrV4;
+use warp::http::header;
+use warp::reject::Rejection;
+use warp::{Buf, Filter};
 
 use webrtc_unreliable::Server as RtcServer;
 use webrtc_unreliable::SessionEndpoint;
@@ -25,42 +26,67 @@ pub async fn start_sdp_listener(
     endpoint: SessionEndpoint,
 ) -> tokio::task::JoinHandle<()> {
     println!("start sdp listener");
-    let make_svc = make_service_fn(move |addr_stream: &AddrStream| {
-        let session_endpoint = endpoint.clone();
-        let remote_addr = addr_stream.remote_addr();
-        async move {
-            Ok::<_, Error>(service_fn(move |req| {
-                let mut session_endpoint = session_endpoint.clone();
-                async move {
-                    if req.uri().path() == "/sdp" && req.method() == Method::POST {
-                        println!("WebRTC session request from {}", remote_addr);
-                        match session_endpoint.http_session_request(req.into_body()).await {
-                            Ok(mut resp) => {
-                                resp.headers_mut().insert(
-                                    header::ACCESS_CONTROL_ALLOW_ORIGIN,
-                                    HeaderValue::from_static("*"),
-                                );
-                                Ok(resp.map(Body::from))
-                            }
-                            Err(err) => Response::builder()
-                                .status(StatusCode::BAD_REQUEST)
-                                .body(Body::from(format!("error: {}", err))),
-                        }
-                    } else {
-                        Response::builder()
-                            .status(StatusCode::NOT_FOUND)
-                            .body(Body::from("not found"))
-                    }
-                }
-            }))
-        }
-    });
+
+    // let ws = warp::path("ws")
+    //     .and(warp::ws())
+    //     .map(|ws: warp::ws::Ws| {
+    //         // println!("ws!");
+
+    //         ws.on_upgrade(|websocket| {
+    //             println!("Ws upgraded!");
+    //             Ok("ws upgraded")
+    //             // // Just echo all messages back...
+    //             // let (tx, rx) = websocket.split();
+    //             // rx.forward(tx).map(|result| {
+    //             //     if let Err(e) = result {
+    //             //         eprintln!("websocket error: {:?}", e);
+    //             //     }
+    //             // })
+    //         })
+    //     });
 
     tokio::spawn(async move {
-        println!("Http SDP requests at: {}", sdp_addr);
-        Server::bind(&sdp_addr.parse().unwrap())
-            .serve(make_svc)
+        let sdp = warp::post()
+            .and(warp::path("sdp"))
+            .and(warp::body::stream())
+            .and_then(move |data| {
+                println!("Incomming SDP request...");
+                let mut session_endpoint = endpoint.clone();
+                let bytes = TryStreamExt::map_ok(data, |mut buf| Buf::to_bytes(&mut buf));
+                async move {
+                    match session_endpoint.http_session_request(bytes).await {
+                        Ok(mut resp) => {
+                            resp.headers_mut().insert(
+                                header::ACCESS_CONTROL_ALLOW_ORIGIN,
+                                header::HeaderValue::from_static("*"),
+                            );
+                            Ok::<_, Rejection>(resp)
+                        }
+                        Err(err) => Err::<_, Rejection>(warp::reject()),
+                    }
+                }
+            });
+
+        // let ws = warp::path("ws")
+        //     // The `ws()` filter will prepare the Websocket handshake.
+        //     .and(warp::ws())
+        //     .map(|ws: warp::ws::Ws| {
+        //         // And then our closure will be called when it completes...
+        //         ws.on_upgrade(|websocket| {
+        //             // Just echo all messages back...
+        //             let (sender, receiver) = websocket.split();
+        //             receiver.forward(sender).map(|result| {
+        //                 if let Err(e) = result {
+        //                     eprintln!("websocket error: {:?}", e);
+        //                 }
+        //             })
+        //         })
+        //     });
+
+        // let routes = ws.or(sdp);
+
+        warp::serve(sdp)
+            .run(sdp_addr.parse::<SocketAddrV4>().unwrap())
             .await
-            .expect("HTTP session server has died");
     })
 }
