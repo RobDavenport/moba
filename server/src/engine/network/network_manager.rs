@@ -102,9 +102,9 @@ fn on_ws_in_msg(
             if let Ok(protomsg) = protobuf::parse_from_bytes::<ClientMessage>(&data) {
                 if let Some(protomsgtype) = protomsg.msgData {
                     match protomsgtype {
-                        ClientMessage_oneof_msgData::command(commandMsg) => {
-                            if let Some(outMsg) = handle_client_command(commandMsg, id) {
-                                game_sender.try_send(outMsg);
+                        ClientMessage_oneof_msgData::command(command_msg) => {
+                            if let Some(out_msg) = handle_client_command(command_msg, id) {
+                                game_sender.try_send(out_msg);
                             };
                         }
                         ClientMessage_oneof_msgData::veryfiyRtc(..) => (),
@@ -127,16 +127,17 @@ async fn on_rtc_in_msg(
     if let Ok(protomsg) = protobuf::parse_from_bytes::<ClientMessage>(msg_text) {
         if let Some(protomsgtype) = protomsg.msgData {
             match protomsgtype {
-                ClientMessage_oneof_msgData::veryfiyRtc(veryfiyRtcMsg) => {
-                    println!("got uuid: {}", &veryfiyRtcMsg.uuid);
-                    if let Some(clientData) = clients.values_mut().find(|client| {
-                        client.socket_uuid == veryfiyRtcMsg.uuid && client.socket_addr == None
+                ClientMessage_oneof_msgData::veryfiyRtc(veryfiy_rtc_msg) => {
+                    println!("got uuid: {}", &veryfiy_rtc_msg.uuid);
+                    if let Some(client_data) = clients.values_mut().find(|client| {
+                        client.socket_uuid == veryfiy_rtc_msg.uuid && client.socket_addr == None
                     }) {
                         println!("User found!");
-                        clientData.socket_addr = Some(msg.remote_addr);
-                        clientData
+                        client_data.socket_addr = Some(msg.remote_addr);
+                        client_data
                             .ws_client_out
-                            .send(Message::binary(build_out_message(OutMessage::VerifiedUuid))).await;
+                            .send(Message::binary(build_out_message(OutMessage::VerifiedUuid)))
+                            .await;
                     }
                 }
                 _ => println!("Received unhandled message over WebRTC"),

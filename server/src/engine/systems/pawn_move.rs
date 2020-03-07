@@ -36,10 +36,10 @@ fn move_to_location(
     movement_speed: f32,
     tick_time: f32,
 ) -> bool {
-    let distance = (location - transform.position);
+    let distance = location - transform.position;
     let travel_distance = movement_speed * tick_time;
 
-    if (distance.magnitude() > travel_distance) {
+    if distance.magnitude() > travel_distance {
         let direction = distance.normalize();
         let travel_vec = direction * travel_distance;
         transform.position = transform.position + travel_vec;

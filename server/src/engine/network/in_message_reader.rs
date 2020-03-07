@@ -6,11 +6,11 @@ use crate::engine::input_command::InputCommand;
 use crate::engine::messaging::messages::GameMessage; //todo cut this in favor of reader?
 
 //Move this to a seperate class?
-pub fn handle_client_command(commandMsg: Command, id: PlayerId) -> Option<GameMessage> {
-    match commandMsg.commandType {
+pub fn handle_client_command(command_msg: Command, id: PlayerId) -> Option<GameMessage> {
+    match command_msg.commandType {
         Command_CommandType::NONE => None,
         Command_CommandType::MOVECOMMAND => {
-            let move_command = commandMsg.get_moveCommand();
+            let move_command = command_msg.get_moveCommand();
             Some(GameMessage::InputCommand {
                 id,
                 command: InputCommand::Move(

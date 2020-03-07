@@ -9,7 +9,6 @@ const WEB_RTC_LISTEN: &str = "0.0.0.0:8000";
 const LOCAL_IP: &str = "127.0.0.1:8000";
 const WEB_SERVICE_ADDR: &str = "0.0.0.0:8000";
 
-const WS_ADDRESS: &str = "0.0.0.0:8000";
 const TICKS_PER_SECOND: u8 = 30;
 
 #[tokio::main]
@@ -26,7 +25,6 @@ async fn main() {
 
     let game_config = GameConfig {
         ticks_per_second: TICKS_PER_SECOND,
-        ws_address: WS_ADDRESS.to_string(),
         rtc_listen: WEB_RTC_LISTEN.to_string(),
         rtc_public: ip,
         sdp_address: WEB_SERVICE_ADDR.to_string(),
@@ -37,5 +35,4 @@ async fn main() {
     println!("engine running...");
 
     join!(game, network, sdp,);
-    // t1.join().unwrap();
 }

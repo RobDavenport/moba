@@ -1,24 +1,20 @@
-use bytes::Bytes;
 use futures::stream::TryStreamExt;
 use futures::{FutureExt, StreamExt};
 use std::net::SocketAddrV4;
-use std::sync::{
-    atomic::{AtomicU32, Ordering},
-    Arc,
-};
+use std::sync::atomic::{AtomicU32, Ordering};
+use warp::filters::ws::Message;
 use warp::http::header;
 use warp::reject::Rejection;
 use warp::{Buf, Filter};
-use warp::filters::ws::Message;
 
 use uuid::Uuid;
 
 use crate::engine::messaging::messages::{OutMessage, WSClientMessage};
 use crate::engine::network::client_data::ClientData;
 
-use tokio::sync::mpsc::Sender;
 use crate::engine::components::player_controlled::PlayerId;
 use crate::engine::network::out_message_builder::build_out_message;
+use tokio::sync::mpsc::Sender;
 
 use futures_util::sink::SinkExt;
 
@@ -42,7 +38,7 @@ pub async fn start_rtc_server(listen_addr: String, public_addr: String) -> RtcSe
 pub async fn start_sdp_listener(
     sdp_addr: String,
     endpoint: SessionEndpoint,
-    manager_out: Sender<WSClientMessage>
+    manager_out: Sender<WSClientMessage>,
 ) -> tokio::task::JoinHandle<()> {
     println!("start sdp listener");
 
@@ -91,7 +87,11 @@ async fn ws_connected(ws: warp::ws::WebSocket, mut manager_out: Sender<WSClientM
     println!("Ws connected. User id: {} with uuid: {}", my_id, &uuid);
 
     let (mut sender, mut receiver) = ws.split();
-    sender.send(Message::binary(build_out_message(OutMessage::VerifyUuid(uuid.clone())))).await;
+    sender
+        .send(Message::binary(build_out_message(OutMessage::VerifyUuid(
+            uuid.clone(),
+        ))))
+        .await;
 
     manager_out.try_send(WSClientMessage::Connected(
         my_id,
