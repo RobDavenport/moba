@@ -5,8 +5,7 @@ use super::game::Game;
 use crate::engine::messaging::messages::*;
 
 use super::network::network_manager::NetworkManager;
-use super::network::webrtc::rtc_server_runner::*;
-//use super::network::ws::ws_server_runner::*;
+use super::network::service::{start_rtc_server, start_service};
 
 const CHANNEL_BUFFER_SIZE: usize = 512;
 
@@ -37,7 +36,7 @@ pub async fn build_engine(
     let (ws_client_sender, ws_in) = channel::<WSClientMessage>(CHANNEL_BUFFER_SIZE);
 
     let rtc_server = start_rtc_server(config.rtc_listen, config.rtc_public).await;
-    let sdp_handle = start_sdp_listener(
+    let sdp_handle = start_service(
         config.sdp_address,
         rtc_server.session_endpoint(),
         ws_client_sender,

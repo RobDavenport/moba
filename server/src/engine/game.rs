@@ -1,15 +1,10 @@
 use std::collections::{HashMap, VecDeque};
 use std::iter::*;
-use std::time::Duration;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
-use futures::join;
-
-use legion::prelude::*;
-use legion::world::World;
+use legion::{prelude::*, world::World};
 use nalgebra::Vector2;
 use tokio::sync::mpsc::{Receiver, Sender};
-use tokio::time::delay_for;
 
 use super::components::all::*;
 use super::game_events::GameEvent;
@@ -97,7 +92,6 @@ impl Game {
                 println!("Game: Client disconnected");
                 self.on_client_disconnected(id)
             }
-            _ => panic!("Unhandled GameMessage!"),
         }
     }
 
@@ -105,11 +99,11 @@ impl Game {
         match command {
             InputCommand::Move(loc, _attacking) => {
                 //todo: change to pawn stuff
-                if let Some(mut player_data) = self
+                if let Some(mut moving) = self
                     .world
                     .get_component_mut::<Moving>(*self.player_entities.get(&id).unwrap())
                 {
-                    player_data.location = Some(loc);
+                    moving.target = MoveTarget::Location(loc);
                     println!("player {} moved to: {}", id, loc);
                 }
             }
@@ -129,7 +123,7 @@ impl Game {
                 PlayerControlled { id: player_id },
                 Moving {
                     base_speed: 125.,
-                    location: None,
+                    target: MoveTarget::None,
                 },
             )),
         );
@@ -175,7 +169,7 @@ impl Game {
     }
 }
 
-fn init_systems(tick_time: f32) -> Vec<Box<Schedulable>> {
+fn init_systems(tick_time: f32) -> Vec<Box<dyn Schedulable>> {
     let mut out = Vec::new();
 
     println!("Initialized game systems with tick time of {}s", tick_time);

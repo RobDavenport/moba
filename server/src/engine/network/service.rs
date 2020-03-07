@@ -1,25 +1,18 @@
-use futures::stream::TryStreamExt;
-use futures::{FutureExt, StreamExt};
 use std::net::SocketAddrV4;
 use std::sync::atomic::{AtomicU32, Ordering};
-use warp::filters::ws::Message;
-use warp::http::header;
-use warp::reject::Rejection;
-use warp::{Buf, Filter};
+
+use futures::{stream::TryStreamExt, SinkExt, StreamExt};
+use tokio::sync::mpsc::Sender;
+use warp::{filters::ws::Message, http::header, reject::Rejection, Buf, Filter};
 
 use uuid::Uuid;
+use webrtc_unreliable::{Server as RtcServer, SessionEndpoint};
 
-use crate::engine::messaging::messages::{OutMessage, WSClientMessage};
-use crate::engine::network::client_data::ClientData;
-
-use crate::engine::components::player_controlled::PlayerId;
-use crate::engine::network::out_message_builder::build_out_message;
-use tokio::sync::mpsc::Sender;
-
-use futures_util::sink::SinkExt;
-
-use webrtc_unreliable::Server as RtcServer;
-use webrtc_unreliable::SessionEndpoint;
+use crate::engine::{
+    components::player_controlled::PlayerId,
+    messaging::messages::{OutMessage, WSClientMessage},
+    network::{client_data::ClientData, out_message_builder::build_out_message},
+};
 
 static NEXT_USER_ID: AtomicU32 = AtomicU32::new(0);
 
@@ -35,7 +28,7 @@ pub async fn start_rtc_server(listen_addr: String, public_addr: String) -> RtcSe
     rtc_server
 }
 
-pub async fn start_sdp_listener(
+pub async fn start_service(
     sdp_addr: String,
     endpoint: SessionEndpoint,
     manager_out: Sender<WSClientMessage>,
