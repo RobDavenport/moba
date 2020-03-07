@@ -112,4 +112,7 @@ async fn ws_connected(ws: warp::ws::WebSocket, mut manager_out: Sender<WSClientM
         };
         manager_out.try_send(WSClientMessage::Packet(my_id, msg.into_bytes()));
     }
+
+    //Client disconnected
+    manager_out.try_send(WSClientMessage::Disconnected(my_id));
 }
