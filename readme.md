@@ -6,6 +6,7 @@
 
 ### Programming Languages 
 - Rust, for the game server
+  - Warp
   - Tokio
   - Legion ECS
   - WebRTC Unreliable

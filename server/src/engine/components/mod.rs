@@ -1,5 +1,4 @@
 pub mod abilities;
-pub mod active_ability;
 pub mod ai_controlled;
 pub mod animation;
 pub mod attacking;
@@ -13,19 +12,17 @@ pub mod owned;
 pub mod player_controlled;
 pub mod provides_vision;
 pub mod receive_input;
-pub mod render;
 pub mod replicated;
 pub mod respawns;
 pub mod search_hostile;
 pub mod status_effects;
-pub mod target_entity;
 pub mod team;
 pub mod transform;
 pub mod velocity;
+pub mod visibility;
 
 pub mod all {
     pub use super::abilities::*;
-    pub use super::active_ability::*;
     pub use super::ai_controlled::*;
     pub use super::animation::*;
     pub use super::attacking::*;
@@ -39,13 +36,12 @@ pub mod all {
     pub use super::player_controlled::*;
     pub use super::provides_vision::*;
     pub use super::receive_input::*;
-    pub use super::render::*;
     pub use super::replicated::*;
     pub use super::respawns::*;
     pub use super::search_hostile::*;
     pub use super::status_effects::*;
-    pub use super::target_entity::*;
     pub use super::team::*;
     pub use super::transform::*;
     pub use super::velocity::*;
+    pub use super::visibility::*;
 }
