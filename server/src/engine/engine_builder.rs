@@ -1,5 +1,3 @@
-use std::thread;
-
 use tokio::sync::mpsc::{channel, Receiver, Sender};
 use webrtc_unreliable::Server as RtcServer;
 
@@ -7,14 +5,12 @@ use super::game::Game;
 use crate::engine::messaging::messages::*;
 
 use super::network::network_manager::NetworkManager;
-use super::network::webrtc::rtc_server_runner::*;
-use super::network::ws::ws_server_runner::*;
+use super::network::service::{start_rtc_server, start_service};
 
-const CHANNEL_BUFFER_SIZE: usize = 256;
+const CHANNEL_BUFFER_SIZE: usize = 512;
 
 pub struct GameConfig {
     pub ticks_per_second: u8,
-    pub ws_address: String,
     pub rtc_listen: String,
     pub rtc_public: String,
     pub sdp_address: String,
@@ -23,7 +19,6 @@ pub struct GameConfig {
 pub async fn build_engine(
     config: GameConfig,
 ) -> (
-    thread::JoinHandle<()>,
     tokio::task::JoinHandle<()>,
     tokio::task::JoinHandle<()>,
     tokio::task::JoinHandle<()>,
@@ -40,10 +35,13 @@ pub async fn build_engine(
     //For WS Clients --> NetworkManager
     let (ws_client_sender, ws_in) = channel::<WSClientMessage>(CHANNEL_BUFFER_SIZE);
 
-    let ws_thread = start_ws_server(config.ws_address, ws_client_sender);
-
     let rtc_server = start_rtc_server(config.rtc_listen, config.rtc_public).await;
-    let sdp_handle = start_sdp_listener(config.sdp_address, rtc_server.session_endpoint()).await;
+    let sdp_handle = start_service(
+        config.sdp_address,
+        rtc_server.session_endpoint(),
+        ws_client_sender,
+    )
+    .await;
 
     let network_handle = start_network_manager(
         ws_in,
@@ -60,7 +58,7 @@ pub async fn build_engine(
         game_in,
     );
 
-    (ws_thread, game_handle, network_handle, sdp_handle)
+    (game_handle, network_handle, sdp_handle)
 }
 
 fn start_network_manager(

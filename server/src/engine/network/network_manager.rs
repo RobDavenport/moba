@@ -5,6 +5,7 @@ use webrtc_unreliable::Server as RtcServer;
 use webrtc_unreliable::{MessageResult, MessageType};
 
 use futures::{future::FutureExt, select};
+use futures_util::sink::SinkExt;
 
 use super::client_data::ClientData;
 use crate::engine::messaging::messages::*;
@@ -15,6 +16,7 @@ use super::in_message_reader::handle_client_command;
 use super::out_message_builder::build_out_message;
 use super::protobuf::ClientMessage::*; //todo cut this in favor of reader?
 
+use warp::filters::ws::Message;
 pub struct NetworkManager {
     clients: HashMap<PlayerId, ClientData>, //Todo: Change to a hash map?
     ws_in: Receiver<WSClientMessage>,
@@ -51,7 +53,7 @@ impl NetworkManager {
                     None => (),
                 },
                 rtc_msg = self.rtc_server.recv(&mut msg_buf).fuse() => match rtc_msg {
-                    Ok(msg) => on_rtc_in_msg(msg, &msg_buf, &mut self.clients, &mut self.game_sender),
+                    Ok(msg) => on_rtc_in_msg(msg, &msg_buf, &mut self.clients, &mut self.game_sender).await,
                     Err(e) => println!("rtc server: {}", e),
                 },
                 reliable_result = self.reliable_out_queue.recv().fuse() => match reliable_result {
@@ -59,8 +61,8 @@ impl NetworkManager {
                         handle_reliable_out_msg(
                             get_targets(targets, &self.clients),
                             out_reliable,
-                            &self.clients
-                        ),
+                            &mut self.clients
+                        ).await,
                     None => (),
                 },
                 unreliable_result = self.unreliable_out_queue.recv().fuse() => match unreliable_result {
@@ -100,9 +102,9 @@ fn on_ws_in_msg(
             if let Ok(protomsg) = protobuf::parse_from_bytes::<ClientMessage>(&data) {
                 if let Some(protomsgtype) = protomsg.msgData {
                     match protomsgtype {
-                        ClientMessage_oneof_msgData::command(commandMsg) => {
-                            if let Some(outMsg) = handle_client_command(commandMsg, id) {
-                                game_sender.try_send(outMsg);
+                        ClientMessage_oneof_msgData::command(command_msg) => {
+                            if let Some(out_msg) = handle_client_command(command_msg, id) {
+                                game_sender.try_send(out_msg);
                             };
                         }
                         ClientMessage_oneof_msgData::veryfiyRtc(..) => (),
@@ -113,7 +115,7 @@ fn on_ws_in_msg(
     };
 }
 
-fn on_rtc_in_msg(
+async fn on_rtc_in_msg(
     msg: MessageResult,
     msg_buf: &Vec<u8>,
     clients: &mut HashMap<PlayerId, ClientData>,
@@ -125,16 +127,17 @@ fn on_rtc_in_msg(
     if let Ok(protomsg) = protobuf::parse_from_bytes::<ClientMessage>(msg_text) {
         if let Some(protomsgtype) = protomsg.msgData {
             match protomsgtype {
-                ClientMessage_oneof_msgData::veryfiyRtc(veryfiyRtcMsg) => {
-                    println!("got uuid: {}", &veryfiyRtcMsg.uuid);
-                    if let Some(clientData) = clients.values_mut().find(|client| {
-                        client.socket_uuid == veryfiyRtcMsg.uuid && client.socket_addr == None
+                ClientMessage_oneof_msgData::veryfiyRtc(veryfiy_rtc_msg) => {
+                    println!("got uuid: {}", &veryfiy_rtc_msg.uuid);
+                    if let Some(client_data) = clients.values_mut().find(|client| {
+                        client.socket_uuid == veryfiy_rtc_msg.uuid && client.socket_addr == None
                     }) {
                         println!("User found!");
-                        clientData.socket_addr = Some(msg.remote_addr);
-                        clientData
+                        client_data.socket_addr = Some(msg.remote_addr);
+                        client_data
                             .ws_client_out
-                            .send(build_out_message(OutMessage::VerifiedUuid));
+                            .send(Message::binary(build_out_message(OutMessage::VerifiedUuid)))
+                            .await;
                     }
                 }
                 _ => println!("Received unhandled message over WebRTC"),
@@ -143,20 +146,20 @@ fn on_rtc_in_msg(
     }
 }
 
-fn handle_reliable_out_msg(
+async fn handle_reliable_out_msg(
     out_indexes: Vec<PlayerId>,
     out_msg: OutMessage,
-    clients: &HashMap<PlayerId, ClientData>,
+    clients: &mut HashMap<PlayerId, ClientData>,
 ) {
-    let output = build_out_message(out_msg);
+    let output = Message::binary(build_out_message(out_msg));
 
     for idx in out_indexes {
         clients
-            .get(&idx)
+            .get_mut(&idx)
             .unwrap()
             .ws_client_out
             .send(output.clone())
-            .unwrap();
+            .await;
     }
 }
 
