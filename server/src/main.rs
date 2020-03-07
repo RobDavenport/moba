@@ -7,7 +7,7 @@ use engine::engine_builder::*;
 
 const WEB_RTC_LISTEN: &str = "0.0.0.0:8000";
 const LOCAL_IP: &str = "127.0.0.1:8000";
-const WEB_SERVICE_ADDR: &str = "0.0.0.0:8001";
+const WEB_SERVICE_ADDR: &str = "0.0.0.0:8000";
 
 const WS_ADDRESS: &str = "0.0.0.0:8000";
 const TICKS_PER_SECOND: u8 = 30;
@@ -32,10 +32,10 @@ async fn main() {
         sdp_address: WEB_SERVICE_ADDR.to_string(),
     };
 
-    let (t1, game, network, sdp) = build_engine(game_config).await;
+    let (game, network, sdp) = build_engine(game_config).await;
 
     println!("engine running...");
 
     join!(game, network, sdp,);
-    t1.join().unwrap();
+    // t1.join().unwrap();
 }

@@ -2,12 +2,30 @@ use bytes::Bytes;
 use futures::stream::TryStreamExt;
 use futures::{FutureExt, StreamExt};
 use std::net::SocketAddrV4;
+use std::sync::{
+    atomic::{AtomicU32, Ordering},
+    Arc,
+};
 use warp::http::header;
 use warp::reject::Rejection;
 use warp::{Buf, Filter};
+use warp::filters::ws::Message;
+
+use uuid::Uuid;
+
+use crate::engine::messaging::messages::{OutMessage, WSClientMessage};
+use crate::engine::network::client_data::ClientData;
+
+use tokio::sync::mpsc::Sender;
+use crate::engine::components::player_controlled::PlayerId;
+use crate::engine::network::out_message_builder::build_out_message;
+
+use futures_util::sink::SinkExt;
 
 use webrtc_unreliable::Server as RtcServer;
 use webrtc_unreliable::SessionEndpoint;
+
+static NEXT_USER_ID: AtomicU32 = AtomicU32::new(0);
 
 pub async fn start_rtc_server(listen_addr: String, public_addr: String) -> RtcServer {
     let rtc_server = tokio::spawn(RtcServer::new(
@@ -24,26 +42,9 @@ pub async fn start_rtc_server(listen_addr: String, public_addr: String) -> RtcSe
 pub async fn start_sdp_listener(
     sdp_addr: String,
     endpoint: SessionEndpoint,
+    manager_out: Sender<WSClientMessage>
 ) -> tokio::task::JoinHandle<()> {
     println!("start sdp listener");
-
-    // let ws = warp::path("ws")
-    //     .and(warp::ws())
-    //     .map(|ws: warp::ws::Ws| {
-    //         // println!("ws!");
-
-    //         ws.on_upgrade(|websocket| {
-    //             println!("Ws upgraded!");
-    //             Ok("ws upgraded")
-    //             // // Just echo all messages back...
-    //             // let (tx, rx) = websocket.split();
-    //             // rx.forward(tx).map(|result| {
-    //             //     if let Err(e) = result {
-    //             //         eprintln!("websocket error: {:?}", e);
-    //             //     }
-    //             // })
-    //         })
-    //     });
 
     tokio::spawn(async move {
         let sdp = warp::post()
@@ -67,26 +68,48 @@ pub async fn start_sdp_listener(
                 }
             });
 
-        // let ws = warp::path("ws")
-        //     // The `ws()` filter will prepare the Websocket handshake.
-        //     .and(warp::ws())
-        //     .map(|ws: warp::ws::Ws| {
-        //         // And then our closure will be called when it completes...
-        //         ws.on_upgrade(|websocket| {
-        //             // Just echo all messages back...
-        //             let (sender, receiver) = websocket.split();
-        //             receiver.forward(sender).map(|result| {
-        //                 if let Err(e) = result {
-        //                     eprintln!("websocket error: {:?}", e);
-        //                 }
-        //             })
-        //         })
-        //     });
+        let ws = warp::path("ws")
+            .map(move || manager_out.clone())
+            .and(warp::ws())
+            .map(|manager_out, ws: warp::ws::Ws| {
+                println!("Ws upgrade request");
+                ws.on_upgrade(|websocket| ws_connected(websocket, manager_out))
+            });
 
-        // let routes = ws.or(sdp);
+        let routes = ws.or(sdp);
 
-        warp::serve(sdp)
+        warp::serve(routes)
             .run(sdp_addr.parse::<SocketAddrV4>().unwrap())
             .await
     })
+}
+
+async fn ws_connected(ws: warp::ws::WebSocket, mut manager_out: Sender<WSClientMessage>) {
+    let my_id = PlayerId(NEXT_USER_ID.fetch_add(1, Ordering::Relaxed));
+    let uuid = Uuid::new_v4().to_string();
+
+    println!("Ws connected. User id: {} with uuid: {}", my_id, &uuid);
+
+    let (mut sender, mut receiver) = ws.split();
+    sender.send(Message::binary(build_out_message(OutMessage::VerifyUuid(uuid.clone())))).await;
+
+    manager_out.try_send(WSClientMessage::Connected(
+        my_id,
+        ClientData {
+            ws_client_out: sender,
+            socket_addr: None,
+            socket_uuid: uuid,
+        },
+    ));
+
+    while let Some(result) = receiver.next().await {
+        let msg = match result {
+            Ok(msg) => msg,
+            Err(e) => {
+                println!("Websocket error! {}", e);
+                break;
+            }
+        };
+        manager_out.try_send(WSClientMessage::Packet(my_id, msg.into_bytes()));
+    }
 }
