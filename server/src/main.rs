@@ -1,33 +1,40 @@
 #![recursion_limit = "1024"]
+use std::env::var_os;
 
 use futures::join;
 
 mod engine;
 use engine::engine_builder::*;
 
-const WEB_RTC_LISTEN: &str = "0.0.0.0:8000";
-const LOCAL_IP: &str = "127.0.0.1:8000";
-const WEB_SERVICE_ADDR: &str = "0.0.0.0:8000";
-
+const WEB_SERVICE_ADDR: &str = "0.0.0.0";
 const TICKS_PER_SECOND: u8 = 30;
+const DEFAULT_PORT: &str = "8000";
 
 #[tokio::main]
 async fn main() {
+    let port = match var_os("PORT") {
+        Some(val) => val.into_string().unwrap(),
+        None => String::from(DEFAULT_PORT),
+    };
+
+    println!("Use port: {}", &port);
+
     let ip = match my_internet_ip::get() {
-        Ok(ip) => ip.to_string() + ":8000",
+        Ok(ip) => ip.to_string() + ":" + &port,
         Err(e) => {
             println!("Couldn't get public IP. Local only.");
-            LOCAL_IP.to_string()
+            WEB_SERVICE_ADDR.to_string() + ":" + &port
         }
     };
 
-    println!("{}", ip);
+    let service_address = String::from(WEB_SERVICE_ADDR) + ":" + &port;
+
+    println!("Server will operate at: {}", &ip);
 
     let game_config = GameConfig {
         ticks_per_second: TICKS_PER_SECOND,
-        rtc_listen: WEB_RTC_LISTEN.to_string(),
-        rtc_public: ip,
-        sdp_address: WEB_SERVICE_ADDR.to_string(),
+        service_address: service_address,
+        public_address: ip,
     };
 
     let (game, network, sdp) = build_engine(game_config).await;

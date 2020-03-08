@@ -33,7 +33,7 @@ pub async fn start_service(
     endpoint: SessionEndpoint,
     manager_out: Sender<WSClientMessage>,
 ) -> tokio::task::JoinHandle<()> {
-    println!("start sdp listener");
+    println!("Web service starting.");
 
     tokio::spawn(async move {
         let sdp = warp::post()

@@ -11,9 +11,8 @@ const CHANNEL_BUFFER_SIZE: usize = 512;
 
 pub struct GameConfig {
     pub ticks_per_second: u8,
-    pub rtc_listen: String,
-    pub rtc_public: String,
-    pub sdp_address: String,
+    pub service_address: String,
+    pub public_address: String,
 }
 
 pub async fn build_engine(
@@ -35,9 +34,9 @@ pub async fn build_engine(
     //For WS Clients --> NetworkManager
     let (ws_client_sender, ws_in) = channel::<WSClientMessage>(CHANNEL_BUFFER_SIZE);
 
-    let rtc_server = start_rtc_server(config.rtc_listen, config.rtc_public).await;
+    let rtc_server = start_rtc_server(config.service_address.clone(), config.public_address).await;
     let sdp_handle = start_service(
-        config.sdp_address,
+        config.service_address,
         rtc_server.session_endpoint(),
         ws_client_sender,
     )
