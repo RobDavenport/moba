@@ -1,4 +1,4 @@
-import * as Serializer from './serializer'
+import * as Serializer from './Serializer'
 import * as Deserializer from './Deserializer'
 import MobaWindow from '../MobaWindow'
 import { CartesianPoint } from '../helpers/GameMath'
