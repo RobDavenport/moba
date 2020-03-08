@@ -28,7 +28,7 @@ module.exports = (env, args) => {
         TextEncoder: ['text-encoding', 'TextEncoder']
       }),
       new CopyWebpackPlugin([
-        { from: 'assets' }
+        { from: 'assets', to: 'assets' }
       ]),
     ],
     module: {
