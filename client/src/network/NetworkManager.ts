@@ -10,7 +10,7 @@ import { ServerMessage } from './protobuf/Servermessage_pb'
 
 const address: string = "moba-test.herokuapp.com"
 const wsAddress = 'wss://' + address + '/ws'
-const rtcAddress = 'https://' + address + '/sdp'
+const rtcAddress = 'http://' + address + '/sdp'
 
 export default class NetworkManager {
   private ws: WebSocket
