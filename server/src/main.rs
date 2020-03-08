@@ -20,10 +20,10 @@ async fn main() {
     println!("Use port: {}", &port);
 
     let ip = match my_internet_ip::get() {
-        Ok(ip) => ip.to_string(), //+ ":" + &port,
+        Ok(ip) => ip.to_string() + ":" + &port,
         Err(e) => {
             println!("Couldn't get public IP. Local only.");
-            WEB_SERVICE_ADDR.to_string() // + ":" + &port
+            WEB_SERVICE_ADDR.to_string() + ":" + &port
         }
     };
 
