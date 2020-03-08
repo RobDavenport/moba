@@ -46,18 +46,13 @@ pub async fn start_service(
                 async move {
                     match session_endpoint.http_session_request(bytes).await {
                         Ok(mut resp) => {
-                            println!("valid SDP request");
                             resp.headers_mut().insert(
                                 header::ACCESS_CONTROL_ALLOW_ORIGIN,
                                 header::HeaderValue::from_static("*")
                             );
-                            println!("invalid SDP request");
                             Ok::<_, Rejection>(resp)
                         }
-                        Err(err) => {
-                            println!("couldnt read bytes");
-                            Err::<_, Rejection>(warp::reject())
-                        }
+                        Err(err) => Err::<_, Rejection>(warp::reject())
                     }
                 }
             });
