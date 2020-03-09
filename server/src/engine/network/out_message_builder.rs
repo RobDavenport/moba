@@ -14,6 +14,10 @@ pub fn build_out_message(out: OutMessage) -> Vec<u8> {
         } => update_tick(frame, x, y, replication_id),
         OutMessage::VerifyUuid(uuid) => verify_uuid(uuid),
         OutMessage::VerifiedUuid => verified_uuid(),
+        OutMessage::EntityDestroyed {
+            frame,
+            replication_id,
+        } => entity_destroyed(frame, replication_id),
     }
 }
 
@@ -46,5 +50,17 @@ fn verified_uuid() -> Vec<u8> {
     let mut output = ServerMessage::new();
     output.set_msgType(ServerMessage_ServerMessageType::VERIFIEDUUID);
     output.set_verifiedUuid(ServerMessage_VerifiedUuid::new());
+    output.write_to_bytes().unwrap()
+}
+
+fn entity_destroyed(frame: u32, replication_id: ReplicationId) -> Vec<u8> {
+    let mut output = ServerMessage::new();
+    output.set_msgType((ServerMessage_ServerMessageType::ENTITYDESTROYED));
+
+    let mut inner = ServerMessage_EntityDestroyed::new();
+    inner.set_frame(frame);
+    inner.set_replicationId(replication_id.0);
+
+    output.set_entityDestroyed(inner);
     output.write_to_bytes().unwrap()
 }

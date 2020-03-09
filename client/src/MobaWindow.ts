@@ -165,6 +165,15 @@ export default class MobaWindow extends Phaser.Scene {
     this.lastUpdateFrame = data.frame
   }
 
+  onEntityDestroyed(data: ServerMessage.EntityDestroyed.AsObject) {
+    let entity = this.entities.get(data.replicationid)
+
+    if (entity !== undefined) {
+      entity.sprite.destroy()
+      this.entities.delete(data.replicationid)
+    }
+  }
+
   interpolateObjects() {
     this.entities.forEach(obj => obj.interpolate())
   }

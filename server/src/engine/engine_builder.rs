@@ -35,7 +35,7 @@ pub async fn build_engine(
     let (ws_client_sender, ws_in) = channel::<WSClientMessage>(CHANNEL_BUFFER_SIZE);
 
     let rtc_server = start_rtc_server(config.service_address.clone(), config.public_address).await;
-    let sdp_handle = start_service(
+    let service = start_service(
         config.service_address,
         rtc_server.session_endpoint(),
         ws_client_sender,
@@ -57,7 +57,7 @@ pub async fn build_engine(
         game_in,
     );
 
-    (game_handle, network_handle, sdp_handle)
+    (game_handle, network_handle, service)
 }
 
 fn start_network_manager(

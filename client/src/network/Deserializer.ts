@@ -5,7 +5,8 @@ import NetworkManager from './NetworkManager'
 const ServerMessageMap = new Map<integer, Function>([
   [ServerMessage.ServerMessageType.UPDATETICK, onUpdate],
   [ServerMessage.ServerMessageType.VERIFYUUID, verifyUuid],
-  [ServerMessage.ServerMessageType.VERIFIEDUUID, verifiedUuid]
+  [ServerMessage.ServerMessageType.VERIFIEDUUID, verifiedUuid],
+  [ServerMessage.ServerMessageType.ENTITYDESTROYED, entityDestroyed],
 ])
 
 function onUpdate(message: ServerMessage.AsObject, dst: MobaWindow, net: NetworkManager) {
@@ -18,6 +19,10 @@ function verifyUuid(message: ServerMessage.AsObject, dst: MobaWindow, net: Netwo
 
 function verifiedUuid(_: ServerMessage.AsObject, dst: MobaWindow, net: NetworkManager) {
   net.verifiedUuid()
+}
+
+function entityDestroyed(message: ServerMessage.AsObject, dst: MobaWindow, net: NetworkManager) {
+  dst.onEntityDestroyed(message.entitydestroyed)
 }
 
 //TODO: Remove this, instead push deserialized messages into a centralized queue

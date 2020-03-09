@@ -6,6 +6,7 @@ message ServerMessage {
     UPDATETICK = 1;
     VERIFYUUID = 2;
     VERIFIEDUUID = 3;
+    ENTITYDESTROYED = 4;
   }
 
   message UpdateTick {
@@ -21,14 +22,21 @@ message ServerMessage {
   
   message VerifiedUuid { }
 
+  message EntityDestroyed {
+    uint32 frame = 1;
+    uint32 replicationId = 2;
+  }
+
 
   //Define actual message Data
   ServerMessageType msgType = 1;
   
   oneof msgData {
     UpdateTick updateTick = 2;
+    EntityDestroyed entityDestroyed = 6;
     VerifyUuid verifyUuid = 100;
     VerifiedUuid verifiedUuid = 101;
+
   }
 }
 

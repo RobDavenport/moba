@@ -9,6 +9,10 @@ pub enum OutMessage {
         y: f32,
         replication_id: ReplicationId,
     },
+    EntityDestroyed {
+        frame: u32,
+        replication_id: ReplicationId,
+    },
     VerifyUuid(String),
     VerifiedUuid,
 }

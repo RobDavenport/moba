@@ -160,6 +160,19 @@ impl Game {
 
             self.out_unreliable.try_send((OutTarget::All, output));
         }
+
+        for event in self.game_events.drain(..) {
+            match event {
+                GameEvent::EntityDestroyed(id) => self.out_reliable.try_send((
+                    OutTarget::All,
+                    OutMessage::EntityDestroyed {
+                        frame: self.game_frame,
+                        replication_id: id,
+                    },
+                )),
+                GameEvent::ClientDisconnected(_) => Ok(()),
+            };
+        }
     }
 
     fn get_new_replication_id(&mut self) -> u32 {

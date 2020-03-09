@@ -12,6 +12,11 @@ export class ServerMessage extends jspb.Message {
   getUpdatetick(): ServerMessage.UpdateTick | undefined;
   setUpdatetick(value?: ServerMessage.UpdateTick): void;
 
+  hasEntitydestroyed(): boolean;
+  clearEntitydestroyed(): void;
+  getEntitydestroyed(): ServerMessage.EntityDestroyed | undefined;
+  setEntitydestroyed(value?: ServerMessage.EntityDestroyed): void;
+
   hasVerifyuuid(): boolean;
   clearVerifyuuid(): void;
   getVerifyuuid(): ServerMessage.VerifyUuid | undefined;
@@ -37,6 +42,7 @@ export namespace ServerMessage {
   export type AsObject = {
     msgtype: ServerMessage.ServerMessageTypeMap[keyof ServerMessage.ServerMessageTypeMap],
     updatetick?: ServerMessage.UpdateTick.AsObject,
+    entitydestroyed?: ServerMessage.EntityDestroyed.AsObject,
     verifyuuid?: ServerMessage.VerifyUuid.AsObject,
     verifieduuid?: ServerMessage.VerifiedUuid.AsObject,
   }
@@ -109,11 +115,36 @@ export namespace ServerMessage {
     }
   }
 
+  export class EntityDestroyed extends jspb.Message {
+    getFrame(): number;
+    setFrame(value: number): void;
+
+    getReplicationid(): number;
+    setReplicationid(value: number): void;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): EntityDestroyed.AsObject;
+    static toObject(includeInstance: boolean, msg: EntityDestroyed): EntityDestroyed.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: EntityDestroyed, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): EntityDestroyed;
+    static deserializeBinaryFromReader(message: EntityDestroyed, reader: jspb.BinaryReader): EntityDestroyed;
+  }
+
+  export namespace EntityDestroyed {
+    export type AsObject = {
+      frame: number,
+      replicationid: number,
+    }
+  }
+
   export interface ServerMessageTypeMap {
     NONE: 0;
     UPDATETICK: 1;
     VERIFYUUID: 2;
     VERIFIEDUUID: 3;
+    ENTITYDESTROYED: 4;
   }
 
   export const ServerMessageType: ServerMessageTypeMap;
@@ -121,6 +152,7 @@ export namespace ServerMessage {
   export enum MsgdataCase {
     MSGDATA_NOT_SET = 0,
     UPDATETICK = 2,
+    ENTITYDESTROYED = 6,
     VERIFYUUID = 100,
     VERIFIEDUUID = 101,
   }
