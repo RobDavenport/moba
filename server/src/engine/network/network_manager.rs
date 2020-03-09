@@ -16,9 +16,10 @@ use super::in_message_reader::handle_client_command;
 use super::out_message_builder::build_out_message;
 use super::protobuf::ClientMessage::*; //todo cut this in favor of reader?
 
+//TODO: add hash for "game/match ID?"
 use warp::filters::ws::Message;
 pub struct NetworkManager {
-    clients: HashMap<PlayerId, ClientData>, //Todo: Change to a hash map?
+    clients: HashMap<PlayerId, ClientData>, //Todo: Change to a hash map of hashmaps?
     ws_in: Receiver<WSClientMessage>,
     game_sender: Sender<GameMessage>,
     reliable_out_queue: Receiver<(OutTarget, OutMessage)>,
