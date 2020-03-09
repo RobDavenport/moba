@@ -48,11 +48,11 @@ pub async fn start_service(
                         Ok(mut resp) => {
                             resp.headers_mut().insert(
                                 header::ACCESS_CONTROL_ALLOW_ORIGIN,
-                                header::HeaderValue::from_static("*"),
+                                header::HeaderValue::from_static("*")
                             );
                             Ok::<_, Rejection>(resp)
                         }
-                        Err(err) => Err::<_, Rejection>(warp::reject()),
+                        Err(err) => Err::<_, Rejection>(warp::reject())
                     }
                 }
             });
