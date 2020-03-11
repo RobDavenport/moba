@@ -13,7 +13,6 @@ use crate::engine::messaging::messages::*;
 use crate::engine::components::player_controlled::PlayerId;
 
 use super::in_message_reader::handle_client_command;
-use super::out_message_builder::build_out_message;
 use super::protobuf::ClientMessage::*; //todo cut this in favor of reader?
 
 //TODO: add hash for "game/match ID?"
@@ -137,7 +136,7 @@ async fn on_rtc_in_msg(
                         client_data.socket_addr = Some(msg.remote_addr);
                         client_data
                             .ws_client_out
-                            .send(Message::binary(build_out_message(OutMessage::VerifiedUuid)))
+                            .send(Message::binary(OutMessage::VerifiedUuid.to_proto_bytes()))
                             .await;
                     }
                 }
@@ -152,7 +151,7 @@ async fn handle_reliable_out_msg(
     out_msg: OutMessage,
     clients: &mut HashMap<PlayerId, ClientData>,
 ) {
-    let output = Message::binary(build_out_message(out_msg));
+    let output = Message::binary(out_msg.to_proto_bytes());
 
     for idx in out_indexes {
         clients
@@ -170,7 +169,7 @@ async fn handle_unreliable_out_msg(
     rtc_server: &mut RtcServer,
     clients: &HashMap<PlayerId, ClientData>,
 ) {
-    let output = build_out_message(out_msg);
+    let output = out_msg.to_proto_bytes();
 
     for idx in out_indexes {
         let client = clients.get(&idx).unwrap();

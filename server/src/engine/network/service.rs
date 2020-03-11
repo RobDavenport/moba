@@ -11,7 +11,7 @@ use webrtc_unreliable::{Server as RtcServer, SessionEndpoint};
 use crate::engine::{
     components::player_controlled::PlayerId,
     messaging::messages::{OutMessage, WSClientMessage},
-    network::{client_data::ClientData, out_message_builder::build_out_message},
+    network::client_data::ClientData,
 };
 
 static NEXT_USER_ID: AtomicU32 = AtomicU32::new(0);
@@ -81,9 +81,9 @@ async fn ws_connected(ws: warp::ws::WebSocket, mut manager_out: Sender<WSClientM
 
     let (mut sender, mut receiver) = ws.split();
     sender
-        .send(Message::binary(build_out_message(OutMessage::VerifyUuid(
-            uuid.clone(),
-        ))))
+        .send(Message::binary(
+            (OutMessage::VerifyUuid(uuid.clone()).to_proto_bytes()),
+        ))
         .await;
 
     manager_out.try_send(WSClientMessage::Connected(

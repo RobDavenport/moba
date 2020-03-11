@@ -7,29 +7,23 @@ use crate::engine::messaging::messages::GameMessage; //todo cut this in favor of
 
 //Move this to a seperate class?
 pub fn handle_client_command(command_msg: Command, id: PlayerId) -> Option<GameMessage> {
-    match command_msg.commandType {
-        Command_CommandType::NONE => None,
-        Command_CommandType::MOVECOMMAND => {
-            let move_command = command_msg.get_moveCommand();
-            Some(GameMessage::InputCommand {
-                id,
-                command: InputCommand::Move(
-                    Vector2::new(move_command.x, move_command.y),
-                    move_command.isAttack,
-                ),
-            })
-        }
-        Command_CommandType::MOVEDELTA => {
+    match command_msg.command {
+        Some(Command_oneof_command::moveCommand(cmd)) => Some(GameMessage::InputCommand {
+            id,
+            command: InputCommand::Move(Vector2::new(cmd.x, cmd.y), cmd.isAttack),
+        }),
+        Some(Command_oneof_command::moveDelta(cmd)) => {
             println!("TODO: MoveDelta");
             None
         }
-        Command_CommandType::ATTACK => {
-            println!("TODO: Attack");
-            None
-        }
-        Command_CommandType::ABILITY => {
+        Some(Command_oneof_command::ability(cmd)) => {
             println!("TODO: Ability");
             None
         }
+        Some(Command_oneof_command::attack(cmd)) => {
+            println!("TODO: Attack");
+            None
+        }
+        None => None,
     }
 }

@@ -1,14 +1,6 @@
 syntax = "proto3";
 
 message ServerMessage {
-  enum ServerMessageType {
-    NONE = 0;
-    UPDATETICK = 1;
-    VERIFYUUID = 2;
-    VERIFIEDUUID = 3;
-    ENTITYDESTROYED = 4;
-  }
-
   message UpdateTick {
     uint32 frame = 1;
     uint32 replicationId = 2;
@@ -27,16 +19,23 @@ message ServerMessage {
     uint32 replicationId = 2;
   }
 
+  message Snapshot {
+    uint32 frame = 1;
+    repeated EntityData entityData = 2;
+  }
 
-  //Define actual message Data
-  ServerMessageType msgType = 1;
+  message EntityData {
+    float x = 1;
+    float y = 2;
+    uint32 replicationId = 3;
+  }
   
   oneof msgData {
-    UpdateTick updateTick = 2;
-    EntityDestroyed entityDestroyed = 6;
-    VerifyUuid verifyUuid = 100;
-    VerifiedUuid verifiedUuid = 101;
-
+    UpdateTick updateTick = 1;
+    Snapshot snapshot = 2;
+    EntityDestroyed entityDestroyed = 5;
+    VerifyUuid verifyUuid = 25;
+    VerifiedUuid verifiedUuid = 26;
   }
 }
 

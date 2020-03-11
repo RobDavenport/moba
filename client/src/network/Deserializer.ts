@@ -3,10 +3,11 @@ import MobaWindow from '../MobaWindow'
 import NetworkManager from './NetworkManager'
 
 const ServerMessageMap = new Map<integer, Function>([
-  [ServerMessage.ServerMessageType.UPDATETICK, onUpdate],
-  [ServerMessage.ServerMessageType.VERIFYUUID, verifyUuid],
-  [ServerMessage.ServerMessageType.VERIFIEDUUID, verifiedUuid],
-  [ServerMessage.ServerMessageType.ENTITYDESTROYED, entityDestroyed],
+  [ServerMessage.MsgdataCase.UPDATETICK, onUpdate],
+  [ServerMessage.MsgdataCase.VERIFYUUID, verifyUuid],
+  [ServerMessage.MsgdataCase.VERIFIEDUUID, verifiedUuid],
+  [ServerMessage.MsgdataCase.ENTITYDESTROYED, entityDestroyed],
+  [ServerMessage.MsgdataCase.SNAPSHOT, snapshot]
 ])
 
 function onUpdate(message: ServerMessage.AsObject, dst: MobaWindow, net: NetworkManager) {
@@ -25,14 +26,19 @@ function entityDestroyed(message: ServerMessage.AsObject, dst: MobaWindow, net: 
   dst.onEntityDestroyed(message.entitydestroyed)
 }
 
+function snapshot(message: ServerMessage.AsObject, dst: MobaWindow, net: NetworkManager) {
+  dst.onSnapshot(message.snapshot)
+}
+
+
 //TODO: Remove this, instead push deserialized messages into a centralized queue
 //inside of the game engine/window
 export function handleServerMessage(data: Uint8Array, dst: MobaWindow, net: NetworkManager) {
-  const message = ServerMessage.deserializeBinary(data).toObject();
-  const func = ServerMessageMap.get(message.msgtype);
+  const message = ServerMessage.deserializeBinary(data)
+  const func = ServerMessageMap.get(message.getMsgdataCase());
 
   if (func) {
-    func(message, dst, net)
+    func(message.toObject(), dst, net)
   }
 }
 

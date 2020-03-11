@@ -3,7 +3,6 @@ import { CartesianPoint } from '../helpers/GameMath'
 
 export function createVerifyRtc(uuid: string) {
   let clientMessage = new ClientMessage()
-  clientMessage.setMsgtype(ClientMessage.ClientMessageType.VERIFYRTC)
 
   let verifyRtc = new ClientMessage.VerifyRtc()
   verifyRtc.setUuid(uuid)
@@ -15,10 +14,7 @@ export function createVerifyRtc(uuid: string) {
 
 export function createMove(point: CartesianPoint, isAttackMove: boolean) {
   let clientMessage = new ClientMessage()
-  clientMessage.setMsgtype(ClientMessage.ClientMessageType.COMMAND)
-
   let command = new Command()
-  command.setCommandtype(Command.CommandType.MOVECOMMAND)
 
   let moveCommand = new Command.MoveCommand()
   moveCommand.setX(point.x)

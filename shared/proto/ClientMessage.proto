@@ -1,41 +1,17 @@
 syntax = "proto3";
 
 message ClientMessage {
-  //Define
-  enum ClientMessageType {
-    NONE = 0;
-    COMMAND = 1;
-    VERIFYRTC = 100;
-  }
-
   message VerifyRtc {
     string uuid = 1;
   }
-  //End Definition
 
-
-  //Message Data
-  ClientMessageType msgType = 1;
-  
   oneof msgData {
-    Command command = 2;
+    Command command = 1;
     VerifyRtc veryfiyRtc = 100;
   }
 }
 
 message Command {
-  //Define
-  enum CommandType {
-    NONE = 0;
-    MOVECOMMAND = 1;
-    MOVEDELTA = 2;
-    ATTACK = 3;
-    ABILITY = 4;
-    //Stop?
-    //Hold Position?
-    //Menu / Upgrade buttons?
-  }
-
   message MoveCommand {
     float x = 1;
     float y = 2;
@@ -50,15 +26,12 @@ message Command {
   message Attack {
     uint32 target = 1;
   }
-  //End Definition
 
-  //Message Data
-  CommandType commandType = 1;
   oneof command {
-    MoveCommand moveCommand = 2;
-    MoveDelta moveDelta = 3;
-    Attack attack = 4;
-    Ability ability = 5;
+    MoveCommand moveCommand = 1;
+    MoveDelta moveDelta = 2;
+    Attack attack = 3;
+    Ability ability = 4;
   }
 }
 
@@ -82,9 +55,8 @@ message Ability {
 
   //Message Data
   int32 abilityID = 1;
-  AbilityDataType abilityDataType = 2;
   oneof abilityData {
-    TargetedAbilityData targetedAbilityData = 3;
-    AimedAbilityData aimedAbilityData = 4;
+    TargetedAbilityData targetedAbilityData = 2;
+    AimedAbilityData aimedAbilityData = 3;
   }
 }

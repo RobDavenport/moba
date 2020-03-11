@@ -18,13 +18,11 @@ goog.exportSymbol('proto.Ability.AbilitydataCase', null, global);
 goog.exportSymbol('proto.Ability.AimedAbilityData', null, global);
 goog.exportSymbol('proto.Ability.TargetedAbilityData', null, global);
 goog.exportSymbol('proto.ClientMessage', null, global);
-goog.exportSymbol('proto.ClientMessage.ClientMessageType', null, global);
 goog.exportSymbol('proto.ClientMessage.MsgdataCase', null, global);
 goog.exportSymbol('proto.ClientMessage.VerifyRtc', null, global);
 goog.exportSymbol('proto.Command', null, global);
 goog.exportSymbol('proto.Command.Attack', null, global);
 goog.exportSymbol('proto.Command.CommandCase', null, global);
-goog.exportSymbol('proto.Command.CommandType', null, global);
 goog.exportSymbol('proto.Command.MoveCommand', null, global);
 goog.exportSymbol('proto.Command.MoveDelta', null, global);
 /**
@@ -225,14 +223,14 @@ if (goog.DEBUG && !COMPILED) {
  * @private {!Array<!Array<number>>}
  * @const
  */
-proto.ClientMessage.oneofGroups_ = [[2,100]];
+proto.ClientMessage.oneofGroups_ = [[1,100]];
 
 /**
  * @enum {number}
  */
 proto.ClientMessage.MsgdataCase = {
   MSGDATA_NOT_SET: 0,
-  COMMAND: 2,
+  COMMAND: 1,
   VERYFIYRTC: 100
 };
 
@@ -274,7 +272,6 @@ proto.ClientMessage.prototype.toObject = function(opt_includeInstance) {
  */
 proto.ClientMessage.toObject = function(includeInstance, msg) {
   var f, obj = {
-    msgtype: jspb.Message.getFieldWithDefault(msg, 1, 0),
     command: (f = msg.getCommand()) && proto.Command.toObject(includeInstance, f),
     veryfiyrtc: (f = msg.getVeryfiyrtc()) && proto.ClientMessage.VerifyRtc.toObject(includeInstance, f)
   };
@@ -314,10 +311,6 @@ proto.ClientMessage.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {!proto.ClientMessage.ClientMessageType} */ (reader.readEnum());
-      msg.setMsgtype(value);
-      break;
-    case 2:
       var value = new proto.Command;
       reader.readMessage(value,proto.Command.deserializeBinaryFromReader);
       msg.setCommand(value);
@@ -356,17 +349,10 @@ proto.ClientMessage.prototype.serializeBinary = function() {
  */
 proto.ClientMessage.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getMsgtype();
-  if (f !== 0.0) {
-    writer.writeEnum(
-      1,
-      f
-    );
-  }
   f = message.getCommand();
   if (f != null) {
     writer.writeMessage(
-      2,
+      1,
       f,
       proto.Command.serializeBinaryToWriter
     );
@@ -381,15 +367,6 @@ proto.ClientMessage.serializeBinaryToWriter = function(message, writer) {
   }
 };
 
-
-/**
- * @enum {number}
- */
-proto.ClientMessage.ClientMessageType = {
-  NONE: 0,
-  COMMAND: 1,
-  VERIFYRTC: 100
-};
 
 
 
@@ -522,30 +499,12 @@ proto.ClientMessage.VerifyRtc.prototype.setUuid = function(value) {
 
 
 /**
- * optional ClientMessageType msgType = 1;
- * @return {!proto.ClientMessage.ClientMessageType}
- */
-proto.ClientMessage.prototype.getMsgtype = function() {
-  return /** @type {!proto.ClientMessage.ClientMessageType} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
-};
-
-
-/**
- * @param {!proto.ClientMessage.ClientMessageType} value
- * @return {!proto.ClientMessage} returns this
- */
-proto.ClientMessage.prototype.setMsgtype = function(value) {
-  return jspb.Message.setProto3EnumField(this, 1, value);
-};
-
-
-/**
- * optional Command command = 2;
+ * optional Command command = 1;
  * @return {?proto.Command}
  */
 proto.ClientMessage.prototype.getCommand = function() {
   return /** @type{?proto.Command} */ (
-    jspb.Message.getWrapperField(this, proto.Command, 2));
+    jspb.Message.getWrapperField(this, proto.Command, 1));
 };
 
 
@@ -554,7 +513,7 @@ proto.ClientMessage.prototype.getCommand = function() {
  * @return {!proto.ClientMessage} returns this
 */
 proto.ClientMessage.prototype.setCommand = function(value) {
-  return jspb.Message.setOneofWrapperField(this, 2, proto.ClientMessage.oneofGroups_[0], value);
+  return jspb.Message.setOneofWrapperField(this, 1, proto.ClientMessage.oneofGroups_[0], value);
 };
 
 
@@ -572,7 +531,7 @@ proto.ClientMessage.prototype.clearCommand = function() {
  * @return {boolean}
  */
 proto.ClientMessage.prototype.hasCommand = function() {
-  return jspb.Message.getField(this, 2) != null;
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
@@ -622,17 +581,17 @@ proto.ClientMessage.prototype.hasVeryfiyrtc = function() {
  * @private {!Array<!Array<number>>}
  * @const
  */
-proto.Command.oneofGroups_ = [[2,3,4,5]];
+proto.Command.oneofGroups_ = [[1,2,3,4]];
 
 /**
  * @enum {number}
  */
 proto.Command.CommandCase = {
   COMMAND_NOT_SET: 0,
-  MOVECOMMAND: 2,
-  MOVEDELTA: 3,
-  ATTACK: 4,
-  ABILITY: 5
+  MOVECOMMAND: 1,
+  MOVEDELTA: 2,
+  ATTACK: 3,
+  ABILITY: 4
 };
 
 /**
@@ -673,7 +632,6 @@ proto.Command.prototype.toObject = function(opt_includeInstance) {
  */
 proto.Command.toObject = function(includeInstance, msg) {
   var f, obj = {
-    commandtype: jspb.Message.getFieldWithDefault(msg, 1, 0),
     movecommand: (f = msg.getMovecommand()) && proto.Command.MoveCommand.toObject(includeInstance, f),
     movedelta: (f = msg.getMovedelta()) && proto.Command.MoveDelta.toObject(includeInstance, f),
     attack: (f = msg.getAttack()) && proto.Command.Attack.toObject(includeInstance, f),
@@ -715,25 +673,21 @@ proto.Command.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {!proto.Command.CommandType} */ (reader.readEnum());
-      msg.setCommandtype(value);
-      break;
-    case 2:
       var value = new proto.Command.MoveCommand;
       reader.readMessage(value,proto.Command.MoveCommand.deserializeBinaryFromReader);
       msg.setMovecommand(value);
       break;
-    case 3:
+    case 2:
       var value = new proto.Command.MoveDelta;
       reader.readMessage(value,proto.Command.MoveDelta.deserializeBinaryFromReader);
       msg.setMovedelta(value);
       break;
-    case 4:
+    case 3:
       var value = new proto.Command.Attack;
       reader.readMessage(value,proto.Command.Attack.deserializeBinaryFromReader);
       msg.setAttack(value);
       break;
-    case 5:
+    case 4:
       var value = new proto.Ability;
       reader.readMessage(value,proto.Ability.deserializeBinaryFromReader);
       msg.setAbility(value);
@@ -767,17 +721,10 @@ proto.Command.prototype.serializeBinary = function() {
  */
 proto.Command.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getCommandtype();
-  if (f !== 0.0) {
-    writer.writeEnum(
-      1,
-      f
-    );
-  }
   f = message.getMovecommand();
   if (f != null) {
     writer.writeMessage(
-      2,
+      1,
       f,
       proto.Command.MoveCommand.serializeBinaryToWriter
     );
@@ -785,7 +732,7 @@ proto.Command.serializeBinaryToWriter = function(message, writer) {
   f = message.getMovedelta();
   if (f != null) {
     writer.writeMessage(
-      3,
+      2,
       f,
       proto.Command.MoveDelta.serializeBinaryToWriter
     );
@@ -793,7 +740,7 @@ proto.Command.serializeBinaryToWriter = function(message, writer) {
   f = message.getAttack();
   if (f != null) {
     writer.writeMessage(
-      4,
+      3,
       f,
       proto.Command.Attack.serializeBinaryToWriter
     );
@@ -801,24 +748,13 @@ proto.Command.serializeBinaryToWriter = function(message, writer) {
   f = message.getAbility();
   if (f != null) {
     writer.writeMessage(
-      5,
+      4,
       f,
       proto.Ability.serializeBinaryToWriter
     );
   }
 };
 
-
-/**
- * @enum {number}
- */
-proto.Command.CommandType = {
-  NONE: 0,
-  MOVECOMMAND: 1,
-  MOVEDELTA: 2,
-  ATTACK: 3,
-  ABILITY: 4
-};
 
 
 
@@ -1301,30 +1237,12 @@ proto.Command.Attack.prototype.setTarget = function(value) {
 
 
 /**
- * optional CommandType commandType = 1;
- * @return {!proto.Command.CommandType}
- */
-proto.Command.prototype.getCommandtype = function() {
-  return /** @type {!proto.Command.CommandType} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
-};
-
-
-/**
- * @param {!proto.Command.CommandType} value
- * @return {!proto.Command} returns this
- */
-proto.Command.prototype.setCommandtype = function(value) {
-  return jspb.Message.setProto3EnumField(this, 1, value);
-};
-
-
-/**
- * optional MoveCommand moveCommand = 2;
+ * optional MoveCommand moveCommand = 1;
  * @return {?proto.Command.MoveCommand}
  */
 proto.Command.prototype.getMovecommand = function() {
   return /** @type{?proto.Command.MoveCommand} */ (
-    jspb.Message.getWrapperField(this, proto.Command.MoveCommand, 2));
+    jspb.Message.getWrapperField(this, proto.Command.MoveCommand, 1));
 };
 
 
@@ -1333,7 +1251,7 @@ proto.Command.prototype.getMovecommand = function() {
  * @return {!proto.Command} returns this
 */
 proto.Command.prototype.setMovecommand = function(value) {
-  return jspb.Message.setOneofWrapperField(this, 2, proto.Command.oneofGroups_[0], value);
+  return jspb.Message.setOneofWrapperField(this, 1, proto.Command.oneofGroups_[0], value);
 };
 
 
@@ -1351,17 +1269,17 @@ proto.Command.prototype.clearMovecommand = function() {
  * @return {boolean}
  */
 proto.Command.prototype.hasMovecommand = function() {
-  return jspb.Message.getField(this, 2) != null;
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
 /**
- * optional MoveDelta moveDelta = 3;
+ * optional MoveDelta moveDelta = 2;
  * @return {?proto.Command.MoveDelta}
  */
 proto.Command.prototype.getMovedelta = function() {
   return /** @type{?proto.Command.MoveDelta} */ (
-    jspb.Message.getWrapperField(this, proto.Command.MoveDelta, 3));
+    jspb.Message.getWrapperField(this, proto.Command.MoveDelta, 2));
 };
 
 
@@ -1370,7 +1288,7 @@ proto.Command.prototype.getMovedelta = function() {
  * @return {!proto.Command} returns this
 */
 proto.Command.prototype.setMovedelta = function(value) {
-  return jspb.Message.setOneofWrapperField(this, 3, proto.Command.oneofGroups_[0], value);
+  return jspb.Message.setOneofWrapperField(this, 2, proto.Command.oneofGroups_[0], value);
 };
 
 
@@ -1388,17 +1306,17 @@ proto.Command.prototype.clearMovedelta = function() {
  * @return {boolean}
  */
 proto.Command.prototype.hasMovedelta = function() {
-  return jspb.Message.getField(this, 3) != null;
+  return jspb.Message.getField(this, 2) != null;
 };
 
 
 /**
- * optional Attack attack = 4;
+ * optional Attack attack = 3;
  * @return {?proto.Command.Attack}
  */
 proto.Command.prototype.getAttack = function() {
   return /** @type{?proto.Command.Attack} */ (
-    jspb.Message.getWrapperField(this, proto.Command.Attack, 4));
+    jspb.Message.getWrapperField(this, proto.Command.Attack, 3));
 };
 
 
@@ -1407,7 +1325,7 @@ proto.Command.prototype.getAttack = function() {
  * @return {!proto.Command} returns this
 */
 proto.Command.prototype.setAttack = function(value) {
-  return jspb.Message.setOneofWrapperField(this, 4, proto.Command.oneofGroups_[0], value);
+  return jspb.Message.setOneofWrapperField(this, 3, proto.Command.oneofGroups_[0], value);
 };
 
 
@@ -1425,17 +1343,17 @@ proto.Command.prototype.clearAttack = function() {
  * @return {boolean}
  */
 proto.Command.prototype.hasAttack = function() {
-  return jspb.Message.getField(this, 4) != null;
+  return jspb.Message.getField(this, 3) != null;
 };
 
 
 /**
- * optional Ability ability = 5;
+ * optional Ability ability = 4;
  * @return {?proto.Ability}
  */
 proto.Command.prototype.getAbility = function() {
   return /** @type{?proto.Ability} */ (
-    jspb.Message.getWrapperField(this, proto.Ability, 5));
+    jspb.Message.getWrapperField(this, proto.Ability, 4));
 };
 
 
@@ -1444,7 +1362,7 @@ proto.Command.prototype.getAbility = function() {
  * @return {!proto.Command} returns this
 */
 proto.Command.prototype.setAbility = function(value) {
-  return jspb.Message.setOneofWrapperField(this, 5, proto.Command.oneofGroups_[0], value);
+  return jspb.Message.setOneofWrapperField(this, 4, proto.Command.oneofGroups_[0], value);
 };
 
 
@@ -1462,7 +1380,7 @@ proto.Command.prototype.clearAbility = function() {
  * @return {boolean}
  */
 proto.Command.prototype.hasAbility = function() {
-  return jspb.Message.getField(this, 5) != null;
+  return jspb.Message.getField(this, 4) != null;
 };
 
 
@@ -1475,15 +1393,15 @@ proto.Command.prototype.hasAbility = function() {
  * @private {!Array<!Array<number>>}
  * @const
  */
-proto.Ability.oneofGroups_ = [[3,4]];
+proto.Ability.oneofGroups_ = [[2,3]];
 
 /**
  * @enum {number}
  */
 proto.Ability.AbilitydataCase = {
   ABILITYDATA_NOT_SET: 0,
-  TARGETEDABILITYDATA: 3,
-  AIMEDABILITYDATA: 4
+  TARGETEDABILITYDATA: 2,
+  AIMEDABILITYDATA: 3
 };
 
 /**
@@ -1525,7 +1443,6 @@ proto.Ability.prototype.toObject = function(opt_includeInstance) {
 proto.Ability.toObject = function(includeInstance, msg) {
   var f, obj = {
     abilityid: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    abilitydatatype: jspb.Message.getFieldWithDefault(msg, 2, 0),
     targetedabilitydata: (f = msg.getTargetedabilitydata()) && proto.Ability.TargetedAbilityData.toObject(includeInstance, f),
     aimedabilitydata: (f = msg.getAimedabilitydata()) && proto.Ability.AimedAbilityData.toObject(includeInstance, f)
   };
@@ -1569,15 +1486,11 @@ proto.Ability.deserializeBinaryFromReader = function(msg, reader) {
       msg.setAbilityid(value);
       break;
     case 2:
-      var value = /** @type {!proto.Ability.AbilityDataType} */ (reader.readEnum());
-      msg.setAbilitydatatype(value);
-      break;
-    case 3:
       var value = new proto.Ability.TargetedAbilityData;
       reader.readMessage(value,proto.Ability.TargetedAbilityData.deserializeBinaryFromReader);
       msg.setTargetedabilitydata(value);
       break;
-    case 4:
+    case 3:
       var value = new proto.Ability.AimedAbilityData;
       reader.readMessage(value,proto.Ability.AimedAbilityData.deserializeBinaryFromReader);
       msg.setAimedabilitydata(value);
@@ -1618,17 +1531,10 @@ proto.Ability.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getAbilitydatatype();
-  if (f !== 0.0) {
-    writer.writeEnum(
-      2,
-      f
-    );
-  }
   f = message.getTargetedabilitydata();
   if (f != null) {
     writer.writeMessage(
-      3,
+      2,
       f,
       proto.Ability.TargetedAbilityData.serializeBinaryToWriter
     );
@@ -1636,7 +1542,7 @@ proto.Ability.serializeBinaryToWriter = function(message, writer) {
   f = message.getAimedabilitydata();
   if (f != null) {
     writer.writeMessage(
-      4,
+      3,
       f,
       proto.Ability.AimedAbilityData.serializeBinaryToWriter
     );
@@ -1962,30 +1868,12 @@ proto.Ability.prototype.setAbilityid = function(value) {
 
 
 /**
- * optional AbilityDataType abilityDataType = 2;
- * @return {!proto.Ability.AbilityDataType}
- */
-proto.Ability.prototype.getAbilitydatatype = function() {
-  return /** @type {!proto.Ability.AbilityDataType} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
-};
-
-
-/**
- * @param {!proto.Ability.AbilityDataType} value
- * @return {!proto.Ability} returns this
- */
-proto.Ability.prototype.setAbilitydatatype = function(value) {
-  return jspb.Message.setProto3EnumField(this, 2, value);
-};
-
-
-/**
- * optional TargetedAbilityData targetedAbilityData = 3;
+ * optional TargetedAbilityData targetedAbilityData = 2;
  * @return {?proto.Ability.TargetedAbilityData}
  */
 proto.Ability.prototype.getTargetedabilitydata = function() {
   return /** @type{?proto.Ability.TargetedAbilityData} */ (
-    jspb.Message.getWrapperField(this, proto.Ability.TargetedAbilityData, 3));
+    jspb.Message.getWrapperField(this, proto.Ability.TargetedAbilityData, 2));
 };
 
 
@@ -1994,7 +1882,7 @@ proto.Ability.prototype.getTargetedabilitydata = function() {
  * @return {!proto.Ability} returns this
 */
 proto.Ability.prototype.setTargetedabilitydata = function(value) {
-  return jspb.Message.setOneofWrapperField(this, 3, proto.Ability.oneofGroups_[0], value);
+  return jspb.Message.setOneofWrapperField(this, 2, proto.Ability.oneofGroups_[0], value);
 };
 
 
@@ -2012,17 +1900,17 @@ proto.Ability.prototype.clearTargetedabilitydata = function() {
  * @return {boolean}
  */
 proto.Ability.prototype.hasTargetedabilitydata = function() {
-  return jspb.Message.getField(this, 3) != null;
+  return jspb.Message.getField(this, 2) != null;
 };
 
 
 /**
- * optional AimedAbilityData aimedAbilityData = 4;
+ * optional AimedAbilityData aimedAbilityData = 3;
  * @return {?proto.Ability.AimedAbilityData}
  */
 proto.Ability.prototype.getAimedabilitydata = function() {
   return /** @type{?proto.Ability.AimedAbilityData} */ (
-    jspb.Message.getWrapperField(this, proto.Ability.AimedAbilityData, 4));
+    jspb.Message.getWrapperField(this, proto.Ability.AimedAbilityData, 3));
 };
 
 
@@ -2031,7 +1919,7 @@ proto.Ability.prototype.getAimedabilitydata = function() {
  * @return {!proto.Ability} returns this
 */
 proto.Ability.prototype.setAimedabilitydata = function(value) {
-  return jspb.Message.setOneofWrapperField(this, 4, proto.Ability.oneofGroups_[0], value);
+  return jspb.Message.setOneofWrapperField(this, 3, proto.Ability.oneofGroups_[0], value);
 };
 
 
@@ -2049,7 +1937,7 @@ proto.Ability.prototype.clearAimedabilitydata = function() {
  * @return {boolean}
  */
 proto.Ability.prototype.hasAimedabilitydata = function() {
-  return jspb.Message.getField(this, 4) != null;
+  return jspb.Message.getField(this, 3) != null;
 };
 
 

@@ -174,6 +174,12 @@ export default class MobaWindow extends Phaser.Scene {
     }
   }
 
+  onSnapshot(data: ServerMessage.Snapshot.AsObject) {
+    data.entitydataList.forEach(entity => {
+      this.setCharacterPosition(new CartesianPoint(entity.x, entity.y), entity.replicationid)
+    })
+  }
+
   interpolateObjects() {
     this.entities.forEach(obj => obj.interpolate())
   }

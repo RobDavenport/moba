@@ -4,13 +4,15 @@
 import * as jspb from "google-protobuf";
 
 export class ServerMessage extends jspb.Message {
-  getMsgtype(): ServerMessage.ServerMessageTypeMap[keyof ServerMessage.ServerMessageTypeMap];
-  setMsgtype(value: ServerMessage.ServerMessageTypeMap[keyof ServerMessage.ServerMessageTypeMap]): void;
-
   hasUpdatetick(): boolean;
   clearUpdatetick(): void;
   getUpdatetick(): ServerMessage.UpdateTick | undefined;
   setUpdatetick(value?: ServerMessage.UpdateTick): void;
+
+  hasSnapshot(): boolean;
+  clearSnapshot(): void;
+  getSnapshot(): ServerMessage.Snapshot | undefined;
+  setSnapshot(value?: ServerMessage.Snapshot): void;
 
   hasEntitydestroyed(): boolean;
   clearEntitydestroyed(): void;
@@ -40,8 +42,8 @@ export class ServerMessage extends jspb.Message {
 
 export namespace ServerMessage {
   export type AsObject = {
-    msgtype: ServerMessage.ServerMessageTypeMap[keyof ServerMessage.ServerMessageTypeMap],
     updatetick?: ServerMessage.UpdateTick.AsObject,
+    snapshot?: ServerMessage.Snapshot.AsObject,
     entitydestroyed?: ServerMessage.EntityDestroyed.AsObject,
     verifyuuid?: ServerMessage.VerifyUuid.AsObject,
     verifieduuid?: ServerMessage.VerifiedUuid.AsObject,
@@ -139,22 +141,67 @@ export namespace ServerMessage {
     }
   }
 
-  export interface ServerMessageTypeMap {
-    NONE: 0;
-    UPDATETICK: 1;
-    VERIFYUUID: 2;
-    VERIFIEDUUID: 3;
-    ENTITYDESTROYED: 4;
+  export class Snapshot extends jspb.Message {
+    getFrame(): number;
+    setFrame(value: number): void;
+
+    clearEntitydataList(): void;
+    getEntitydataList(): Array<ServerMessage.EntityData>;
+    setEntitydataList(value: Array<ServerMessage.EntityData>): void;
+    addEntitydata(value?: ServerMessage.EntityData, index?: number): ServerMessage.EntityData;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): Snapshot.AsObject;
+    static toObject(includeInstance: boolean, msg: Snapshot): Snapshot.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: Snapshot, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): Snapshot;
+    static deserializeBinaryFromReader(message: Snapshot, reader: jspb.BinaryReader): Snapshot;
   }
 
-  export const ServerMessageType: ServerMessageTypeMap;
+  export namespace Snapshot {
+    export type AsObject = {
+      frame: number,
+      entitydataList: Array<ServerMessage.EntityData.AsObject>,
+    }
+  }
+
+  export class EntityData extends jspb.Message {
+    getX(): number;
+    setX(value: number): void;
+
+    getY(): number;
+    setY(value: number): void;
+
+    getReplicationid(): number;
+    setReplicationid(value: number): void;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): EntityData.AsObject;
+    static toObject(includeInstance: boolean, msg: EntityData): EntityData.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: EntityData, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): EntityData;
+    static deserializeBinaryFromReader(message: EntityData, reader: jspb.BinaryReader): EntityData;
+  }
+
+  export namespace EntityData {
+    export type AsObject = {
+      x: number,
+      y: number,
+      replicationid: number,
+    }
+  }
 
   export enum MsgdataCase {
     MSGDATA_NOT_SET = 0,
-    UPDATETICK = 2,
-    ENTITYDESTROYED = 6,
-    VERIFYUUID = 100,
-    VERIFIEDUUID = 101,
+    UPDATETICK = 1,
+    SNAPSHOT = 2,
+    ENTITYDESTROYED = 5,
+    VERIFYUUID = 25,
+    VERIFIEDUUID = 26,
   }
 }
 

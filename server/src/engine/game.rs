@@ -10,7 +10,7 @@ use super::components::all::*;
 use super::game_events::GameEvent;
 use super::input_command::InputCommand;
 use super::systems::*;
-use crate::engine::messaging::messages::{GameMessage, OutMessage, OutTarget};
+use crate::engine::messaging::messages::{EntitySnapshot, GameMessage, OutMessage, OutTarget};
 
 pub struct Game {
     tick_time: f32,
@@ -150,16 +150,19 @@ impl Game {
         let query = <(Read<Transform>, Read<Replicated>)>::query();
 
         //Todo only send 'dirty' components
-        for (transform, replicated) in query.iter(&mut self.world) {
-            let output = OutMessage::UpdateTick {
-                frame: self.game_frame,
-                x: transform.position.x,
-                y: transform.position.y,
-                replication_id: replicated.id,
-            };
+        let snapshot = OutMessage::Snapshot {
+            frame: self.game_frame,
+            entities: query
+                .iter(&mut self.world)
+                .map(|(transform, replicated)| EntitySnapshot {
+                    x: transform.position.x,
+                    y: transform.position.y,
+                    replication_id: replicated.id,
+                })
+                .collect(),
+        };
 
-            self.out_unreliable.try_send((OutTarget::All, output));
-        }
+        self.out_unreliable.try_send((OutTarget::All, snapshot));
 
         for event in self.game_events.drain(..) {
             match event {

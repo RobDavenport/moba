@@ -4,9 +4,6 @@
 import * as jspb from "google-protobuf";
 
 export class ClientMessage extends jspb.Message {
-  getMsgtype(): ClientMessage.ClientMessageTypeMap[keyof ClientMessage.ClientMessageTypeMap];
-  setMsgtype(value: ClientMessage.ClientMessageTypeMap[keyof ClientMessage.ClientMessageTypeMap]): void;
-
   hasCommand(): boolean;
   clearCommand(): void;
   getCommand(): Command | undefined;
@@ -30,7 +27,6 @@ export class ClientMessage extends jspb.Message {
 
 export namespace ClientMessage {
   export type AsObject = {
-    msgtype: ClientMessage.ClientMessageTypeMap[keyof ClientMessage.ClientMessageTypeMap],
     command?: Command.AsObject,
     veryfiyrtc?: ClientMessage.VerifyRtc.AsObject,
   }
@@ -55,25 +51,14 @@ export namespace ClientMessage {
     }
   }
 
-  export interface ClientMessageTypeMap {
-    NONE: 0;
-    COMMAND: 1;
-    VERIFYRTC: 100;
-  }
-
-  export const ClientMessageType: ClientMessageTypeMap;
-
   export enum MsgdataCase {
     MSGDATA_NOT_SET = 0,
-    COMMAND = 2,
+    COMMAND = 1,
     VERYFIYRTC = 100,
   }
 }
 
 export class Command extends jspb.Message {
-  getCommandtype(): Command.CommandTypeMap[keyof Command.CommandTypeMap];
-  setCommandtype(value: Command.CommandTypeMap[keyof Command.CommandTypeMap]): void;
-
   hasMovecommand(): boolean;
   clearMovecommand(): void;
   getMovecommand(): Command.MoveCommand | undefined;
@@ -107,7 +92,6 @@ export class Command extends jspb.Message {
 
 export namespace Command {
   export type AsObject = {
-    commandtype: Command.CommandTypeMap[keyof Command.CommandTypeMap],
     movecommand?: Command.MoveCommand.AsObject,
     movedelta?: Command.MoveDelta.AsObject,
     attack?: Command.Attack.AsObject,
@@ -186,31 +170,18 @@ export namespace Command {
     }
   }
 
-  export interface CommandTypeMap {
-    NONE: 0;
-    MOVECOMMAND: 1;
-    MOVEDELTA: 2;
-    ATTACK: 3;
-    ABILITY: 4;
-  }
-
-  export const CommandType: CommandTypeMap;
-
   export enum CommandCase {
     COMMAND_NOT_SET = 0,
-    MOVECOMMAND = 2,
-    MOVEDELTA = 3,
-    ATTACK = 4,
-    ABILITY = 5,
+    MOVECOMMAND = 1,
+    MOVEDELTA = 2,
+    ATTACK = 3,
+    ABILITY = 4,
   }
 }
 
 export class Ability extends jspb.Message {
   getAbilityid(): number;
   setAbilityid(value: number): void;
-
-  getAbilitydatatype(): Ability.AbilityDataTypeMap[keyof Ability.AbilityDataTypeMap];
-  setAbilitydatatype(value: Ability.AbilityDataTypeMap[keyof Ability.AbilityDataTypeMap]): void;
 
   hasTargetedabilitydata(): boolean;
   clearTargetedabilitydata(): void;
@@ -236,7 +207,6 @@ export class Ability extends jspb.Message {
 export namespace Ability {
   export type AsObject = {
     abilityid: number,
-    abilitydatatype: Ability.AbilityDataTypeMap[keyof Ability.AbilityDataTypeMap],
     targetedabilitydata?: Ability.TargetedAbilityData.AsObject,
     aimedabilitydata?: Ability.AimedAbilityData.AsObject,
   }
@@ -295,8 +265,8 @@ export namespace Ability {
 
   export enum AbilitydataCase {
     ABILITYDATA_NOT_SET = 0,
-    TARGETEDABILITYDATA = 3,
-    AIMEDABILITYDATA = 4,
+    TARGETEDABILITYDATA = 2,
+    AIMEDABILITYDATA = 3,
   }
 }
 
