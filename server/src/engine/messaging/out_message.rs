@@ -61,7 +61,6 @@ impl OutMessage {
 
 fn update_tick(frame: u32, x: f32, y: f32, replication_id: ReplicationId) -> Vec<u8> {
     let mut output = ServerMessage::new();
-    //output.set_msgType(ServerMessage_ServerMessageType::UPDATETICK);
 
     let mut inner = ServerMessage_UpdateTick::new();
     inner.set_frame(frame);
@@ -75,7 +74,6 @@ fn update_tick(frame: u32, x: f32, y: f32, replication_id: ReplicationId) -> Vec
 
 fn verify_uuid(uuid: String) -> Vec<u8> {
     let mut output = ServerMessage::new();
-    //output.set_msgType(ServerMessage_ServerMessageType::VERIFYUUID);
 
     let mut inner = ServerMessage_VerifyUuid::new();
     inner.set_uuid(uuid);
@@ -86,14 +84,12 @@ fn verify_uuid(uuid: String) -> Vec<u8> {
 
 fn verified_uuid() -> Vec<u8> {
     let mut output = ServerMessage::new();
-    // output.set_msgType(ServerMessage_ServerMessageType::VERIFIEDUUID);
     output.set_verifiedUuid(ServerMessage_VerifiedUuid::new());
     output.write_to_bytes().unwrap()
 }
 
 fn entity_destroyed(frame: u32, replication_id: ReplicationId) -> Vec<u8> {
     let mut output = ServerMessage::new();
-    //output.set_msgType(ServerMessage_ServerMessageType::ENTITYDESTROYED);
 
     let mut inner = ServerMessage_EntityDestroyed::new();
     inner.set_frame(frame);
@@ -105,7 +101,6 @@ fn entity_destroyed(frame: u32, replication_id: ReplicationId) -> Vec<u8> {
 
 fn snapshot(frame: u32, entities: Vec<EntitySnapshot>) -> Vec<u8> {
     let mut output = ServerMessage::new();
-    //output.set_msgType(ServerMessage_ServerMessageType::SNAPSHOT);
 
     let mut inner = ServerMessage_Snapshot::new();
     inner.set_frame(frame);

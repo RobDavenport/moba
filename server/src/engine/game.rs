@@ -74,6 +74,7 @@ impl Game {
                     executor.execute(&mut self.world);
                     accumulator -= self.tick_time;
                 }
+
                 self.broadcast_state().await;
             }
 
@@ -147,22 +148,26 @@ impl Game {
     }
 
     async fn broadcast_state(&mut self) {
+        //Todo only send 'dirty' components
         let query = <(Read<Transform>, Read<Replicated>)>::query();
 
-        //Todo only send 'dirty' components
-        let snapshot = OutMessage::Snapshot {
-            frame: self.game_frame,
-            entities: query
-                .iter(&mut self.world)
-                .map(|(transform, replicated)| EntitySnapshot {
-                    x: transform.position.x,
-                    y: transform.position.y,
-                    replication_id: replicated.id,
-                })
-                .collect(),
-        };
+        let entities: Vec<EntitySnapshot> = query
+            .iter(&mut self.world)
+            .map(|(transform, replicated)| EntitySnapshot {
+                x: transform.position.x,
+                y: transform.position.y,
+                replication_id: replicated.id,
+            })
+            .collect();
 
-        self.out_unreliable.try_send((OutTarget::All, snapshot));
+        if entities.len() > 0 {
+            let snapshot = OutMessage::Snapshot {
+                frame: self.game_frame,
+                entities,
+            };
+
+            self.out_unreliable.try_send((OutTarget::All, snapshot));
+        }
 
         for event in self.game_events.drain(..) {
             match event {

@@ -82,7 +82,7 @@ async fn ws_connected(ws: warp::ws::WebSocket, mut manager_out: Sender<WSClientM
     let (mut sender, mut receiver) = ws.split();
     sender
         .send(Message::binary(
-            (OutMessage::VerifyUuid(uuid.clone()).to_proto_bytes()),
+            OutMessage::VerifyUuid(uuid.clone()).to_proto_bytes(),
         ))
         .await;
 
