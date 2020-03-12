@@ -551,8 +551,8 @@ pub struct ServerMessage_UpdateTick {
     // message fields
     pub frame: u32,
     pub replicationId: u32,
-    pub x: f32,
-    pub y: f32,
+    pub x: i32,
+    pub y: i32,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
@@ -599,33 +599,33 @@ impl ServerMessage_UpdateTick {
         self.replicationId = v;
     }
 
-    // float x = 3;
+    // sint32 x = 3;
 
 
-    pub fn get_x(&self) -> f32 {
+    pub fn get_x(&self) -> i32 {
         self.x
     }
     pub fn clear_x(&mut self) {
-        self.x = 0.;
+        self.x = 0;
     }
 
     // Param is passed by value, moved
-    pub fn set_x(&mut self, v: f32) {
+    pub fn set_x(&mut self, v: i32) {
         self.x = v;
     }
 
-    // float y = 4;
+    // sint32 y = 4;
 
 
-    pub fn get_y(&self) -> f32 {
+    pub fn get_y(&self) -> i32 {
         self.y
     }
     pub fn clear_y(&mut self) {
-        self.y = 0.;
+        self.y = 0;
     }
 
     // Param is passed by value, moved
-    pub fn set_y(&mut self, v: f32) {
+    pub fn set_y(&mut self, v: i32) {
         self.y = v;
     }
 }
@@ -654,17 +654,17 @@ impl ::protobuf::Message for ServerMessage_UpdateTick {
                     self.replicationId = tmp;
                 },
                 3 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeFixed32 {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
                     }
-                    let tmp = is.read_float()?;
+                    let tmp = is.read_sint32()?;
                     self.x = tmp;
                 },
                 4 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeFixed32 {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
                     }
-                    let tmp = is.read_float()?;
+                    let tmp = is.read_sint32()?;
                     self.y = tmp;
                 },
                 _ => {
@@ -685,11 +685,11 @@ impl ::protobuf::Message for ServerMessage_UpdateTick {
         if self.replicationId != 0 {
             my_size += ::protobuf::rt::value_size(2, self.replicationId, ::protobuf::wire_format::WireTypeVarint);
         }
-        if self.x != 0. {
-            my_size += 5;
+        if self.x != 0 {
+            my_size += ::protobuf::rt::value_varint_zigzag_size(3, self.x);
         }
-        if self.y != 0. {
-            my_size += 5;
+        if self.y != 0 {
+            my_size += ::protobuf::rt::value_varint_zigzag_size(4, self.y);
         }
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
@@ -703,11 +703,11 @@ impl ::protobuf::Message for ServerMessage_UpdateTick {
         if self.replicationId != 0 {
             os.write_uint32(2, self.replicationId)?;
         }
-        if self.x != 0. {
-            os.write_float(3, self.x)?;
+        if self.x != 0 {
+            os.write_sint32(3, self.x)?;
         }
-        if self.y != 0. {
-            os.write_float(4, self.y)?;
+        if self.y != 0 {
+            os.write_sint32(4, self.y)?;
         }
         os.write_unknown_fields(self.get_unknown_fields())?;
         ::std::result::Result::Ok(())
@@ -761,12 +761,12 @@ impl ::protobuf::Message for ServerMessage_UpdateTick {
                     |m: &ServerMessage_UpdateTick| { &m.replicationId },
                     |m: &mut ServerMessage_UpdateTick| { &mut m.replicationId },
                 ));
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeFloat>(
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeSint32>(
                     "x",
                     |m: &ServerMessage_UpdateTick| { &m.x },
                     |m: &mut ServerMessage_UpdateTick| { &mut m.x },
                 ));
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeFloat>(
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeSint32>(
                     "y",
                     |m: &ServerMessage_UpdateTick| { &m.y },
                     |m: &mut ServerMessage_UpdateTick| { &mut m.y },
@@ -795,8 +795,8 @@ impl ::protobuf::Clear for ServerMessage_UpdateTick {
     fn clear(&mut self) {
         self.frame = 0;
         self.replicationId = 0;
-        self.x = 0.;
-        self.y = 0.;
+        self.x = 0;
+        self.y = 0;
         self.unknown_fields.clear();
     }
 }
@@ -1519,8 +1519,8 @@ impl ::protobuf::reflect::ProtobufValue for ServerMessage_Snapshot {
 #[derive(PartialEq,Clone,Default)]
 pub struct ServerMessage_EntityData {
     // message fields
-    pub x: f32,
-    pub y: f32,
+    pub x: i32,
+    pub y: i32,
     pub replicationId: u32,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
@@ -1538,33 +1538,33 @@ impl ServerMessage_EntityData {
         ::std::default::Default::default()
     }
 
-    // float x = 1;
+    // sint32 x = 1;
 
 
-    pub fn get_x(&self) -> f32 {
+    pub fn get_x(&self) -> i32 {
         self.x
     }
     pub fn clear_x(&mut self) {
-        self.x = 0.;
+        self.x = 0;
     }
 
     // Param is passed by value, moved
-    pub fn set_x(&mut self, v: f32) {
+    pub fn set_x(&mut self, v: i32) {
         self.x = v;
     }
 
-    // float y = 2;
+    // sint32 y = 2;
 
 
-    pub fn get_y(&self) -> f32 {
+    pub fn get_y(&self) -> i32 {
         self.y
     }
     pub fn clear_y(&mut self) {
-        self.y = 0.;
+        self.y = 0;
     }
 
     // Param is passed by value, moved
-    pub fn set_y(&mut self, v: f32) {
+    pub fn set_y(&mut self, v: i32) {
         self.y = v;
     }
 
@@ -1594,17 +1594,17 @@ impl ::protobuf::Message for ServerMessage_EntityData {
             let (field_number, wire_type) = is.read_tag_unpack()?;
             match field_number {
                 1 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeFixed32 {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
                     }
-                    let tmp = is.read_float()?;
+                    let tmp = is.read_sint32()?;
                     self.x = tmp;
                 },
                 2 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeFixed32 {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
                     }
-                    let tmp = is.read_float()?;
+                    let tmp = is.read_sint32()?;
                     self.y = tmp;
                 },
                 3 => {
@@ -1626,11 +1626,11 @@ impl ::protobuf::Message for ServerMessage_EntityData {
     #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
-        if self.x != 0. {
-            my_size += 5;
+        if self.x != 0 {
+            my_size += ::protobuf::rt::value_varint_zigzag_size(1, self.x);
         }
-        if self.y != 0. {
-            my_size += 5;
+        if self.y != 0 {
+            my_size += ::protobuf::rt::value_varint_zigzag_size(2, self.y);
         }
         if self.replicationId != 0 {
             my_size += ::protobuf::rt::value_size(3, self.replicationId, ::protobuf::wire_format::WireTypeVarint);
@@ -1641,11 +1641,11 @@ impl ::protobuf::Message for ServerMessage_EntityData {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if self.x != 0. {
-            os.write_float(1, self.x)?;
+        if self.x != 0 {
+            os.write_sint32(1, self.x)?;
         }
-        if self.y != 0. {
-            os.write_float(2, self.y)?;
+        if self.y != 0 {
+            os.write_sint32(2, self.y)?;
         }
         if self.replicationId != 0 {
             os.write_uint32(3, self.replicationId)?;
@@ -1692,12 +1692,12 @@ impl ::protobuf::Message for ServerMessage_EntityData {
         unsafe {
             descriptor.get(|| {
                 let mut fields = ::std::vec::Vec::new();
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeFloat>(
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeSint32>(
                     "x",
                     |m: &ServerMessage_EntityData| { &m.x },
                     |m: &mut ServerMessage_EntityData| { &mut m.x },
                 ));
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeFloat>(
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeSint32>(
                     "y",
                     |m: &ServerMessage_EntityData| { &m.y },
                     |m: &mut ServerMessage_EntityData| { &mut m.y },
@@ -1729,8 +1729,8 @@ impl ::protobuf::Message for ServerMessage_EntityData {
 
 impl ::protobuf::Clear for ServerMessage_EntityData {
     fn clear(&mut self) {
-        self.x = 0.;
-        self.y = 0.;
+        self.x = 0;
+        self.y = 0;
         self.replicationId = 0;
         self.unknown_fields.clear();
     }
@@ -1758,14 +1758,14 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     edUuid\x18\x1a\x20\x01(\x0b2\x1b.ServerMessage.VerifiedUuidH\0R\x0cverif\
     iedUuid\x1ad\n\nUpdateTick\x12\x14\n\x05frame\x18\x01\x20\x01(\rR\x05fra\
     me\x12$\n\rreplicationId\x18\x02\x20\x01(\rR\rreplicationId\x12\x0c\n\
-    \x01x\x18\x03\x20\x01(\x02R\x01x\x12\x0c\n\x01y\x18\x04\x20\x01(\x02R\
+    \x01x\x18\x03\x20\x01(\x11R\x01x\x12\x0c\n\x01y\x18\x04\x20\x01(\x11R\
     \x01y\x1a\x20\n\nVerifyUuid\x12\x12\n\x04uuid\x18\x01\x20\x01(\tR\x04uui\
     d\x1a\x0e\n\x0cVerifiedUuid\x1aM\n\x0fEntityDestroyed\x12\x14\n\x05frame\
     \x18\x01\x20\x01(\rR\x05frame\x12$\n\rreplicationId\x18\x02\x20\x01(\rR\
     \rreplicationId\x1a[\n\x08Snapshot\x12\x14\n\x05frame\x18\x01\x20\x01(\r\
     R\x05frame\x129\n\nentityData\x18\x02\x20\x03(\x0b2\x19.ServerMessage.En\
     tityDataR\nentityData\x1aN\n\nEntityData\x12\x0c\n\x01x\x18\x01\x20\x01(\
-    \x02R\x01x\x12\x0c\n\x01y\x18\x02\x20\x01(\x02R\x01y\x12$\n\rreplication\
+    \x11R\x01x\x12\x0c\n\x01y\x18\x02\x20\x01(\x11R\x01y\x12$\n\rreplication\
     Id\x18\x03\x20\x01(\rR\rreplicationIdB\t\n\x07msgDataJ\x84\n\n\x06\x12\
     \x04\0\0'\x01\n\x08\n\x01\x0c\x12\x03\0\0\x12\n\n\n\x02\x04\0\x12\x04\
     \x02\0'\x01\n\n\n\x03\x04\0\x01\x12\x03\x02\x08\x15\n\x0c\n\x04\x04\0\
@@ -1776,59 +1776,59 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \r\n\x06\x04\0\x03\0\x02\x01\x12\x03\x05\x04\x1d\n\x0e\n\x07\x04\0\x03\0\
     \x02\x01\x05\x12\x03\x05\x04\n\n\x0e\n\x07\x04\0\x03\0\x02\x01\x01\x12\
     \x03\x05\x0b\x18\n\x0e\n\x07\x04\0\x03\0\x02\x01\x03\x12\x03\x05\x1b\x1c\
-    \n\r\n\x06\x04\0\x03\0\x02\x02\x12\x03\x06\x04\x10\n\x0e\n\x07\x04\0\x03\
-    \0\x02\x02\x05\x12\x03\x06\x04\t\n\x0e\n\x07\x04\0\x03\0\x02\x02\x01\x12\
-    \x03\x06\n\x0b\n\x0e\n\x07\x04\0\x03\0\x02\x02\x03\x12\x03\x06\x0e\x0f\n\
-    \r\n\x06\x04\0\x03\0\x02\x03\x12\x03\x07\x04\x10\n\x0e\n\x07\x04\0\x03\0\
-    \x02\x03\x05\x12\x03\x07\x04\t\n\x0e\n\x07\x04\0\x03\0\x02\x03\x01\x12\
-    \x03\x07\n\x0b\n\x0e\n\x07\x04\0\x03\0\x02\x03\x03\x12\x03\x07\x0e\x0f\n\
-    \x0c\n\x04\x04\0\x03\x01\x12\x04\n\x02\x0c\x03\n\x0c\n\x05\x04\0\x03\x01\
-    \x01\x12\x03\n\n\x14\n\r\n\x06\x04\0\x03\x01\x02\0\x12\x03\x0b\x04\x14\n\
-    \x0e\n\x07\x04\0\x03\x01\x02\0\x05\x12\x03\x0b\x04\n\n\x0e\n\x07\x04\0\
-    \x03\x01\x02\0\x01\x12\x03\x0b\x0b\x0f\n\x0e\n\x07\x04\0\x03\x01\x02\0\
-    \x03\x12\x03\x0b\x12\x13\n\x0b\n\x04\x04\0\x03\x02\x12\x03\x0e\x02\x1a\n\
-    \x0c\n\x05\x04\0\x03\x02\x01\x12\x03\x0e\n\x16\n\x0c\n\x04\x04\0\x03\x03\
-    \x12\x04\x10\x02\x13\x03\n\x0c\n\x05\x04\0\x03\x03\x01\x12\x03\x10\n\x19\
-    \n\r\n\x06\x04\0\x03\x03\x02\0\x12\x03\x11\x04\x15\n\x0e\n\x07\x04\0\x03\
-    \x03\x02\0\x05\x12\x03\x11\x04\n\n\x0e\n\x07\x04\0\x03\x03\x02\0\x01\x12\
-    \x03\x11\x0b\x10\n\x0e\n\x07\x04\0\x03\x03\x02\0\x03\x12\x03\x11\x13\x14\
-    \n\r\n\x06\x04\0\x03\x03\x02\x01\x12\x03\x12\x04\x1d\n\x0e\n\x07\x04\0\
-    \x03\x03\x02\x01\x05\x12\x03\x12\x04\n\n\x0e\n\x07\x04\0\x03\x03\x02\x01\
-    \x01\x12\x03\x12\x0b\x18\n\x0e\n\x07\x04\0\x03\x03\x02\x01\x03\x12\x03\
-    \x12\x1b\x1c\n\x0c\n\x04\x04\0\x03\x04\x12\x04\x15\x02\x18\x03\n\x0c\n\
-    \x05\x04\0\x03\x04\x01\x12\x03\x15\n\x12\n\r\n\x06\x04\0\x03\x04\x02\0\
-    \x12\x03\x16\x04\x15\n\x0e\n\x07\x04\0\x03\x04\x02\0\x05\x12\x03\x16\x04\
-    \n\n\x0e\n\x07\x04\0\x03\x04\x02\0\x01\x12\x03\x16\x0b\x10\n\x0e\n\x07\
-    \x04\0\x03\x04\x02\0\x03\x12\x03\x16\x13\x14\n\r\n\x06\x04\0\x03\x04\x02\
-    \x01\x12\x03\x17\x04'\n\x0e\n\x07\x04\0\x03\x04\x02\x01\x04\x12\x03\x17\
-    \x04\x0c\n\x0e\n\x07\x04\0\x03\x04\x02\x01\x06\x12\x03\x17\r\x17\n\x0e\n\
-    \x07\x04\0\x03\x04\x02\x01\x01\x12\x03\x17\x18\"\n\x0e\n\x07\x04\0\x03\
-    \x04\x02\x01\x03\x12\x03\x17%&\n\x0c\n\x04\x04\0\x03\x05\x12\x04\x1a\x02\
-    \x1e\x03\n\x0c\n\x05\x04\0\x03\x05\x01\x12\x03\x1a\n\x14\n\r\n\x06\x04\0\
-    \x03\x05\x02\0\x12\x03\x1b\x04\x10\n\x0e\n\x07\x04\0\x03\x05\x02\0\x05\
-    \x12\x03\x1b\x04\t\n\x0e\n\x07\x04\0\x03\x05\x02\0\x01\x12\x03\x1b\n\x0b\
-    \n\x0e\n\x07\x04\0\x03\x05\x02\0\x03\x12\x03\x1b\x0e\x0f\n\r\n\x06\x04\0\
-    \x03\x05\x02\x01\x12\x03\x1c\x04\x10\n\x0e\n\x07\x04\0\x03\x05\x02\x01\
-    \x05\x12\x03\x1c\x04\t\n\x0e\n\x07\x04\0\x03\x05\x02\x01\x01\x12\x03\x1c\
-    \n\x0b\n\x0e\n\x07\x04\0\x03\x05\x02\x01\x03\x12\x03\x1c\x0e\x0f\n\r\n\
-    \x06\x04\0\x03\x05\x02\x02\x12\x03\x1d\x04\x1d\n\x0e\n\x07\x04\0\x03\x05\
-    \x02\x02\x05\x12\x03\x1d\x04\n\n\x0e\n\x07\x04\0\x03\x05\x02\x02\x01\x12\
-    \x03\x1d\x0b\x18\n\x0e\n\x07\x04\0\x03\x05\x02\x02\x03\x12\x03\x1d\x1b\
-    \x1c\n\x0c\n\x04\x04\0\x08\0\x12\x04\x20\x02&\x03\n\x0c\n\x05\x04\0\x08\
-    \0\x01\x12\x03\x20\x08\x0f\n\x0b\n\x04\x04\0\x02\0\x12\x03!\x04\x1e\n\
-    \x0c\n\x05\x04\0\x02\0\x06\x12\x03!\x04\x0e\n\x0c\n\x05\x04\0\x02\0\x01\
-    \x12\x03!\x0f\x19\n\x0c\n\x05\x04\0\x02\0\x03\x12\x03!\x1c\x1d\n\x0b\n\
-    \x04\x04\0\x02\x01\x12\x03\"\x04\x1a\n\x0c\n\x05\x04\0\x02\x01\x06\x12\
-    \x03\"\x04\x0c\n\x0c\n\x05\x04\0\x02\x01\x01\x12\x03\"\r\x15\n\x0c\n\x05\
-    \x04\0\x02\x01\x03\x12\x03\"\x18\x19\n\x0b\n\x04\x04\0\x02\x02\x12\x03#\
-    \x04(\n\x0c\n\x05\x04\0\x02\x02\x06\x12\x03#\x04\x13\n\x0c\n\x05\x04\0\
-    \x02\x02\x01\x12\x03#\x14#\n\x0c\n\x05\x04\0\x02\x02\x03\x12\x03#&'\n\
-    \x0b\n\x04\x04\0\x02\x03\x12\x03$\x04\x1f\n\x0c\n\x05\x04\0\x02\x03\x06\
-    \x12\x03$\x04\x0e\n\x0c\n\x05\x04\0\x02\x03\x01\x12\x03$\x0f\x19\n\x0c\n\
-    \x05\x04\0\x02\x03\x03\x12\x03$\x1c\x1e\n\x0b\n\x04\x04\0\x02\x04\x12\
-    \x03%\x04#\n\x0c\n\x05\x04\0\x02\x04\x06\x12\x03%\x04\x10\n\x0c\n\x05\
-    \x04\0\x02\x04\x01\x12\x03%\x11\x1d\n\x0c\n\x05\x04\0\x02\x04\x03\x12\
-    \x03%\x20\"b\x06proto3\
+    \n\r\n\x06\x04\0\x03\0\x02\x02\x12\x03\x06\x04\x11\n\x0e\n\x07\x04\0\x03\
+    \0\x02\x02\x05\x12\x03\x06\x04\n\n\x0e\n\x07\x04\0\x03\0\x02\x02\x01\x12\
+    \x03\x06\x0b\x0c\n\x0e\n\x07\x04\0\x03\0\x02\x02\x03\x12\x03\x06\x0f\x10\
+    \n\r\n\x06\x04\0\x03\0\x02\x03\x12\x03\x07\x04\x11\n\x0e\n\x07\x04\0\x03\
+    \0\x02\x03\x05\x12\x03\x07\x04\n\n\x0e\n\x07\x04\0\x03\0\x02\x03\x01\x12\
+    \x03\x07\x0b\x0c\n\x0e\n\x07\x04\0\x03\0\x02\x03\x03\x12\x03\x07\x0f\x10\
+    \n\x0c\n\x04\x04\0\x03\x01\x12\x04\n\x02\x0c\x03\n\x0c\n\x05\x04\0\x03\
+    \x01\x01\x12\x03\n\n\x14\n\r\n\x06\x04\0\x03\x01\x02\0\x12\x03\x0b\x04\
+    \x14\n\x0e\n\x07\x04\0\x03\x01\x02\0\x05\x12\x03\x0b\x04\n\n\x0e\n\x07\
+    \x04\0\x03\x01\x02\0\x01\x12\x03\x0b\x0b\x0f\n\x0e\n\x07\x04\0\x03\x01\
+    \x02\0\x03\x12\x03\x0b\x12\x13\n\x0b\n\x04\x04\0\x03\x02\x12\x03\x0e\x02\
+    \x1a\n\x0c\n\x05\x04\0\x03\x02\x01\x12\x03\x0e\n\x16\n\x0c\n\x04\x04\0\
+    \x03\x03\x12\x04\x10\x02\x13\x03\n\x0c\n\x05\x04\0\x03\x03\x01\x12\x03\
+    \x10\n\x19\n\r\n\x06\x04\0\x03\x03\x02\0\x12\x03\x11\x04\x15\n\x0e\n\x07\
+    \x04\0\x03\x03\x02\0\x05\x12\x03\x11\x04\n\n\x0e\n\x07\x04\0\x03\x03\x02\
+    \0\x01\x12\x03\x11\x0b\x10\n\x0e\n\x07\x04\0\x03\x03\x02\0\x03\x12\x03\
+    \x11\x13\x14\n\r\n\x06\x04\0\x03\x03\x02\x01\x12\x03\x12\x04\x1d\n\x0e\n\
+    \x07\x04\0\x03\x03\x02\x01\x05\x12\x03\x12\x04\n\n\x0e\n\x07\x04\0\x03\
+    \x03\x02\x01\x01\x12\x03\x12\x0b\x18\n\x0e\n\x07\x04\0\x03\x03\x02\x01\
+    \x03\x12\x03\x12\x1b\x1c\n\x0c\n\x04\x04\0\x03\x04\x12\x04\x15\x02\x18\
+    \x03\n\x0c\n\x05\x04\0\x03\x04\x01\x12\x03\x15\n\x12\n\r\n\x06\x04\0\x03\
+    \x04\x02\0\x12\x03\x16\x04\x15\n\x0e\n\x07\x04\0\x03\x04\x02\0\x05\x12\
+    \x03\x16\x04\n\n\x0e\n\x07\x04\0\x03\x04\x02\0\x01\x12\x03\x16\x0b\x10\n\
+    \x0e\n\x07\x04\0\x03\x04\x02\0\x03\x12\x03\x16\x13\x14\n\r\n\x06\x04\0\
+    \x03\x04\x02\x01\x12\x03\x17\x04'\n\x0e\n\x07\x04\0\x03\x04\x02\x01\x04\
+    \x12\x03\x17\x04\x0c\n\x0e\n\x07\x04\0\x03\x04\x02\x01\x06\x12\x03\x17\r\
+    \x17\n\x0e\n\x07\x04\0\x03\x04\x02\x01\x01\x12\x03\x17\x18\"\n\x0e\n\x07\
+    \x04\0\x03\x04\x02\x01\x03\x12\x03\x17%&\n\x0c\n\x04\x04\0\x03\x05\x12\
+    \x04\x1a\x02\x1e\x03\n\x0c\n\x05\x04\0\x03\x05\x01\x12\x03\x1a\n\x14\n\r\
+    \n\x06\x04\0\x03\x05\x02\0\x12\x03\x1b\x04\x11\n\x0e\n\x07\x04\0\x03\x05\
+    \x02\0\x05\x12\x03\x1b\x04\n\n\x0e\n\x07\x04\0\x03\x05\x02\0\x01\x12\x03\
+    \x1b\x0b\x0c\n\x0e\n\x07\x04\0\x03\x05\x02\0\x03\x12\x03\x1b\x0f\x10\n\r\
+    \n\x06\x04\0\x03\x05\x02\x01\x12\x03\x1c\x04\x11\n\x0e\n\x07\x04\0\x03\
+    \x05\x02\x01\x05\x12\x03\x1c\x04\n\n\x0e\n\x07\x04\0\x03\x05\x02\x01\x01\
+    \x12\x03\x1c\x0b\x0c\n\x0e\n\x07\x04\0\x03\x05\x02\x01\x03\x12\x03\x1c\
+    \x0f\x10\n\r\n\x06\x04\0\x03\x05\x02\x02\x12\x03\x1d\x04\x1d\n\x0e\n\x07\
+    \x04\0\x03\x05\x02\x02\x05\x12\x03\x1d\x04\n\n\x0e\n\x07\x04\0\x03\x05\
+    \x02\x02\x01\x12\x03\x1d\x0b\x18\n\x0e\n\x07\x04\0\x03\x05\x02\x02\x03\
+    \x12\x03\x1d\x1b\x1c\n\x0c\n\x04\x04\0\x08\0\x12\x04\x20\x02&\x03\n\x0c\
+    \n\x05\x04\0\x08\0\x01\x12\x03\x20\x08\x0f\n\x0b\n\x04\x04\0\x02\0\x12\
+    \x03!\x04\x1e\n\x0c\n\x05\x04\0\x02\0\x06\x12\x03!\x04\x0e\n\x0c\n\x05\
+    \x04\0\x02\0\x01\x12\x03!\x0f\x19\n\x0c\n\x05\x04\0\x02\0\x03\x12\x03!\
+    \x1c\x1d\n\x0b\n\x04\x04\0\x02\x01\x12\x03\"\x04\x1a\n\x0c\n\x05\x04\0\
+    \x02\x01\x06\x12\x03\"\x04\x0c\n\x0c\n\x05\x04\0\x02\x01\x01\x12\x03\"\r\
+    \x15\n\x0c\n\x05\x04\0\x02\x01\x03\x12\x03\"\x18\x19\n\x0b\n\x04\x04\0\
+    \x02\x02\x12\x03#\x04(\n\x0c\n\x05\x04\0\x02\x02\x06\x12\x03#\x04\x13\n\
+    \x0c\n\x05\x04\0\x02\x02\x01\x12\x03#\x14#\n\x0c\n\x05\x04\0\x02\x02\x03\
+    \x12\x03#&'\n\x0b\n\x04\x04\0\x02\x03\x12\x03$\x04\x1f\n\x0c\n\x05\x04\0\
+    \x02\x03\x06\x12\x03$\x04\x0e\n\x0c\n\x05\x04\0\x02\x03\x01\x12\x03$\x0f\
+    \x19\n\x0c\n\x05\x04\0\x02\x03\x03\x12\x03$\x1c\x1e\n\x0b\n\x04\x04\0\
+    \x02\x04\x12\x03%\x04#\n\x0c\n\x05\x04\0\x02\x04\x06\x12\x03%\x04\x10\n\
+    \x0c\n\x05\x04\0\x02\x04\x01\x12\x03%\x11\x1d\n\x0c\n\x05\x04\0\x02\x04\
+    \x03\x12\x03%\x20\"b\x06proto3\
 ";
 
 static mut file_descriptor_proto_lazy: ::protobuf::lazy::Lazy<::protobuf::descriptor::FileDescriptorProto> = ::protobuf::lazy::Lazy {

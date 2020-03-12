@@ -400,8 +400,8 @@ proto.ServerMessage.UpdateTick.toObject = function(includeInstance, msg) {
   var f, obj = {
     frame: jspb.Message.getFieldWithDefault(msg, 1, 0),
     replicationid: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    x: jspb.Message.getFloatingPointFieldWithDefault(msg, 3, 0.0),
-    y: jspb.Message.getFloatingPointFieldWithDefault(msg, 4, 0.0)
+    x: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    y: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -447,11 +447,11 @@ proto.ServerMessage.UpdateTick.deserializeBinaryFromReader = function(msg, reade
       msg.setReplicationid(value);
       break;
     case 3:
-      var value = /** @type {number} */ (reader.readFloat());
+      var value = /** @type {number} */ (reader.readSint32());
       msg.setX(value);
       break;
     case 4:
-      var value = /** @type {number} */ (reader.readFloat());
+      var value = /** @type {number} */ (reader.readSint32());
       msg.setY(value);
       break;
     default:
@@ -498,15 +498,15 @@ proto.ServerMessage.UpdateTick.serializeBinaryToWriter = function(message, write
     );
   }
   f = message.getX();
-  if (f !== 0.0) {
-    writer.writeFloat(
+  if (f !== 0) {
+    writer.writeSint32(
       3,
       f
     );
   }
   f = message.getY();
-  if (f !== 0.0) {
-    writer.writeFloat(
+  if (f !== 0) {
+    writer.writeSint32(
       4,
       f
     );
@@ -551,11 +551,11 @@ proto.ServerMessage.UpdateTick.prototype.setReplicationid = function(value) {
 
 
 /**
- * optional float x = 3;
+ * optional sint32 x = 3;
  * @return {number}
  */
 proto.ServerMessage.UpdateTick.prototype.getX = function() {
-  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 3, 0.0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
 
@@ -564,16 +564,16 @@ proto.ServerMessage.UpdateTick.prototype.getX = function() {
  * @return {!proto.ServerMessage.UpdateTick} returns this
  */
 proto.ServerMessage.UpdateTick.prototype.setX = function(value) {
-  return jspb.Message.setProto3FloatField(this, 3, value);
+  return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 
 /**
- * optional float y = 4;
+ * optional sint32 y = 4;
  * @return {number}
  */
 proto.ServerMessage.UpdateTick.prototype.getY = function() {
-  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 4, 0.0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
 
@@ -582,7 +582,7 @@ proto.ServerMessage.UpdateTick.prototype.getY = function() {
  * @return {!proto.ServerMessage.UpdateTick} returns this
  */
 proto.ServerMessage.UpdateTick.prototype.setY = function(value) {
-  return jspb.Message.setProto3FloatField(this, 4, value);
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
@@ -1199,8 +1199,8 @@ proto.ServerMessage.EntityData.prototype.toObject = function(opt_includeInstance
  */
 proto.ServerMessage.EntityData.toObject = function(includeInstance, msg) {
   var f, obj = {
-    x: jspb.Message.getFloatingPointFieldWithDefault(msg, 1, 0.0),
-    y: jspb.Message.getFloatingPointFieldWithDefault(msg, 2, 0.0),
+    x: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    y: jspb.Message.getFieldWithDefault(msg, 2, 0),
     replicationid: jspb.Message.getFieldWithDefault(msg, 3, 0)
   };
 
@@ -1239,11 +1239,11 @@ proto.ServerMessage.EntityData.deserializeBinaryFromReader = function(msg, reade
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readFloat());
+      var value = /** @type {number} */ (reader.readSint32());
       msg.setX(value);
       break;
     case 2:
-      var value = /** @type {number} */ (reader.readFloat());
+      var value = /** @type {number} */ (reader.readSint32());
       msg.setY(value);
       break;
     case 3:
@@ -1280,15 +1280,15 @@ proto.ServerMessage.EntityData.prototype.serializeBinary = function() {
 proto.ServerMessage.EntityData.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getX();
-  if (f !== 0.0) {
-    writer.writeFloat(
+  if (f !== 0) {
+    writer.writeSint32(
       1,
       f
     );
   }
   f = message.getY();
-  if (f !== 0.0) {
-    writer.writeFloat(
+  if (f !== 0) {
+    writer.writeSint32(
       2,
       f
     );
@@ -1304,11 +1304,11 @@ proto.ServerMessage.EntityData.serializeBinaryToWriter = function(message, write
 
 
 /**
- * optional float x = 1;
+ * optional sint32 x = 1;
  * @return {number}
  */
 proto.ServerMessage.EntityData.prototype.getX = function() {
-  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 1, 0.0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
 
@@ -1317,16 +1317,16 @@ proto.ServerMessage.EntityData.prototype.getX = function() {
  * @return {!proto.ServerMessage.EntityData} returns this
  */
 proto.ServerMessage.EntityData.prototype.setX = function(value) {
-  return jspb.Message.setProto3FloatField(this, 1, value);
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
 /**
- * optional float y = 2;
+ * optional sint32 y = 2;
  * @return {number}
  */
 proto.ServerMessage.EntityData.prototype.getY = function() {
-  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 2, 0.0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
@@ -1335,7 +1335,7 @@ proto.ServerMessage.EntityData.prototype.getY = function() {
  * @return {!proto.ServerMessage.EntityData} returns this
  */
 proto.ServerMessage.EntityData.prototype.setY = function(value) {
-  return jspb.Message.setProto3FloatField(this, 2, value);
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 

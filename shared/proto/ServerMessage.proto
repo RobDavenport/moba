@@ -4,8 +4,8 @@ message ServerMessage {
   message UpdateTick {
     uint32 frame = 1;
     uint32 replicationId = 2;
-    float x = 3;
-    float y = 4;
+    sint32 x = 3;
+    sint32 y = 4;
   }
   
   message VerifyUuid {
@@ -25,8 +25,8 @@ message ServerMessage {
   }
 
   message EntityData {
-    float x = 1;
-    float y = 2;
+    sint32 x = 1;
+    sint32 y = 2;
     uint32 replicationId = 3;
   }
   

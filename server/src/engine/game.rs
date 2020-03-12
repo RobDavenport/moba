@@ -154,8 +154,8 @@ impl Game {
         let entities: Vec<EntitySnapshot> = query
             .iter(&mut self.world)
             .map(|(transform, replicated)| EntitySnapshot {
-                x: transform.position.x,
-                y: transform.position.y,
+                x: transform.position.x.into(),
+                y: transform.position.y.into(),
                 replication_id: replicated.id,
             })
             .collect();
