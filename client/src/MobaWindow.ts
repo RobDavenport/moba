@@ -73,7 +73,7 @@ export default class MobaWindow extends Phaser.Scene {
 
       if (!this.input.mouse.locked) {
         this.input.mouse.requestPointerLock()
-        this.cursor.setPosition(pointer.x, pointer.y)
+        this.cursor.setPosition(Math.round(pointer.x), Math.round(pointer.y))
       }
 
       const btn = pointer.button
@@ -191,8 +191,7 @@ export default class MobaWindow extends Phaser.Scene {
     this.input.activePointer.movementY = 0
 
     this.cursor.x = Phaser.Math.Clamp(this.cursor.x, 0, this.game.renderer.width)
-    this.cursor.y = Phaser.Math.Clamp(this.cursor.y, 0, this.game.renderer.height)
-  }
+    this.cursor.y = Phaser.Math.Clamp(this.cursor.y, 0, this.game.renderer.height)  }
 
   updateCamera(dt: number) {
     this.cameras.main.scrollX += this.cameraScrollSpeed * this.cameraAxis.x * dt
@@ -211,6 +210,9 @@ export default class MobaWindow extends Phaser.Scene {
         this.cameras.main.scrollY += this.cameraScrollSpeed * dt
       }
     }
+
+    this.cameras.main.scrollX = Math.round(this.cameras.main.scrollX)
+    this.cameras.main.scrollY = Math.round(this.cameras.main.scrollY)
   }
 
   startFocusHero() {
