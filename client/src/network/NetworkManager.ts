@@ -122,6 +122,7 @@ export default class NetworkManager {
     }
   }
 
+  //This might need to change to send unreliable if bad connections end up choppy
   sendMoveCommand(point: CartesianPoint, isAttackMove: boolean) {
     this.sendReliable(Serializer.createMove(point, isAttackMove))
   }

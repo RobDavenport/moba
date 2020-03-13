@@ -19,6 +19,7 @@ use super::protobuf::ClientMessage::*; //todo cut this in favor of reader?
 use warp::filters::ws::Message;
 pub struct NetworkManager {
     clients: HashMap<PlayerId, ClientData>, //Todo: Change to a hash map of hashmaps?
+    unreliable_ids: HashMap<std::net::SocketAddr, PlayerId>, //Combine these into a "Socket Manager?"
     ws_in: Receiver<WSClientMessage>,
     game_sender: Sender<GameMessage>,
     reliable_out_queue: Receiver<(OutTarget, OutMessage)>,
@@ -36,6 +37,7 @@ impl NetworkManager {
     ) -> Self {
         Self {
             clients: HashMap::new(),
+            unreliable_ids: HashMap::new(),
             ws_in,
             game_sender,
             reliable_out_queue,
@@ -53,7 +55,7 @@ impl NetworkManager {
                     None => (),
                 },
                 rtc_msg = self.rtc_server.recv(&mut msg_buf).fuse() => match rtc_msg {
-                    Ok(msg) => on_rtc_in_msg(msg, &msg_buf, &mut self.clients, &mut self.game_sender).await,
+                    Ok(msg) => on_rtc_in_msg(msg, &msg_buf, &mut self.clients, &mut self.game_sender, &mut self.unreliable_ids).await,
                     Err(e) => println!("rtc server: {}", e),
                 },
                 reliable_result = self.reliable_out_queue.recv().fuse() => match reliable_result {
@@ -71,7 +73,7 @@ impl NetworkManager {
                             get_targets(targets, &self.clients),
                             out_unreliable,
                             &mut self.rtc_server,
-                            &self.clients
+                            &self.clients,
                         ).await,
                     None => (),
                 },
@@ -120,24 +122,31 @@ async fn on_rtc_in_msg(
     msg_buf: &Vec<u8>,
     clients: &mut HashMap<PlayerId, ClientData>,
     game_out: &mut Sender<GameMessage>,
+    unreliable_ids: &mut HashMap<std::net::SocketAddr, PlayerId>,
 ) {
     //todo read the message, handle deserealizing
-    println!("got rtc message from: {}", msg.remote_addr);
     let msg_text = &msg_buf[0..msg.message_len];
     if let Ok(protomsg) = protobuf::parse_from_bytes::<ClientMessage>(msg_text) {
         if let Some(protomsgtype) = protomsg.msgData {
             match protomsgtype {
-                ClientMessage_oneof_msgData::veryfiyRtc(veryfiy_rtc_msg) => {
-                    println!("got uuid: {}", &veryfiy_rtc_msg.uuid);
-                    if let Some(client_data) = clients.values_mut().find(|client| {
-                        client.socket_uuid == veryfiy_rtc_msg.uuid && client.socket_addr == None
-                    }) {
-                        println!("User found!");
-                        client_data.socket_addr = Some(msg.remote_addr);
-                        client_data
-                            .ws_client_out
-                            .send(Message::binary(OutMessage::VerifiedUuid.to_proto_bytes()))
-                            .await;
+                ClientMessage_oneof_msgData::veryfiyRtc(verify_rtc_msg) => {
+                    println!("got uuid: {}", &verify_rtc_msg.uuid);
+                    for (key, val) in clients.iter_mut() {
+                        if (val.socket_uuid == verify_rtc_msg.uuid && val.socket_addr == None) {
+                            println!("User found!");
+                            val.socket_addr = Some(msg.remote_addr);
+                            unreliable_ids.insert(msg.remote_addr, *key);
+                            val.ws_client_out
+                                .send(Message::binary(OutMessage::VerifiedUuid.to_proto_bytes()))
+                                .await;
+                        }
+                    }
+                }
+                ClientMessage_oneof_msgData::command(command_msg) => {
+                    if let Some(player_id) = unreliable_ids.get(&msg.remote_addr) {
+                        if let Some(out_msg) = handle_client_command(command_msg, *player_id) {
+                            game_out.try_send(out_msg);
+                        };
                     }
                 }
                 _ => println!("Received unhandled message over WebRTC"),
