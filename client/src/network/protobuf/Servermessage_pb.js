@@ -983,7 +983,7 @@ proto.ServerMessage.EntityDestroyed.prototype.setReplicationid = function(value)
  * @private {!Array<number>}
  * @const
  */
-proto.ServerMessage.Snapshot.repeatedFields_ = [2];
+proto.ServerMessage.Snapshot.repeatedFields_ = [3];
 
 
 
@@ -1017,6 +1017,7 @@ proto.ServerMessage.Snapshot.prototype.toObject = function(opt_includeInstance) 
 proto.ServerMessage.Snapshot.toObject = function(includeInstance, msg) {
   var f, obj = {
     frame: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    baseline: jspb.Message.getFieldWithDefault(msg, 2, 0),
     entitydataList: jspb.Message.toObjectList(msg.getEntitydataList(),
     proto.ServerMessage.EntityData.toObject, includeInstance)
   };
@@ -1060,6 +1061,10 @@ proto.ServerMessage.Snapshot.deserializeBinaryFromReader = function(msg, reader)
       msg.setFrame(value);
       break;
     case 2:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setBaseline(value);
+      break;
+    case 3:
       var value = new proto.ServerMessage.EntityData;
       reader.readMessage(value,proto.ServerMessage.EntityData.deserializeBinaryFromReader);
       msg.addEntitydata(value);
@@ -1100,10 +1105,17 @@ proto.ServerMessage.Snapshot.serializeBinaryToWriter = function(message, writer)
       f
     );
   }
+  f = message.getBaseline();
+  if (f !== 0) {
+    writer.writeUint32(
+      2,
+      f
+    );
+  }
   f = message.getEntitydataList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
-      2,
+      3,
       f,
       proto.ServerMessage.EntityData.serializeBinaryToWriter
     );
@@ -1130,12 +1142,30 @@ proto.ServerMessage.Snapshot.prototype.setFrame = function(value) {
 
 
 /**
- * repeated EntityData entityData = 2;
+ * optional uint32 baseline = 2;
+ * @return {number}
+ */
+proto.ServerMessage.Snapshot.prototype.getBaseline = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.ServerMessage.Snapshot} returns this
+ */
+proto.ServerMessage.Snapshot.prototype.setBaseline = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * repeated EntityData entityData = 3;
  * @return {!Array<!proto.ServerMessage.EntityData>}
  */
 proto.ServerMessage.Snapshot.prototype.getEntitydataList = function() {
   return /** @type{!Array<!proto.ServerMessage.EntityData>} */ (
-    jspb.Message.getRepeatedWrapperField(this, proto.ServerMessage.EntityData, 2));
+    jspb.Message.getRepeatedWrapperField(this, proto.ServerMessage.EntityData, 3));
 };
 
 
@@ -1144,7 +1174,7 @@ proto.ServerMessage.Snapshot.prototype.getEntitydataList = function() {
  * @return {!proto.ServerMessage.Snapshot} returns this
 */
 proto.ServerMessage.Snapshot.prototype.setEntitydataList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 2, value);
+  return jspb.Message.setRepeatedWrapperField(this, 3, value);
 };
 
 
@@ -1154,7 +1184,7 @@ proto.ServerMessage.Snapshot.prototype.setEntitydataList = function(value) {
  * @return {!proto.ServerMessage.EntityData}
  */
 proto.ServerMessage.Snapshot.prototype.addEntitydata = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.ServerMessage.EntityData, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 3, opt_value, proto.ServerMessage.EntityData, opt_index);
 };
 
 

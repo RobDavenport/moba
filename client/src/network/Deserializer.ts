@@ -27,7 +27,9 @@ function entityDestroyed(message: ServerMessage.AsObject, dst: MobaWindow, net: 
 }
 
 function snapshot(message: ServerMessage.AsObject, dst: MobaWindow, net: NetworkManager) {
-  dst.onSnapshot(message.snapshot)
+  if (net.onSnapshot(message.snapshot)) {
+    dst.onSnapshot(message.snapshot)
+  }
 }
 
 

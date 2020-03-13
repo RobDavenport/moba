@@ -110,6 +110,7 @@ fn on_ws_in_msg(
                             };
                         }
                         ClientMessage_oneof_msgData::veryfiyRtc(..) => (),
+                        ClientMessage_oneof_msgData::ack(..) => (),
                     }
                 }
             }
@@ -132,13 +133,14 @@ async fn on_rtc_in_msg(
                 ClientMessage_oneof_msgData::veryfiyRtc(verify_rtc_msg) => {
                     println!("got uuid: {}", &verify_rtc_msg.uuid);
                     for (key, val) in clients.iter_mut() {
-                        if (val.socket_uuid == verify_rtc_msg.uuid && val.socket_addr == None) {
+                        if val.socket_uuid == verify_rtc_msg.uuid && val.socket_addr == None {
                             println!("User found!");
                             val.socket_addr = Some(msg.remote_addr);
                             unreliable_ids.insert(msg.remote_addr, *key);
                             val.ws_client_out
                                 .send(Message::binary(OutMessage::VerifiedUuid.to_proto_bytes()))
                                 .await;
+                            break;
                         }
                     }
                 }
@@ -149,7 +151,14 @@ async fn on_rtc_in_msg(
                         };
                     }
                 }
-                _ => println!("Received unhandled message over WebRTC"),
+                ClientMessage_oneof_msgData::ack(ack_msg) => {
+                    if let Some(player_id) = unreliable_ids.get(&msg.remote_addr) {
+                        game_out.try_send(GameMessage::Ack {
+                            id: *player_id,
+                            new_baseline: ack_msg.newBaseline,
+                        });
+                    }
+                }
             }
         }
     }

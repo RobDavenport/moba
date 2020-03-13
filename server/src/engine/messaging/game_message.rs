@@ -7,4 +7,5 @@ pub enum GameMessage {
     ClientConnected(PlayerId),
     ClientDisconnected(PlayerId),
     InputCommand { id: PlayerId, command: InputCommand },
+    Ack { id: PlayerId, new_baseline: u32 },
 }

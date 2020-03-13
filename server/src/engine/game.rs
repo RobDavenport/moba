@@ -12,6 +12,8 @@ use super::input_command::InputCommand;
 use super::systems::*;
 use crate::engine::messaging::messages::{EntitySnapshot, GameMessage, OutMessage, OutTarget};
 
+const SNAPSHOT_HISTORY_MAX_SIZE: usize = 64;
+
 pub struct Game {
     tick_time: f32,
     world: World,
@@ -21,8 +23,53 @@ pub struct Game {
     out_unreliable: Sender<(OutTarget, OutMessage)>,
     game_in: Receiver<GameMessage>,
     player_entities: HashMap<PlayerId, Entity>,
+    player_snapshot_history: HashMap<PlayerId, SnapshotHistory>,
     replication_counter: u32,
     game_events: VecDeque<GameEvent>,
+}
+
+struct SnapshotHistory {
+    history: VecDeque<SnapshotData>,
+    ack_baseline: Option<SnapshotData>,
+}
+
+struct SnapshotData {
+    pub entity_data: Vec<EntitySnapshot>,
+    pub frame: u32,
+}
+
+impl SnapshotHistory {
+    pub fn new() -> Self {
+        Self {
+            history: VecDeque::with_capacity(SNAPSHOT_HISTORY_MAX_SIZE),
+            ack_baseline: None,
+        }
+    }
+
+    pub fn save_and_calc_delta(
+        &mut self,
+        in_snapshot: SnapshotData,
+    ) -> Option<Vec<EntitySnapshot>> {
+        if self.history.len() == SNAPSHOT_HISTORY_MAX_SIZE {
+            self.history.clear();
+            return None;
+        }
+
+        if let Some(baseline) = &self.ack_baseline {
+            //calcualte the deltas, add them to out, and send
+            //let mut out = Vec::new();
+            //TODO fix this
+            Some(baseline.entity_data.clone())
+        } else {
+            self.history.push_back(in_snapshot);
+            None
+        }
+    }
+
+    pub fn set_new_baseline(&mut self, frame: u32) {
+        self.history.retain(|snap| snap.frame >= frame); //only keep "newer snapsots"
+        self.ack_baseline = self.history.pop_front();
+    }
 }
 
 impl Game {
@@ -43,6 +90,7 @@ impl Game {
             player_entities: HashMap::new(),
             replication_counter: 0,
             game_events: VecDeque::new(),
+            player_snapshot_history: HashMap::new(),
         }
     }
 
@@ -93,7 +141,12 @@ impl Game {
                 println!("Game: Client disconnected");
                 self.on_client_disconnected(id)
             }
+            GameMessage::Ack { id, new_baseline } => self.handle_ack(id, new_baseline),
         }
+    }
+
+    fn handle_ack(&mut self, id: PlayerId, new_baseline: u32) {
+        //TODO!
     }
 
     fn handle_input_command(&mut self, id: PlayerId, command: InputCommand) {

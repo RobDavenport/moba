@@ -1,5 +1,7 @@
 import { interpolationFrames } from './Constants'
 
+//TODO: use a snapshot buffer for interpolation?
+
 export class InterpolatedSprite {
   private nextPoint: { x: number, y: number }
   private lastPoint: { x: number, y: number }

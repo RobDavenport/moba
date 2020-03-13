@@ -102,7 +102,7 @@ export default class MobaWindow extends Phaser.Scene {
     this.updateCursor()
     this.updateCamera(dt)
     this.gameEngine.update(dt)
-    this.interpolateObjects()
+    this.interpolateObjects() //TODO: use a snapshot buffer for interpolation?
   }
 
   // Input Code

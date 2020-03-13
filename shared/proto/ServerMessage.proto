@@ -21,7 +21,8 @@ message ServerMessage {
 
   message Snapshot {
     uint32 frame = 1;
-    repeated EntityData entityData = 2;
+    uint32 baseline = 2;
+    repeated EntityData entityData = 3;
   }
 
   message EntityData {

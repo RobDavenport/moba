@@ -20,12 +20,14 @@ export default class NetworkManager {
   private socketUuid: string
   private verifier: NodeJS.Timeout
   private serverMessageQueue: Array<Uint8Array>
+  private baseline: integer
 
   constructor(gameWindow: MobaWindow) {
     this.gameWindow = gameWindow
-    this.serverMessageQueue = [];
+    this.serverMessageQueue = []
     this.initWebsocket()
     this.initWebRTC()
+    this.baseline = -1
   }
 
   handleMessageQueue(dt: number) {
@@ -141,6 +143,17 @@ export default class NetworkManager {
 
   verifiedUuid() {
     clearInterval(this.verifier)
+  }
+
+  onSnapshot(snapshot: ServerMessage.Snapshot.AsObject): Boolean {
+    if (this.baseline >= snapshot.frame) { //We already have this, so just trash it
+      return false
+    }
+
+    this.baseline = snapshot.frame
+    this.channel.send(Serializer.createSnapshotAck(snapshot.frame))
+
+    return true
   }
 
   private handleServerMessage({ data }: MessageEvent) {

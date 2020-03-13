@@ -1,12 +1,17 @@
 syntax = "proto3";
 
 message ClientMessage {
+  message Ack {
+    uint32 newBaseline = 1;
+  }
+
   message VerifyRtc {
     string uuid = 1;
   }
 
   oneof msgData {
-    Command command = 1;
+    Ack ack = 1;
+    Command command = 2;
     VerifyRtc veryfiyRtc = 100;
   }
 }

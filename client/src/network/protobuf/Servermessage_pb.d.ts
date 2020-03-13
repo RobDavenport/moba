@@ -145,6 +145,9 @@ export namespace ServerMessage {
     getFrame(): number;
     setFrame(value: number): void;
 
+    getBaseline(): number;
+    setBaseline(value: number): void;
+
     clearEntitydataList(): void;
     getEntitydataList(): Array<ServerMessage.EntityData>;
     setEntitydataList(value: Array<ServerMessage.EntityData>): void;
@@ -163,6 +166,7 @@ export namespace ServerMessage {
   export namespace Snapshot {
     export type AsObject = {
       frame: number,
+      baseline: number,
       entitydataList: Array<ServerMessage.EntityData.AsObject>,
     }
   }

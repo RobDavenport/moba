@@ -1,6 +1,17 @@
 import { ClientMessage, Command } from './protobuf/ClientMessage_pb'
 import { CartesianPoint } from '../helpers/GameMath'
 
+export function createSnapshotAck(newBaseline: integer) {
+  let clientMessage = new ClientMessage()
+
+  let ack = new ClientMessage.Ack()
+  ack.setNewbaseline(newBaseline)
+
+  clientMessage.setAck(ack);
+
+  return clientMessage.serializeBinary()
+}
+
 export function createVerifyRtc(uuid: string) {
   let clientMessage = new ClientMessage()
 

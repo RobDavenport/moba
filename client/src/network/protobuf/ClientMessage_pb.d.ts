@@ -4,6 +4,11 @@
 import * as jspb from "google-protobuf";
 
 export class ClientMessage extends jspb.Message {
+  hasAck(): boolean;
+  clearAck(): void;
+  getAck(): ClientMessage.Ack | undefined;
+  setAck(value?: ClientMessage.Ack): void;
+
   hasCommand(): boolean;
   clearCommand(): void;
   getCommand(): Command | undefined;
@@ -27,8 +32,29 @@ export class ClientMessage extends jspb.Message {
 
 export namespace ClientMessage {
   export type AsObject = {
+    ack?: ClientMessage.Ack.AsObject,
     command?: Command.AsObject,
     veryfiyrtc?: ClientMessage.VerifyRtc.AsObject,
+  }
+
+  export class Ack extends jspb.Message {
+    getNewbaseline(): number;
+    setNewbaseline(value: number): void;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): Ack.AsObject;
+    static toObject(includeInstance: boolean, msg: Ack): Ack.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: Ack, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): Ack;
+    static deserializeBinaryFromReader(message: Ack, reader: jspb.BinaryReader): Ack;
+  }
+
+  export namespace Ack {
+    export type AsObject = {
+      newbaseline: number,
+    }
   }
 
   export class VerifyRtc extends jspb.Message {
@@ -53,7 +79,8 @@ export namespace ClientMessage {
 
   export enum MsgdataCase {
     MSGDATA_NOT_SET = 0,
-    COMMAND = 1,
+    ACK = 1,
+    COMMAND = 2,
     VERYFIYRTC = 100,
   }
 }
