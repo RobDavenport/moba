@@ -5,6 +5,7 @@ use crate::engine::components::all::{PlayerId, ReplicationId};
 #[derive(Clone, Debug)]
 pub enum OutMessage {
     Snapshot {
+        baseline: Option<u32>,
         frame: u32,
         entities: Vec<EntitySnapshot>,
     },
@@ -69,7 +70,11 @@ impl OutMessage {
                 frame,
                 replication_id,
             } => entity_destroyed(frame, replication_id),
-            Self::Snapshot { frame, entities } => snapshot(frame, entities),
+            Self::Snapshot {
+                frame,
+                entities,
+                baseline,
+            } => snapshot(frame, entities, baseline),
         }
     }
 }
@@ -119,11 +124,14 @@ fn entity_destroyed(frame: u32, replication_id: ReplicationId) -> Vec<u8> {
     output.write_to_bytes().unwrap()
 }
 
-fn snapshot(frame: u32, entities: Vec<EntitySnapshot>) -> Vec<u8> {
+fn snapshot(frame: u32, entities: Vec<EntitySnapshot>, baseline: Option<u32>) -> Vec<u8> {
     let mut output = ServerMessage::new();
 
     let mut inner = ServerMessage_Snapshot::new();
     inner.set_frame(frame);
+    if let Some(base) = baseline {
+        inner.set_baseline(base);
+    }
 
     inner.set_entityData(RepeatedField::from_vec(
         entities

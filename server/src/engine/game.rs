@@ -11,8 +11,7 @@ use super::game_events::GameEvent;
 use super::input_command::InputCommand;
 use super::systems::*;
 use crate::engine::messaging::messages::{EntitySnapshot, GameMessage, OutMessage, OutTarget};
-
-const SNAPSHOT_HISTORY_MAX_SIZE: usize = 64;
+use crate::engine::network::delta_encoder::SnapshotHistory;
 
 pub struct Game {
     tick_time: f32,
@@ -23,53 +22,9 @@ pub struct Game {
     out_unreliable: Sender<(OutTarget, OutMessage)>,
     game_in: Receiver<GameMessage>,
     player_entities: HashMap<PlayerId, Entity>,
-    player_snapshot_history: HashMap<PlayerId, SnapshotHistory>,
+    player_snapshot_histories: HashMap<PlayerId, SnapshotHistory>,
     replication_counter: u32,
     game_events: VecDeque<GameEvent>,
-}
-
-struct SnapshotHistory {
-    history: VecDeque<SnapshotData>,
-    ack_baseline: Option<SnapshotData>,
-}
-
-struct SnapshotData {
-    pub entity_data: Vec<EntitySnapshot>,
-    pub frame: u32,
-}
-
-impl SnapshotHistory {
-    pub fn new() -> Self {
-        Self {
-            history: VecDeque::with_capacity(SNAPSHOT_HISTORY_MAX_SIZE),
-            ack_baseline: None,
-        }
-    }
-
-    pub fn save_and_calc_delta(
-        &mut self,
-        in_snapshot: SnapshotData,
-    ) -> Option<Vec<EntitySnapshot>> {
-        if self.history.len() == SNAPSHOT_HISTORY_MAX_SIZE {
-            self.history.clear();
-            return None;
-        }
-
-        if let Some(baseline) = &self.ack_baseline {
-            //calcualte the deltas, add them to out, and send
-            //let mut out = Vec::new();
-            //TODO fix this
-            Some(baseline.entity_data.clone())
-        } else {
-            self.history.push_back(in_snapshot);
-            None
-        }
-    }
-
-    pub fn set_new_baseline(&mut self, frame: u32) {
-        self.history.retain(|snap| snap.frame >= frame); //only keep "newer snapsots"
-        self.ack_baseline = self.history.pop_front();
-    }
 }
 
 impl Game {
@@ -90,7 +45,7 @@ impl Game {
             player_entities: HashMap::new(),
             replication_counter: 0,
             game_events: VecDeque::new(),
-            player_snapshot_history: HashMap::new(),
+            player_snapshot_histories: HashMap::new(),
         }
     }
 
@@ -146,7 +101,9 @@ impl Game {
     }
 
     fn handle_ack(&mut self, id: PlayerId, new_baseline: u32) {
-        //TODO!
+        if let Some(history) = self.player_snapshot_histories.get_mut(&id) {
+            history.ack_baseline(new_baseline);
+        }
     }
 
     fn handle_input_command(&mut self, id: PlayerId, command: InputCommand) {
@@ -185,6 +142,8 @@ impl Game {
         let player_entity = entities.first().unwrap();
 
         self.player_entities.insert(player_id, *player_entity);
+        self.player_snapshot_histories
+            .insert(player_id, SnapshotHistory::new());
     }
 
     fn on_client_disconnected(&mut self, player_id: PlayerId) {
@@ -214,12 +173,38 @@ impl Game {
             .collect();
 
         if entities.len() > 0 {
-            let snapshot = OutMessage::Snapshot {
-                frame: self.game_frame,
-                entities,
-            };
+            // let snapshot = OutMessage::Snapshot {
+            //     frame: self.game_frame,
+            //     entities,
+            // };
 
-            self.out_unreliable.try_send((OutTarget::All, snapshot));
+            for (id, mut history) in self.player_snapshot_histories.iter_mut() {
+                if let Some((baseline, delta_entities)) =
+                    history.encode_delta(self.game_frame, &entities)
+                {
+                    println!("d");
+                    self.out_unreliable.try_send((
+                        OutTarget::Single(*id),
+                        OutMessage::Snapshot {
+                            frame: self.game_frame,
+                            entities: delta_entities,
+                            baseline: Some(baseline),
+                        },
+                    ));
+                } else {
+                    println!("###");
+                    self.out_unreliable.try_send((
+                        OutTarget::Single(*id),
+                        OutMessage::Snapshot {
+                            frame: self.game_frame,
+                            entities: entities.clone(),
+                            baseline: None,
+                        },
+                    ));
+                }
+            }
+
+            // self.out_unreliable.try_send((OutTarget::All, snapshot));
         }
 
         for event in self.game_events.drain(..) {
