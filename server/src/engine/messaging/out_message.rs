@@ -1,4 +1,5 @@
 use crate::engine::components::all::{PlayerId, ReplicationId};
+use std::cmp::Ordering;
 
 //Messages that are broadcasted from the Server to Game Clients only
 //Change this to a struct? that implements toProtobuf ?
@@ -25,10 +26,30 @@ pub enum OutMessage {
 
 #[derive(Clone, Debug)]
 pub struct EntitySnapshot {
+    pub replication_id: ReplicationId,
     pub x: NetworkedFloat,
     pub y: NetworkedFloat,
-    pub replication_id: ReplicationId,
 }
+
+impl Ord for EntitySnapshot {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.replication_id.cmp(&other.replication_id)
+    }
+}
+
+impl PartialOrd for EntitySnapshot {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl PartialEq for EntitySnapshot {
+    fn eq(&self, other: &Self) -> bool {
+        self.replication_id == other.replication_id
+    }
+}
+
+impl Eq for EntitySnapshot {}
 
 pub enum OutTarget {
     All,

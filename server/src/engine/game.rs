@@ -163,7 +163,7 @@ impl Game {
         //Todo only send 'dirty' components
         let query = <(Read<Transform>, Read<Replicated>)>::query();
 
-        let entities: Vec<EntitySnapshot> = query
+        let mut entities: Vec<EntitySnapshot> = query
             .iter(&mut self.world)
             .map(|(transform, replicated)| EntitySnapshot {
                 x: transform.position.x.into(),
@@ -177,6 +177,8 @@ impl Game {
             //     frame: self.game_frame,
             //     entities,
             // };
+
+            entities.sort_unstable();
 
             for (id, mut history) in self.player_snapshot_histories.iter_mut() {
                 if let Some((baseline, delta_entities)) =
