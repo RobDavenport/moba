@@ -184,17 +184,20 @@ impl Game {
                 if let Some((baseline, delta_entities)) =
                     history.encode_delta(self.game_frame, &entities)
                 {
-                    println!("d");
-                    self.out_unreliable.try_send((
-                        OutTarget::Single(*id),
-                        OutMessage::Snapshot {
-                            frame: self.game_frame,
-                            entities: delta_entities,
-                            baseline: Some(baseline),
-                        },
-                    ));
+                    if delta_entities.len() > 0 {
+                        //println!("d {} => {}", baseline, self.game_frame);
+                        self.out_unreliable.try_send((
+                            OutTarget::Single(*id),
+                            OutMessage::Snapshot {
+                                frame: self.game_frame,
+                                entities: delta_entities,
+                                baseline: Some(baseline),
+                            },
+                        ));
+                    }
                 } else {
-                    println!("###");
+                    // println!("###");
+                    //println!("# {}", self.game_frame);
                     self.out_unreliable.try_send((
                         OutTarget::Single(*id),
                         OutMessage::Snapshot {

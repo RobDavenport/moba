@@ -687,6 +687,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "itertools"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "284f18f85651fe11e8a991b2adb42cb078325c996ed026d994719efcfca1d54b"
+dependencies = [
+ "either",
+]
+
+[[package]]
 name = "itoa"
 version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -724,7 +733,7 @@ dependencies = [
  "crossbeam",
  "derivative",
  "downcast-rs",
- "itertools",
+ "itertools 0.8.2",
  "parking_lot",
  "paste",
  "rayon",
@@ -918,6 +927,7 @@ dependencies = [
  "bytes 0.5.4",
  "futures",
  "futures-util",
+ "itertools 0.9.0",
  "legion",
  "my_internet_ip",
  "nalgebra",
@@ -1687,7 +1697,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "83695fde96cbe9e08f0e4eb96b1b56fdbd44f2098ee27462dda964c7745fddc7"
 dependencies = [
  "bitflags",
- "itertools",
+ "itertools 0.8.2",
  "proc-macro2 1.0.8",
  "quote 1.0.2",
  "syn 1.0.14",
