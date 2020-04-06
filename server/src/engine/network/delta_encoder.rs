@@ -1,6 +1,8 @@
 use crate::engine::messaging::messages::EntitySnapshot;
 use std::collections::VecDeque;
 
+use itertools::{diff_with, Diff};
+
 const SNAPSHOT_HISTORY_MAX_SIZE: usize = 64;
 
 pub struct SnapshotHistory {
@@ -27,17 +29,38 @@ impl SnapshotHistory {
         entities: &Vec<EntitySnapshot>,
     ) -> Option<(u32, Vec<EntitySnapshot>)> {
         if self.history.len() == SNAPSHOT_HISTORY_MAX_SIZE {
-            println!("Snapshots are too old, clearing history");
-            self.history.clear();
+            drop(self.history.pop_front());
             self.ack_baseline = None;
-            //return None;
         }
 
         let output = if let Some(baseline) = &self.ack_baseline {
-            //calcualte the deltas, add them to out, and send
-            //let mut out = Vec::new();
-            //TODO fix this
-            Some((baseline.frame, entities.clone()))
+            let mut out = Vec::<EntitySnapshot>::new();
+            let mut base_iter = baseline.entity_data.iter();
+            let mut next_iter = entities.iter();
+
+            while let Some(diff) = diff_with(base_iter, next_iter, |base, next| base == next) {
+                match diff {
+                    Diff::FirstMismatch(idx, i, j) => {
+                        //Mismatch found at index
+                        let (j_val, j_iter) = j.into_parts();
+                        out.push(j_val.unwrap().clone());
+                        base_iter = i.into_parts().1;
+                        next_iter = j_iter;
+                    }
+                    Diff::Shorter(len, i) => {
+                        // Next contains less elementas than baseline
+                        break;
+                    }
+                    Diff::Longer(len, j) => {
+                        // Next contains more elements than baseline
+                        for snapshot in j {
+                            out.push(snapshot.clone());
+                        }
+                        break;
+                    }
+                }
+            }
+            Some((baseline.frame, out))
         } else {
             // We dont have a baseline, so just send a full snapshot
             None
@@ -70,7 +93,8 @@ impl SnapshotHistory {
         self.ack_baseline = self.history.pop_front();
 
         // if let Some(baseline) = &self.ack_baseline {
-        //     println!("baseline frame {}", baseline.frame);
+        //     println!("delta = +{} || {} {}", frame - baseline.frame, frame, baseline.frame);
+        //     //println!("baseline frame {}", baseline.frame);
         // }
     }
 }

@@ -160,7 +160,6 @@ impl Game {
     }
 
     async fn broadcast_state(&mut self) {
-        //Todo only send 'dirty' components
         let query = <(Read<Transform>, Read<Replicated>)>::query();
 
         let mut entities: Vec<EntitySnapshot> = query
@@ -173,11 +172,6 @@ impl Game {
             .collect();
 
         if entities.len() > 0 {
-            // let snapshot = OutMessage::Snapshot {
-            //     frame: self.game_frame,
-            //     entities,
-            // };
-
             entities.sort_unstable();
 
             for (id, mut history) in self.player_snapshot_histories.iter_mut() {
@@ -196,8 +190,6 @@ impl Game {
                         ));
                     }
                 } else {
-                    // println!("###");
-                    //println!("# {}", self.game_frame);
                     self.out_unreliable.try_send((
                         OutTarget::Single(*id),
                         OutMessage::Snapshot {
@@ -208,8 +200,6 @@ impl Game {
                     ));
                 }
             }
-
-            // self.out_unreliable.try_send((OutTarget::All, snapshot));
         }
 
         for event in self.game_events.drain(..) {

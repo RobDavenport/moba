@@ -190,9 +190,10 @@ async fn handle_unreliable_out_msg(
     let output = out_msg.to_proto_bytes();
 
     for idx in out_indexes {
-        let client = clients.get(&idx).unwrap();
-        if let Some(addr) = client.socket_addr {
-            rtc_server.send(&output, MessageType::Binary, &addr).await;
+        if let Some(client) = clients.get(&idx) {
+            if let Some(addr) = client.socket_addr {
+                rtc_server.send(&output, MessageType::Binary, &addr).await;
+            }
         }
     }
 }

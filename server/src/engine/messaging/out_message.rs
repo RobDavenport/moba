@@ -45,7 +45,7 @@ impl PartialOrd for EntitySnapshot {
 
 impl PartialEq for EntitySnapshot {
     fn eq(&self, other: &Self) -> bool {
-        self.replication_id == other.replication_id
+        self.replication_id == other.replication_id && self.x == other.x && self.y == other.y
     }
 }
 
@@ -71,6 +71,14 @@ impl Into<i32> for NetworkedFloat {
         self.0.round() as i32
     }
 }
+
+impl PartialEq for NetworkedFloat {
+    fn eq(&self, other: &Self) -> bool {
+        self.0.round() as i32 == other.0.round() as i32
+    }
+}
+
+impl Eq for NetworkedFloat {}
 
 use crate::engine::network::protobuf::ServerMessage::*;
 use protobuf::Message as Message_imported_for_functions;
