@@ -5,7 +5,7 @@ import { CartesianPoint } from '../helpers/GameMath'
 import { ServerMessage } from './protobuf/Servermessage_pb'
 
 //const address: string = prompt('Enter game server address.', document.location.hostname)
-const address = '126.57.118.187' //document.location.hostname
+const address = document.location.hostname
 const wsAddress = 'ws://' + address + ':8000/ws'
 const rtcAddress = 'http://' + address + ':8000/sdp'
 
