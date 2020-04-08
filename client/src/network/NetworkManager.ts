@@ -6,8 +6,8 @@ import { ServerMessage } from './protobuf/Servermessage_pb'
 
 //const address: string = prompt('Enter game server address.', document.location.hostname)
 const address = '126.57.118.187' //document.location.hostname
-const wsAddress = 'ws://' + address + ':8000/ws'
-const rtcAddress = 'http://' + address + ':8000/sdp'
+const wsAddress = 'wss://' + address + ':8000/ws'
+const rtcAddress = 'https://' + address + ':8000/sdp'
 
 export default class NetworkManager {
   private ws: WebSocket
