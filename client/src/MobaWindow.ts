@@ -24,8 +24,10 @@ export default class MobaWindow extends Phaser.Scene {
   private gameEngine: MobaEngine
   private cursor: Phaser.GameObjects.Image
 
+  private cameraLocked: boolean
   private cameraAxis: { x: number, y: number }
   private cameraScrollSpeed: number
+
 
   constructor() {
     super('moba')
@@ -34,6 +36,8 @@ export default class MobaWindow extends Phaser.Scene {
     this.gameEngine = new MobaEngine(this);
 
     this.entities = new Map()
+
+    this.cameraLocked = true;
 
     this.cameraAxis = { x: 0, y: 0 }
     this.cameraScrollSpeed = cameraScrollSpeed
@@ -59,6 +63,9 @@ export default class MobaWindow extends Phaser.Scene {
     }
 
     this.cursor = this.add.sprite(mid.x, mid.y, 'cursor')
+    this.cameras.main.scrollX = -mid.x
+    this.cameras.main.scrollY = -mid.y
+
     this.cursor.depth = 999999999
     this.cursor.setScrollFactor(0, 0)
     this.cursor.setOrigin(0, 0)
@@ -100,7 +107,11 @@ export default class MobaWindow extends Phaser.Scene {
   update(_, dt) {
     this.handleKeyInputs()
     this.updateCursor()
-    this.updateCamera(dt)
+    if (this.cameraLocked === true) {
+
+    } else {
+      this.updateCamera(dt)
+    }
     this.gameEngine.update(dt)
     this.interpolateObjects() //TODO: use a snapshot buffer for interpolation?
   }
@@ -143,14 +154,18 @@ export default class MobaWindow extends Phaser.Scene {
   }
 
   initTilemap() {
+
     const tileWidth = 256
     const tileHeight = 128
+
+    // TODO FIX THIS
+    const yOffset = tileHeight * mapHeight / 2
 
     for (let x = 0; x < mapWidth; x++) {
       for (let y = 0; y < mapHeight; y++) {
         let tilePoint = GM.tileIndexToCoordinate(x, y, tileWidth, tileHeight)
 
-        let tile = this.add.image(tilePoint.x, tilePoint.y, 'tile')
+        let tile = this.add.image(tilePoint.x, tilePoint.y - yOffset, 'tile')
         tile.depth = tilePoint.y
       }
     }
@@ -191,7 +206,8 @@ export default class MobaWindow extends Phaser.Scene {
     this.input.activePointer.movementY = 0
 
     this.cursor.x = Phaser.Math.Clamp(this.cursor.x, 0, this.game.renderer.width)
-    this.cursor.y = Phaser.Math.Clamp(this.cursor.y, 0, this.game.renderer.height)  }
+    this.cursor.y = Phaser.Math.Clamp(this.cursor.y, 0, this.game.renderer.height)
+  }
 
   updateCamera(dt: number) {
     this.cameras.main.scrollX += this.cameraScrollSpeed * this.cameraAxis.x * dt
