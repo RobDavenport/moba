@@ -1,4 +1,4 @@
-use nalgebra::Vector2;
+use glam::Vec2;
 
 use super::protobuf::ClientMessage::*;
 use crate::engine::components::player_controlled::PlayerId;
@@ -10,7 +10,7 @@ pub fn handle_client_command(command_msg: Command, id: PlayerId) -> Option<GameM
     match command_msg.command {
         Some(Command_oneof_command::moveCommand(cmd)) => Some(GameMessage::InputCommand {
             id,
-            command: InputCommand::Move(Vector2::new(cmd.x, cmd.y), cmd.isAttack),
+            command: InputCommand::Move(Vec2::new(cmd.x, cmd.y), cmd.isAttack),
         }),
         Some(Command_oneof_command::moveDelta(cmd)) => {
             println!("TODO: MoveDelta");

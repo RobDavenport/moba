@@ -1,5 +1,3 @@
-extern crate ws;
-
 use crate::engine::components::player_controlled::PlayerId;
 use crate::engine::network::client_data::ClientData;
 

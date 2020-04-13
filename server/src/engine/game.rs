@@ -2,8 +2,8 @@ use std::collections::{HashMap, VecDeque};
 use std::iter::*;
 use std::time::{Duration, Instant};
 
+use glam::Vec2;
 use legion::{prelude::*, world::World};
-use nalgebra::Vector2;
 use tokio::sync::mpsc::{Receiver, Sender};
 
 use super::components::all::*;
@@ -127,7 +127,7 @@ impl Game {
         let entities = self.world.insert(
             (),
             once((
-                Transform::new(Vector2::<f32>::new(1., 1.), None, None),
+                Transform::new(Vec2::new(1., 1.), None, None),
                 Replicated {
                     id: ReplicationId(replication_id),
                 },
@@ -165,8 +165,8 @@ impl Game {
         let mut entities: Vec<EntitySnapshot> = query
             .iter(&mut self.world)
             .map(|(transform, replicated)| EntitySnapshot {
-                x: transform.position.x.into(),
-                y: transform.position.y.into(),
+                x: transform.position.x().into(),
+                y: transform.position.y().into(),
                 replication_id: replicated.id,
             })
             .collect();

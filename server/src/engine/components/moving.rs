@@ -1,4 +1,4 @@
-use nalgebra::Vector2;
+use glam::Vec2;
 
 use legion::prelude::Entity;
 
@@ -11,6 +11,6 @@ pub struct Moving {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum MoveTarget {
     None,
-    Location(Vector2<f32>),
+    Location(Vec2),
     Entity(Entity),
 }

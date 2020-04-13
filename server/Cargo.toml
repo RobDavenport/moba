@@ -9,10 +9,8 @@ edition = "2018"
 [dependencies]
 pretty_env_logger = "0.4.0"
 legion = "0.2.1"
-ws = "*"
-nalgebra = "0.18"
+glam = "0.8.6"
 ncollide2d = "0.20"
-nphysics2d = "0.12"
 tokio = { version = "0.2.11", features = ["macros", "sync", "time"] }
 webrtc-unreliable = "0.4.0"
 futures = "0.3.4"

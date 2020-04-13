@@ -1,5 +1,5 @@
+use glam::Vec2;
 use legion::prelude::*;
-use nalgebra::Vector2;
 
 use crate::engine::components::all::*;
 
@@ -12,8 +12,8 @@ use crate::engine::components::all::*;
 
 //FIRST CHECK HOSTILE,
 //THEN DO MOVEMENT
-// Moving(Vector2<f32>), - transform, move to, movement data, NOT SEARCH HOSTILE
-// AttackMoving(Vector2<f32>), - transform, move to , movement data + search hostile
+// Moving(Vec2), - transform, move to, movement data, NOT SEARCH HOSTILE
+// AttackMoving(Vec2), - transform, move to , movement data + search hostile
 pub fn pawn_move(tick_time: f32) -> Box<dyn Schedulable> {
     SystemBuilder::new("pawn_move_system")
         .with_query(<(Write<Transform>, Write<Moving>)>::query())
@@ -36,14 +36,14 @@ pub fn pawn_move(tick_time: f32) -> Box<dyn Schedulable> {
 // Returns true if we reached the destination
 fn move_to_location(
     transform: &mut Transform,
-    location: &Vector2<f32>,
+    location: &Vec2,
     movement_speed: f32,
     tick_time: f32,
 ) -> bool {
-    let distance = location - transform.position;
+    let distance = *location - transform.position;
     let travel_distance = movement_speed * tick_time;
 
-    if distance.magnitude() > travel_distance {
+    if distance.length() > travel_distance {
         let direction = distance.normalize();
         let travel_vec = direction * travel_distance;
         transform.position = transform.position + travel_vec;
