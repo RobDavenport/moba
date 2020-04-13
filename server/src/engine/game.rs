@@ -107,19 +107,12 @@ impl Game {
     }
 
     fn handle_input_command(&mut self, id: PlayerId, command: InputCommand) {
-        match command {
-            InputCommand::Move(loc, _attacking) => {
-                //todo: change to pawn stuff
-                if let Some(mut moving) = self
-                    .world
-                    .get_component_mut::<Moving>(*self.player_entities.get(&id).unwrap())
-                {
-                    moving.target = MoveTarget::Location(loc);
-                    println!("player {} moved to: {}", id, loc);
-                }
-            }
-            _ => println!("Unhaled Input Command!"),
-        }
+        if let Some(mut recieve_input) = self
+            .world
+            .get_component_mut::<ReceiveInput>(*self.player_entities.get(&id).unwrap())
+        {
+            recieve_input.next_command = Some(command)
+        };
     }
 
     fn on_client_connected(&mut self, player_id: PlayerId) {
@@ -136,6 +129,7 @@ impl Game {
                     base_speed: 125.,
                     target: MoveTarget::None,
                 },
+                ReceiveInput::new(),
             )),
         );
 
@@ -174,7 +168,7 @@ impl Game {
         if entities.len() > 0 {
             entities.sort_unstable();
 
-            for (id, mut history) in self.player_snapshot_histories.iter_mut() {
+            for (id, history) in self.player_snapshot_histories.iter_mut() {
                 if let Some((baseline, delta_entities)) =
                     history.encode_delta(self.game_frame, &entities)
                 {
@@ -228,6 +222,7 @@ fn init_systems(tick_time: f32) -> Vec<Box<dyn Schedulable>> {
 
     println!("Initialized game systems with tick time of {}s", tick_time);
 
+    out.push(pawn_input::pawn_input(tick_time));
     out.push(pawn_move::pawn_move(tick_time));
 
     out

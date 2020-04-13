@@ -40,18 +40,19 @@ impl SnapshotHistory {
 
             while let Some(diff) = diff_with(base_iter, next_iter, |base, next| base == next) {
                 match diff {
-                    Diff::FirstMismatch(idx, i, j) => {
+                    Diff::FirstMismatch(_len, i, j) => {
                         //Mismatch found at index
                         let (j_val, j_iter) = j.into_parts();
                         out.push(j_val.unwrap().clone());
                         base_iter = i.into_parts().1;
                         next_iter = j_iter;
                     }
-                    Diff::Shorter(len, i) => {
+                    Diff::Shorter(_len, _i) => {
+                        // TODO: Do we need this?
                         // Next contains less elementas than baseline
                         break;
                     }
-                    Diff::Longer(len, j) => {
+                    Diff::Longer(_len, j) => {
                         // Next contains more elements than baseline
                         for snapshot in j {
                             out.push(snapshot.clone());

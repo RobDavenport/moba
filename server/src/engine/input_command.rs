@@ -8,6 +8,6 @@ pub enum InputCommand {
     Stop,
     Recall,
     UseAbility(u8),
-    UseTargettedAbility(u8, u32),
     UseAimedAbility(u8, Vec2),
+    UseTargettedAbility(u8, u32),
 }
