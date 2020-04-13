@@ -24,6 +24,14 @@ pub fn handle_client_command(command_msg: Command, id: PlayerId) -> Option<GameM
             println!("TODO: Attack");
             None
         }
+        Some(Command_oneof_command::stop(cmd)) => {
+            println!("TODO: Stop");
+            None
+        }
+        Some(Command_oneof_command::recall(cmd)) => {
+            println!("TODO: Recall");
+            None
+        }
         None => None,
     }
 }

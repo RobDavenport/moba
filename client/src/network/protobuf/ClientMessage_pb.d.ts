@@ -106,6 +106,16 @@ export class Command extends jspb.Message {
   getAbility(): Ability | undefined;
   setAbility(value?: Ability): void;
 
+  hasStop(): boolean;
+  clearStop(): void;
+  getStop(): Command.Stop | undefined;
+  setStop(value?: Command.Stop): void;
+
+  hasRecall(): boolean;
+  clearRecall(): void;
+  getRecall(): Command.Recall | undefined;
+  setRecall(value?: Command.Recall): void;
+
   getCommandCase(): Command.CommandCase;
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Command.AsObject;
@@ -123,6 +133,8 @@ export namespace Command {
     movedelta?: Command.MoveDelta.AsObject,
     attack?: Command.Attack.AsObject,
     ability?: Ability.AsObject,
+    stop?: Command.Stop.AsObject,
+    recall?: Command.Recall.AsObject,
   }
 
   export class MoveCommand extends jspb.Message {
@@ -197,12 +209,46 @@ export namespace Command {
     }
   }
 
+  export class Stop extends jspb.Message {
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): Stop.AsObject;
+    static toObject(includeInstance: boolean, msg: Stop): Stop.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: Stop, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): Stop;
+    static deserializeBinaryFromReader(message: Stop, reader: jspb.BinaryReader): Stop;
+  }
+
+  export namespace Stop {
+    export type AsObject = {
+    }
+  }
+
+  export class Recall extends jspb.Message {
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): Recall.AsObject;
+    static toObject(includeInstance: boolean, msg: Recall): Recall.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: Recall, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): Recall;
+    static deserializeBinaryFromReader(message: Recall, reader: jspb.BinaryReader): Recall;
+  }
+
+  export namespace Recall {
+    export type AsObject = {
+    }
+  }
+
   export enum CommandCase {
     COMMAND_NOT_SET = 0,
     MOVECOMMAND = 1,
     MOVEDELTA = 2,
     ATTACK = 3,
     ABILITY = 4,
+    STOP = 5,
+    RECALL = 6,
   }
 }
 

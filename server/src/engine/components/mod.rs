@@ -1,6 +1,5 @@
 pub mod abilities;
 pub mod ai_controlled;
-pub mod animation;
 pub mod attacking;
 pub mod collider;
 pub mod energy;
@@ -24,7 +23,6 @@ pub mod visibility;
 pub mod all {
     pub use super::abilities::*;
     pub use super::ai_controlled::*;
-    pub use super::animation::*;
     pub use super::attacking::*;
     pub use super::collider::*;
     pub use super::energy::*;
