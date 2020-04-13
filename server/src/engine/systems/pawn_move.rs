@@ -26,7 +26,9 @@ pub fn pawn_move(tick_time: f32) -> Box<dyn Schedulable> {
                             moving.target = MoveTarget::None;
                         }
                     }
-                    MoveTarget::Entity(_entity) => println!("TODO: PAWN MOVE TO ENTITY UNFINISHED!"),
+                    MoveTarget::Entity(_entity) => {
+                        println!("TODO: PAWN MOVE TO ENTITY UNFINISHED!")
+                    }
                     MoveTarget::None => (),
                 }
             }

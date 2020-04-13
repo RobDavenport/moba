@@ -174,30 +174,34 @@ impl Game {
                 {
                     if delta_entities.len() > 0 {
                         //println!("d {} => {}", baseline, self.game_frame);
-                        self.out_unreliable.try_send((
+                        if let Err(e) = self.out_unreliable.try_send((
                             OutTarget::Single(*id),
                             OutMessage::Snapshot {
                                 frame: self.game_frame,
                                 entities: delta_entities,
                                 baseline: Some(baseline),
                             },
-                        ));
+                        )) {
+                            println!("Error in Broadcast State: {}", &e);
+                        };
                     }
                 } else {
-                    self.out_unreliable.try_send((
+                    if let Err(e) = self.out_unreliable.try_send((
                         OutTarget::Single(*id),
                         OutMessage::Snapshot {
                             frame: self.game_frame,
                             entities: entities.clone(),
                             baseline: None,
                         },
-                    ));
+                    )) {
+                        println!("Error in Broadcast State: {}", &e);
+                    };
                 }
             }
         }
 
         for event in self.game_events.drain(..) {
-            match event {
+            if let Err(e) = match event {
                 GameEvent::EntityDestroyed(id) => self.out_reliable.try_send((
                     OutTarget::All,
                     OutMessage::EntityDestroyed {
@@ -206,7 +210,9 @@ impl Game {
                     },
                 )),
                 GameEvent::ClientDisconnected(_) => Ok(()),
-            };
+            } {
+                println!("Error in game_events: {}", &e);
+            }
         }
     }
 
@@ -222,7 +228,7 @@ fn init_systems(tick_time: f32) -> Vec<Box<dyn Schedulable>> {
 
     println!("Initialized game systems with tick time of {}s", tick_time);
 
-    out.push(pawn_input::pawn_input(tick_time));
+    out.push(pawn_input::pawn_input());
     out.push(pawn_move::pawn_move(tick_time));
 
     out

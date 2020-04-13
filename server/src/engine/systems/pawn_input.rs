@@ -3,7 +3,7 @@ use legion::prelude::*;
 use crate::engine::components::all::*;
 use crate::engine::input_command::InputCommand;
 
-pub fn pawn_input(tick_time: f32) -> Box<dyn Schedulable> {
+pub fn pawn_input() -> Box<dyn Schedulable> {
     SystemBuilder::new("pawn_input_system")
         .with_query(<Write<ReceiveInput>>::query())
         .write_component::<Moving>()
@@ -25,8 +25,12 @@ pub fn pawn_input(tick_time: f32) -> Box<dyn Schedulable> {
                             }
                         }
                         Some(InputCommand::UseAbility(idx)) => println!("TODO: USEABILITY"),
-                        Some(InputCommand::UseAimedAbility(idx, target_loc)) => println!("TODO: USEAIMEDABILITY"),
-                        Some(InputCommand::UseTargettedAbility(idx, target_entity)) => println!("TODO: USETARGETTEDABILITY"),
+                        Some(InputCommand::UseAimedAbility(idx, target_loc)) => {
+                            println!("TODO: USEAIMEDABILITY")
+                        }
+                        Some(InputCommand::UseTargettedAbility(idx, target_entity)) => {
+                            println!("TODO: USETARGETTEDABILITY")
+                        }
                         None => (),
                     };
                 }
