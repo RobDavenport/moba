@@ -35,7 +35,7 @@ export default class MobaEngine {
   }
 
   onRecallDown() {
-    console.log('b')
+    this.net.sendRecallCommand()
   }
 
   onRecallUp() {
@@ -43,7 +43,7 @@ export default class MobaEngine {
   }
 
   onStopDown() {
-    console.log('stop')
+    this.net.sendStopCommand()
   }
 
   onStopUp() {

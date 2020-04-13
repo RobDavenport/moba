@@ -39,3 +39,22 @@ export function createMove(point: CartesianPoint, isAttackMove: boolean) {
 }
 
 //TODO add the rest of the command types
+export function createStop() {
+  let clientMessage = new ClientMessage()
+  let command = new Command()
+  command.setStop(new Command.Stop())
+  
+  clientMessage.setCommand(command)
+
+  return clientMessage.serializeBinary()
+}
+
+export function createRecall() {
+  let clientMessage = new ClientMessage()
+  let command = new Command()
+  command.setRecall(new Command.Recall())
+
+  clientMessage.setCommand(command)
+
+  return clientMessage.serializeBinary()
+}
