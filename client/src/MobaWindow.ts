@@ -10,6 +10,33 @@ import { ServerMessage } from './network/protobuf/Servermessage_pb'
 import * as BABYLON from '@babylonjs/core'
 import InputManager from './InputManager'
 
+//TODO:
+// Allow "Screen Capture" & Full Screen mode
+
+// Map pointer buttons
+// Set default mouse bindings
+// Add cursor "sprite"
+// Disable right click menu
+// On mouse down...
+//  If not locked locked, request lock (update position) and...
+//  move the cursor
+//  see if a command is hit
+// On mouse up...
+//  If its locked, see if a command is hit (input handling)
+
+// Update function
+// Call gameEngine update
+// Call updatecamera, updatecursor
+// Interpolate objects / animate
+
+// Update Camera
+// scroll an amount based on cameraAxis * speed
+// And if the mouse is locked...
+//    Scroll edges of screen
+
+// Update Cursor
+// Move the cursor based on mouse move events (when it's locked)
+
 export default class MobaWindow {
   private gameEngine: MobaEngine
   private engine: BABYLON.Engine
@@ -19,6 +46,7 @@ export default class MobaWindow {
   private inputManager: InputManager
   private cameraLocked: boolean
   private cameraAxis: BABYLON.Vector2
+  private cameraScrollSpeed: number
 
   init(canvas: HTMLCanvasElement) {
     this.keyBindings = new Map()
@@ -38,12 +66,13 @@ export default class MobaWindow {
 
     this.cameraLocked = true
     this.cameraAxis = new BABYLON.Vector2(0, 0)
+    this.cameraScrollSpeed = 15
 
     //TODO: Allow re-bindings of keys
     this.bindDefaultKeys()
     this.initInputHandler()
   }
-  
+
   bindDefaultKeys() {
     defaultKeyBindings.forEach((value, key) => {
       this.keyBindings.set(key, value)

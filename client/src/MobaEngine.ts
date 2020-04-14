@@ -4,7 +4,7 @@ import { InputCommand } from './Constants'
 import { ServerMessage } from './network/protobuf/Servermessage_pb'
 import * as BABYLON from '@babylonjs/core'
 
-class gameObject {}
+class gameObject { }
 
 export default class MobaEngine {
   private net: NetworkManager
@@ -44,12 +44,25 @@ export default class MobaEngine {
   }
 
   //   interpolateObjects() {
-//     this.entities.forEach(obj => obj.interpolate())
-//   }
+  //     this.entities.forEach(obj => obj.interpolate())
+  //   }
+
+  //   setCharacterPosition(point: GM.CartesianPoint, index: number) {
+  //     const entity = this.entities.get(index)
+  //     if (entity) {
+  //       const target = point.toIsometric()
+  //       entity.setInterpolatePoint(target.x, target.y)
+  //     } else {
+  //       const character = new InterpolatedSprite(this.add.sprite(0, 0, 'character'));
+  //       character.sprite.depth = 999999
+
+  //       this.entities.set(index, character)
+  //     }
+  //   }
 
   update(dt: number) {
     this.net.handleMessageQueue(dt)
-  } 
+  }
 
   onMoveDown() {
     this.net.sendMoveCommand(this.gameWindow.getPointerPositionWorld(), false)
