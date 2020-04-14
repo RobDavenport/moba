@@ -1,13 +1,6 @@
-import Phaser, { Input } from 'phaser'
-import MobaWindow from './MobaWindow'
-
 //Camera
 export const cameraScrollSpeed = 2
-
 export const interpolationFrames = 4
-
-// Input
-const KeyCodes = Input.Keyboard.KeyCodes
 
 export const enum PointerButtons {
   PRIMARY = 0,
@@ -50,53 +43,42 @@ export const enum InputCommand {
   ToggleFullscreen
 }
 
-export const defaultKeyBindings = new Map<number, InputCommand>([
+//TODO: Change this to be key code instead of string
+export const defaultKeyBindings = new Map<string, InputCommand>([
   // Hero Controls
-  [KeyCodes.M, InputCommand.Move],
-  [KeyCodes.A, InputCommand.AttackMove],
-  [KeyCodes.S, InputCommand.Stop],
-  [KeyCodes.B, InputCommand.Recall],
-  [KeyCodes.Q, InputCommand.UseSlot1],
-  [KeyCodes.W, InputCommand.UseSlot2],
-  [KeyCodes.E, InputCommand.UseSlot3],
-  [KeyCodes.R, InputCommand.UseSlot4],
+  ['m', InputCommand.Move],
+  ['a', InputCommand.AttackMove],
+  ['s', InputCommand.Stop],
+  ['b', InputCommand.Recall],
+  ['q', InputCommand.UseSlot1],
+  ['w', InputCommand.UseSlot2],
+  ['e', InputCommand.UseSlot3],
+  ['r', InputCommand.UseSlot4],
 
   // Camera Controls
-  [KeyCodes.PAGE_UP, InputCommand.ZoomIn],
-  [KeyCodes.PAGE_DOWN, InputCommand.ZoomOut],
-  [KeyCodes.UP, InputCommand.ScrollUp],
-  [KeyCodes.DOWN, InputCommand.ScrollDown],
-  [KeyCodes.LEFT, InputCommand.ScrollLeft],
-  [KeyCodes.RIGHT, InputCommand.ScrollRight],
-  [KeyCodes.L, InputCommand.LockCamera],
-  [KeyCodes.SPACE, InputCommand.FocusHero],
-  [KeyCodes.F1, InputCommand.FocusAlly1],
-  [KeyCodes.F2, InputCommand.FocusAlly2],
-  [KeyCodes.F3, InputCommand.FocusAlly3],
-  [KeyCodes.F4, InputCommand.FocusAlly4],
+  ['PageUp', InputCommand.ZoomIn],
+  ['PageDown', InputCommand.ZoomOut],
+  ['ArrowUp', InputCommand.ScrollUp],
+  ['ArrowDown', InputCommand.ScrollDown],
+  ['ArrowLeft', InputCommand.ScrollLeft],
+  ['ArrowRight', InputCommand.ScrollRight],
+  ['l', InputCommand.LockCamera],
+  [' ', InputCommand.FocusHero],
+  ['F1', InputCommand.FocusAlly1],
+  ['F2', InputCommand.FocusAlly2],
+  ['F3', InputCommand.FocusAlly3],
+  ['F4', InputCommand.FocusAlly4],
 
   // Menu
-  [KeyCodes.ESC, InputCommand.ToggleMenu],
-  [KeyCodes.TAB, InputCommand.ToggleScoreboard],
-  [KeyCodes.N, InputCommand.ToggleHeroDetailView],
+  ['Escape', InputCommand.ToggleMenu],
+  ['Tab', InputCommand.ToggleScoreboard],
+  ['n', InputCommand.ToggleHeroDetailView],
 
   //Other
-  [KeyCodes.F10, InputCommand.ToggleFullscreen]
+  ['F10', InputCommand.ToggleFullscreen]
 ])
 
 export const defaultPointerBindings = new Map<number, InputCommand>([
   [PointerButtons.PRIMARY, InputCommand.Click],
   [PointerButtons.RIGHT, InputCommand.Move]
 ])
-
-// Phaser Config
-export const defaultPhaserConfig: Phaser.Types.Core.GameConfig = {
-  type: Phaser.WEBGL,
-  canvas: document.getElementById('gameCanvas') as HTMLCanvasElement,
-  scene: MobaWindow,
-  scale: {
-    mode: Phaser.Scale.ENVELOP,
-    width: 1920,
-    height: 1080
-  }
-}

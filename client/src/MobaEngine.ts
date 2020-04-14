@@ -1,25 +1,58 @@
 import NetworkManager from './network/NetworkManager'
 import MobaWindow from './MobaWindow'
-import * as GM from './helpers/GameMath'
 import { InputCommand } from './Constants'
 import { ServerMessage } from './network/protobuf/Servermessage_pb'
+import * as BABYLON from '@babylonjs/core'
+
+class gameObject {}
 
 export default class MobaEngine {
   private net: NetworkManager
   private gameWindow: MobaWindow
+  private entities: Map<number, gameObject> //TODO
+  private lastUpdateFrame: number;
 
   constructor(gameWindow: MobaWindow) {
-    this.net = new NetworkManager(gameWindow)
+    this.net = new NetworkManager(this)
     this.gameWindow = gameWindow
+
+    this.entities = new Map()
   }
+
+  onServerUpdateTick(data: ServerMessage.UpdateTick.AsObject) {
+    // if (this.lastUpdateFrame <= data.frame) {
+    //   this.setCharacterPosition(new CartesianPoint(data.x, data.y), data.replicationid)
+    // } else {
+    //   console.log('out of order!')
+    // }
+    // this.lastUpdateFrame = data.frame
+  }
+
+  onEntityDestroyed(data: ServerMessage.EntityDestroyed.AsObject) {
+    // let entity = this.entities.get(data.replicationid)
+
+    // if (entity !== undefined) {
+    //   entity.sprite.destroy()
+    //   this.entities.delete(data.replicationid)
+    //}
+  }
+
+  onSnapshot(data: ServerMessage.Snapshot.AsObject) {
+    // data.entitydataList.forEach(entity => {
+    //   this.setCharacterPosition(new CartesianPoint(entity.x, entity.y), entity.replicationid)
+    // })
+  }
+
+  //   interpolateObjects() {
+//     this.entities.forEach(obj => obj.interpolate())
+//   }
 
   update(dt: number) {
     this.net.handleMessageQueue(dt)
   } 
 
   onMoveDown() {
-    const { x, y } = this.gameWindow.getPointerPositionWorld()
-    this.net.sendMoveCommand(GM.isometricToCartesian(x, y), false)
+    this.net.sendMoveCommand(this.gameWindow.getPointerPositionWorld(), false)
   }
 
   onMoveUp() {
@@ -211,11 +244,11 @@ export default class MobaEngine {
   }
 
   onToggleFullscreenDown() {
-    if (this.gameWindow.scale.isFullscreen) {
-      this.gameWindow.scale.stopFullscreen()
-    } else {
-      this.gameWindow.scale.startFullscreen()
-    }
+    // if (this.gameWindow.scale.isFullscreen) {
+    //   this.gameWindow.scale.stopFullscreen()
+    // } else {
+    //   this.gameWindow.scale.startFullscreen()
+    // }
   }
 
   onToggleFullscreenUp() {

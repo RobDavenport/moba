@@ -1,4 +1,3 @@
-import Phaser from 'phaser'
 import {
   InputCommand,
   defaultKeyBindings,
@@ -7,239 +6,80 @@ import {
   cameraScrollSpeed
 } from './Constants'
 import MobaEngine from './MobaEngine'
-import * as GM from './helpers/GameMath'
 import { ServerMessage } from './network/protobuf/Servermessage_pb'
-import { CartesianPoint } from './helpers/GameMath'
-import { InterpolatedSprite } from './InterpolatedSprite'
+import * as BABYLON from '@babylonjs/core'
+import InputManager from './InputManager'
 
-const mapWidth = 16
-const mapHeight = 16
-
-export default class MobaWindow extends Phaser.Scene {
-  private keyMapping: Map<Phaser.Input.Keyboard.Key, InputCommand>
-  private pointerMapping: Map<PointerButtons, InputCommand>
-  private entities: Map<integer, InterpolatedSprite>
-  private lastUpdateFrame: integer;
-
+export default class MobaWindow {
   private gameEngine: MobaEngine
-  private cursor: Phaser.GameObjects.Image
-
+  private engine: BABYLON.Engine
+  private scene: BABYLON.Scene
+  private mainCamera: BABYLON.FreeCamera
+  private keyBindings: Map<string, InputCommand>
+  private inputManager: InputManager
   private cameraLocked: boolean
-  private cameraAxis: { x: number, y: number }
-  private cameraScrollSpeed: number
+  private cameraAxis: BABYLON.Vector2
 
+  init(canvas: HTMLCanvasElement) {
+    this.keyBindings = new Map()
+    this.inputManager = new InputManager()
+    this.gameEngine = new MobaEngine(this)
+    this.engine = new BABYLON.Engine(canvas)
+    this.scene = new BABYLON.Scene(this.engine)
+    this.scene.actionManager = new BABYLON.ActionManager(this.scene)
+    this.scene.clearColor = new BABYLON.Color4(0.1, 0.1, 0.1)
+    this.mainCamera = new BABYLON.FreeCamera('mainCamera', new BABYLON.Vector3(0, 0, 0), this.scene)
 
-  constructor() {
-    super('moba')
-    this.keyMapping = new Map()
-    this.pointerMapping = new Map()
-    this.gameEngine = new MobaEngine(this);
+    let light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), this.scene)
+    light.intensity = 0.7
 
-    this.entities = new Map()
+    let ground = BABYLON.Mesh.CreateGround('ground1', 10, 10, 10, this.scene)
+    ground.material = new BABYLON.StandardMaterial('grdmat', this.scene)
 
-    this.cameraLocked = true;
+    this.cameraLocked = true
+    this.cameraAxis = new BABYLON.Vector2(0, 0)
 
-    this.cameraAxis = { x: 0, y: 0 }
-    this.cameraScrollSpeed = cameraScrollSpeed
-    this.lastUpdateFrame = 0
+    //TODO: Allow re-bindings of keys
+    this.bindDefaultKeys()
+    this.initInputHandler()
   }
-
-  preload() {
-    this.load.image('background', './assets/art/backgrounds/background.png')
-    this.load.image('character', './assets/art/characters/character.png')
-
-    this.load.image('tile', './assets/art/tiles/floor_E.png')
-
-    this.load.image('cursor', './assets/art/ui/cursorNormal.png')
-    this.load.image('cursorAttack', './assets/art/ui/cursorAttack.png')
-  }
-
-  create() {
-    this.add.image(0, 0, 'background')
-
-    const mid = {
-      x: this.game.renderer.width / 2,
-      y: this.game.renderer.height / 2,
-    }
-
-    this.cursor = this.add.sprite(mid.x, mid.y, 'cursor')
-    this.cameras.main.scrollX = -mid.x
-    this.cameras.main.scrollY = -mid.y
-
-    this.cursor.depth = 999999999
-    this.cursor.setScrollFactor(0, 0)
-    this.cursor.setOrigin(0, 0)
-
-    this.input.mouse.disableContextMenu()
-    this.setDefaultKeyBindings()
-    this.setDefaultPointerBindings()
-
-    this.initTilemap()
-
-    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-
-      if (!this.input.mouse.locked) {
-        this.input.mouse.requestPointerLock()
-        this.cursor.setPosition(Math.round(pointer.x), Math.round(pointer.y))
-      }
-
-      const btn = pointer.button
-      const cmd = this.pointerMapping.get(btn)
-      if (cmd) {
-        this.gameEngine.CommandMap.get(cmd)?.[0].call(this.gameEngine)
-      } else {
-        console.log('cmd not found: ' + cmd)
-      }
-    })
-
-    this.input.on('pointerup', (pointer: Phaser.Input.Pointer) => {
-      const btn = pointer.button
-      const cmd = this.pointerMapping.get(btn)
-      if (cmd) {
-        this.gameEngine.CommandMap.get(cmd)?.[1].call(this.gameEngine)
-      } else {
-        console.log('cmd not found: ' + cmd)
-      }
-    })
-
-  }
-
-  update(_, dt) {
-    this.handleKeyInputs()
-    this.updateCursor()
-    if (this.cameraLocked === true) {
-
-    } else {
-      this.updateCamera(dt)
-    }
-    this.gameEngine.update(dt)
-    this.interpolateObjects() //TODO: use a snapshot buffer for interpolation?
-  }
-
-  // Input Code
-  setDefaultKeyBindings() {
-    defaultKeyBindings.forEach((inputCommand, keyCode, _) => {
-      const inputKey = this.input.keyboard.addKey(keyCode)
-      this.keyMapping.set(inputKey, inputCommand)
+  
+  bindDefaultKeys() {
+    defaultKeyBindings.forEach((value, key) => {
+      this.keyBindings.set(key, value)
     })
   }
 
-  handleKeyInputs() {
-    this.keyMapping.forEach((inputCommand, key, _) => {
-      if (Phaser.Input.Keyboard.JustDown(key)) {
-        this.gameEngine.CommandMap.get(inputCommand)[0].call(this.gameEngine)
-      } else if (Phaser.Input.Keyboard.JustUp(key)) {
-        this.gameEngine.CommandMap.get(inputCommand)[1].call(this.gameEngine)
-      }
+  initInputHandler() {
+    this.scene.onKeyboardObservable.add((data) => {
+      this.inputManager.setKey(data.event.key, data.type === BABYLON.KeyboardEventTypes.KEYDOWN)
+    })
+
+    this.scene.registerBeforeRender(() => {
+      this.keyBindings.forEach((val, key) => {
+        if (this.inputManager.justPressed(key)) {
+          this.gameEngine.CommandMap.get(val)[0].call(this.gameEngine)
+        } else if (this.inputManager.justReleased(key)) {
+          this.gameEngine.CommandMap.get(val)[1].call(this.gameEngine)
+        }
+      })
+
+      this.inputManager.update()
     })
   }
 
-  setDefaultPointerBindings() {
-    defaultPointerBindings.forEach((inputCommand, keyCode, _) => {
-      this.pointerMapping.set(keyCode, inputCommand)
+  start() {
+    this.engine.runRenderLoop(() => {
+      this.scene.render();
     })
   }
 
-  setCharacterPosition(point: GM.CartesianPoint, index: number) {
-    const entity = this.entities.get(index)
-    if (entity) {
-      const target = point.toIsometric()
-      entity.setInterpolatePoint(target.x, target.y)
-    } else {
-      const character = new InterpolatedSprite(this.add.sprite(0, 0, 'character'));
-      character.sprite.depth = 999999
+  getPointerPositionWorld(): BABYLON.Vector2 {
 
-      this.entities.set(index, character)
-    }
+    return new BABYLON.Vector2(0, 0)
   }
 
-  initTilemap() {
-
-    const tileWidth = 256
-    const tileHeight = 128
-
-    // TODO FIX THIS
-    const yOffset = tileHeight * mapHeight / 2
-
-    for (let x = 0; x < mapWidth; x++) {
-      for (let y = 0; y < mapHeight; y++) {
-        let tilePoint = GM.tileIndexToCoordinate(x, y, tileWidth, tileHeight)
-
-        let tile = this.add.image(tilePoint.x, tilePoint.y - yOffset, 'tile')
-        tile.depth = tilePoint.y
-      }
-    }
-  }
-
-  onServerUpdateTick(data: ServerMessage.UpdateTick.AsObject) {
-    if (this.lastUpdateFrame <= data.frame) {
-      this.setCharacterPosition(new CartesianPoint(data.x, data.y), data.replicationid)
-    } else {
-      console.log('out of order!')
-    }
-    this.lastUpdateFrame = data.frame
-  }
-
-  onEntityDestroyed(data: ServerMessage.EntityDestroyed.AsObject) {
-    let entity = this.entities.get(data.replicationid)
-
-    if (entity !== undefined) {
-      entity.sprite.destroy()
-      this.entities.delete(data.replicationid)
-    }
-  }
-
-  onSnapshot(data: ServerMessage.Snapshot.AsObject) {
-    data.entitydataList.forEach(entity => {
-      this.setCharacterPosition(new CartesianPoint(entity.x, entity.y), entity.replicationid)
-    })
-  }
-
-  interpolateObjects() {
-    this.entities.forEach(obj => obj.interpolate())
-  }
-
-  updateCursor() {
-    this.cursor.x += this.input.activePointer.movementX
-    this.input.activePointer.movementX = 0
-    this.cursor.y += this.input.activePointer.movementY
-    this.input.activePointer.movementY = 0
-
-    this.cursor.x = Phaser.Math.Clamp(this.cursor.x, 0, this.game.renderer.width)
-    this.cursor.y = Phaser.Math.Clamp(this.cursor.y, 0, this.game.renderer.height)
-  }
-
-  updateCamera(dt: number) {
-    this.cameras.main.scrollX += this.cameraScrollSpeed * this.cameraAxis.x * dt
-    this.cameras.main.scrollY += this.cameraScrollSpeed * this.cameraAxis.y * dt
-
-    if (this.input.mouse.locked) {
-      if (this.cursor.x === 0) {
-        this.cameras.main.scrollX -= this.cameraScrollSpeed * dt
-      } else if (this.cursor.x === this.game.renderer.width) {
-        this.cameras.main.scrollX += this.cameraScrollSpeed * dt
-      }
-
-      if (this.cursor.y === 0) {
-        this.cameras.main.scrollY -= this.cameraScrollSpeed * dt
-      } else if (this.cursor.y === this.game.renderer.height) {
-        this.cameras.main.scrollY += this.cameraScrollSpeed * dt
-      }
-    }
-
-    this.cameras.main.scrollX = Math.round(this.cameras.main.scrollX)
-    this.cameras.main.scrollY = Math.round(this.cameras.main.scrollY)
-  }
-
-  startFocusHero() {
-    console.log('start focus hero')
-  }
-
-  stopFocusHero() {
-    console.log('stop focus hero')
-  }
-
-
+  // CAMERA CONTROLS
   scrollUp(isDown: boolean) {
     if (isDown) {
       this.cameraAxis.y += -1
@@ -272,17 +112,11 @@ export default class MobaWindow extends Phaser.Scene {
     }
   }
 
-  getPointerPositionScreen() {
-    return {
-      x: this.cursor.x,
-      y: this.cursor.y
-    }
+  startFocusHero() {
+    //TODO
   }
 
-  getPointerPositionWorld() {
-    return {
-      x: this.cursor.x + this.cameras.main.scrollX,
-      y: this.cursor.y + this.cameras.main.scrollY
-    }
+  stopFocusHero() {
+    //TODO
   }
 }

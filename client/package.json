@@ -10,6 +10,7 @@
     "lint:fix": "eslint src/** --fix"
   },
   "devDependencies": {
+    "@babylonjs/core": "^4.1.0",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",
     "copy-webpack-plugin": "^5.1.1",
@@ -28,7 +29,6 @@
   "dependencies": {
     "denque": "^1.4.1",
     "google-protobuf": "^3.11.4",
-    "phaser": "^3.22.0",
     "stats.js": "^0.17.0",
     "text-encoding": "^0.7.0",
     "ts-protoc-gen": "^0.12.0",
