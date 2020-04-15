@@ -44,7 +44,7 @@ export const enum InputCommand {
 }
 
 //TODO: Change this to be key code instead of string
-export const defaultKeyBindings = new Map<string, InputCommand>([
+export const defaultKeyBindings = new Map<any, InputCommand>([
   // Hero Controls
   ['m', InputCommand.Move],
   ['a', InputCommand.AttackMove],
@@ -75,10 +75,9 @@ export const defaultKeyBindings = new Map<string, InputCommand>([
   ['n', InputCommand.ToggleHeroDetailView],
 
   //Other
-  ['F10', InputCommand.ToggleFullscreen]
-])
+  ['F10', InputCommand.ToggleFullscreen],
 
-export const defaultPointerBindings = new Map<number, InputCommand>([
+  // Mouse
   [PointerButtons.PRIMARY, InputCommand.Click],
   [PointerButtons.RIGHT, InputCommand.Move]
 ])

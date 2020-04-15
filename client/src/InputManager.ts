@@ -1,5 +1,5 @@
 
-type T = string
+type T = any
 
 export default class InputManager {
   private prevKeys: Map<T, Boolean>

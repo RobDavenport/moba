@@ -1,5 +1,5 @@
 import { ClientMessage, Command } from './protobuf/ClientMessage_pb'
-import * as BABYLON from '@babylonjs/core'
+import { Vector2 } from '@babylonjs/core/Maths/math'
 
 export function createSnapshotAck(newBaseline: number) {
   let clientMessage = new ClientMessage()
@@ -23,7 +23,7 @@ export function createVerifyRtc(uuid: string) {
   return clientMessage.serializeBinary()
 }
 
-export function createMove(point: BABYLON.Vector2, isAttackMove: boolean) {
+export function createMove(point: Vector2, isAttackMove: boolean) {
   let clientMessage = new ClientMessage()
   let command = new Command()
 
@@ -43,7 +43,7 @@ export function createStop() {
   let clientMessage = new ClientMessage()
   let command = new Command()
   command.setStop(new Command.Stop())
-  
+
   clientMessage.setCommand(command)
 
   return clientMessage.serializeBinary()

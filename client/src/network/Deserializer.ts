@@ -32,9 +32,6 @@ function snapshot(message: ServerMessage.AsObject, dst: MobaEngine, net: Network
   }
 }
 
-
-//TODO: Remove this, instead push deserialized messages into a centralized queue
-//inside of the game engine/window
 export function handleServerMessage(data: Uint8Array, dst: MobaEngine, net: NetworkManager) {
   const message = ServerMessage.deserializeBinary(data)
   const func = ServerMessageMap.get(message.getMsgdataCase());

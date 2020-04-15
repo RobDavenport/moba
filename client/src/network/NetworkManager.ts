@@ -1,9 +1,9 @@
 import * as Serializer from './Serializer'
 import * as Deserializer from './Deserializer'
-import MobaEngine  from '../MobaEngine'
+import MobaEngine from '../MobaEngine'
 
 import { ServerMessage } from './protobuf/Servermessage_pb'
-import * as BABYLON from '@babylonjs/core'
+import { Vector2 } from '@babylonjs/core/Maths/math'
 
 //const address: string = prompt('Enter game server address.', document.location.hostname)
 const address = document.location.hostname
@@ -37,7 +37,9 @@ export default class NetworkManager {
   }
 
   private verifyWebRTC() {
-    this.channel.send(Serializer.createVerifyRtc(this.socketUuid))
+    if (this.socketUuid) {
+      this.channel.send(Serializer.createVerifyRtc(this.socketUuid))
+    }
   }
 
   private initWebRTC() {
@@ -60,7 +62,7 @@ export default class NetworkManager {
     }
 
     this.channel.onmessage = (evt) => {
-      this.handleServerMessage(evt)
+      this.pushServerMessage(evt)
       //this.serverMessageQueue.push(evt.data as Uint8Array)
     }
 
@@ -117,13 +119,13 @@ export default class NetworkManager {
     }
 
     this.ws.onmessage = (evt) => {
-      this.handleServerMessage(evt)
+      this.pushServerMessage(evt)
       //this.serverMessageQueue.push(evt.data as Uint8Array)
     }
   }
 
   //This might need to change to send unreliable if bad connections end up choppy
-  sendMoveCommand(point: BABYLON.Vector2, isAttackMove: boolean) {
+  sendMoveCommand(point: Vector2, isAttackMove: boolean) {
     this.sendReliable(Serializer.createMove(point, isAttackMove))
   }
 
@@ -162,7 +164,7 @@ export default class NetworkManager {
     return true
   }
 
-  private handleServerMessage({ data }: MessageEvent) {
+  private pushServerMessage({ data }: MessageEvent) {
     this.serverMessageQueue.push(data as Uint8Array);
   }
 }

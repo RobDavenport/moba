@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@babylonjs/core": "^4.1.0",
+    "@babylonjs/gui": "^4.1.0",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",
     "copy-webpack-plugin": "^5.1.1",
