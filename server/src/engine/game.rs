@@ -161,6 +161,7 @@ impl Game {
             .map(|(transform, replicated)| EntitySnapshot {
                 x: transform.position.x().into(),
                 y: transform.position.y().into(),
+                rotation: transform.rotation.into(),
                 replication_id: replicated.id,
             })
             .collect();

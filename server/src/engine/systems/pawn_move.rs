@@ -43,6 +43,7 @@ fn move_to_location(
     tick_time: f32,
 ) -> bool {
     let distance = *location - transform.position;
+    transform.rotation = distance.x().atan2(distance.y()) * (180.0 / std::f32::consts::PI);
     let travel_distance = movement_speed * tick_time;
 
     if distance.length() > travel_distance {

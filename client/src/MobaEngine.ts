@@ -4,8 +4,9 @@ import { InputCommand } from './Constants'
 import { ServerMessage } from './network/protobuf/Servermessage_pb'
 
 import { Mesh } from "@babylonjs/core/Meshes/mesh"
-import { Vector3, Vector2, Color3, Color4, Matrix } from "@babylonjs/core/Maths/math"
+import { Vector3, Vector2, Color3, Color4, Matrix, Angle } from "@babylonjs/core/Maths/math"
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
+import '@babylonjs/core/Meshes/Builders/boxBuilder'
 
 export default class MobaEngine {
   private net: NetworkManager
@@ -21,11 +22,9 @@ export default class MobaEngine {
   }
 
   onServerUpdateTick(data: ServerMessage.UpdateTick.AsObject) {
-    if (this.lastUpdateFrame <= data.frame) {
-      this.setCharacterPosition(data.x, data.y, data.replicationid)
-    } else {
-      console.log('out of order!')
-    }
+    if (this.lastUpdateFrame < data.frame) {
+      this.setCharacterPosition(data.entitydata.x, data.entitydata.y, data.entitydata.rotation, data.entitydata.replicationid)
+    } 
     this.lastUpdateFrame = data.frame
   }
 
@@ -40,21 +39,23 @@ export default class MobaEngine {
 
   onSnapshot(data: ServerMessage.Snapshot.AsObject) {
     data.entitydataList.forEach(entity => {
-      this.setCharacterPosition(entity.x, entity.y, entity.replicationid)
+      this.setCharacterPosition(entity.x, entity.y, entity.rotation, entity.replicationid)
     })
   }
 
+  // TODO
   //   interpolateObjects() {
   //     this.entities.forEach(obj => obj.interpolate())
   //   }
 
-  setCharacterPosition(x: number, y: number, id: number) {
+  setCharacterPosition(x: number, y: number, rotation: number, id: number) {
     const entity = this.entities.get(id)
     if (entity) {
       //entity.setInterpolatePoint(target.x, target.y)
       entity.setAbsolutePosition(new Vector3(x, 0, y))
+      entity.setDirection(Vector3.ZeroReadOnly, rotation * (Math.PI / 180))
     } else {
-      let character = Mesh.CreateBox('char_' + id, 25, this.gameWindow.scene, true)
+      let character = Mesh.CreateBox('char_' + id, 35, this.gameWindow.scene, true)
       let material = new StandardMaterial('char_' + id + 'mat', this.gameWindow.scene)
       material.diffuseColor = new Color3(0, 1, 0)
       character.material = material

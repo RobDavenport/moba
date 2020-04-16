@@ -53,14 +53,10 @@ export namespace ServerMessage {
     getFrame(): number;
     setFrame(value: number): void;
 
-    getReplicationid(): number;
-    setReplicationid(value: number): void;
-
-    getX(): number;
-    setX(value: number): void;
-
-    getY(): number;
-    setY(value: number): void;
+    hasEntitydata(): boolean;
+    clearEntitydata(): void;
+    getEntitydata(): ServerMessage.EntityData | undefined;
+    setEntitydata(value?: ServerMessage.EntityData): void;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): UpdateTick.AsObject;
@@ -75,9 +71,7 @@ export namespace ServerMessage {
   export namespace UpdateTick {
     export type AsObject = {
       frame: number,
-      replicationid: number,
-      x: number,
-      y: number,
+      entitydata?: ServerMessage.EntityData.AsObject,
     }
   }
 
@@ -178,6 +172,9 @@ export namespace ServerMessage {
     getY(): number;
     setY(value: number): void;
 
+    getRotation(): number;
+    setRotation(value: number): void;
+
     getReplicationid(): number;
     setReplicationid(value: number): void;
 
@@ -195,6 +192,7 @@ export namespace ServerMessage {
     export type AsObject = {
       x: number,
       y: number,
+      rotation: number,
       replicationid: number,
     }
   }

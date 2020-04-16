@@ -399,9 +399,7 @@ proto.ServerMessage.UpdateTick.prototype.toObject = function(opt_includeInstance
 proto.ServerMessage.UpdateTick.toObject = function(includeInstance, msg) {
   var f, obj = {
     frame: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    replicationid: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    x: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    y: jspb.Message.getFieldWithDefault(msg, 4, 0)
+    entitydata: (f = msg.getEntitydata()) && proto.ServerMessage.EntityData.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -443,16 +441,9 @@ proto.ServerMessage.UpdateTick.deserializeBinaryFromReader = function(msg, reade
       msg.setFrame(value);
       break;
     case 2:
-      var value = /** @type {number} */ (reader.readUint32());
-      msg.setReplicationid(value);
-      break;
-    case 3:
-      var value = /** @type {number} */ (reader.readSint32());
-      msg.setX(value);
-      break;
-    case 4:
-      var value = /** @type {number} */ (reader.readSint32());
-      msg.setY(value);
+      var value = new proto.ServerMessage.EntityData;
+      reader.readMessage(value,proto.ServerMessage.EntityData.deserializeBinaryFromReader);
+      msg.setEntitydata(value);
       break;
     default:
       reader.skipField();
@@ -490,25 +481,12 @@ proto.ServerMessage.UpdateTick.serializeBinaryToWriter = function(message, write
       f
     );
   }
-  f = message.getReplicationid();
-  if (f !== 0) {
-    writer.writeUint32(
+  f = message.getEntitydata();
+  if (f != null) {
+    writer.writeMessage(
       2,
-      f
-    );
-  }
-  f = message.getX();
-  if (f !== 0) {
-    writer.writeSint32(
-      3,
-      f
-    );
-  }
-  f = message.getY();
-  if (f !== 0) {
-    writer.writeSint32(
-      4,
-      f
+      f,
+      proto.ServerMessage.EntityData.serializeBinaryToWriter
     );
   }
 };
@@ -533,56 +511,39 @@ proto.ServerMessage.UpdateTick.prototype.setFrame = function(value) {
 
 
 /**
- * optional uint32 replicationId = 2;
- * @return {number}
+ * optional EntityData entityData = 2;
+ * @return {?proto.ServerMessage.EntityData}
  */
-proto.ServerMessage.UpdateTick.prototype.getReplicationid = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+proto.ServerMessage.UpdateTick.prototype.getEntitydata = function() {
+  return /** @type{?proto.ServerMessage.EntityData} */ (
+    jspb.Message.getWrapperField(this, proto.ServerMessage.EntityData, 2));
 };
 
 
 /**
- * @param {number} value
+ * @param {?proto.ServerMessage.EntityData|undefined} value
+ * @return {!proto.ServerMessage.UpdateTick} returns this
+*/
+proto.ServerMessage.UpdateTick.prototype.setEntitydata = function(value) {
+  return jspb.Message.setWrapperField(this, 2, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
  * @return {!proto.ServerMessage.UpdateTick} returns this
  */
-proto.ServerMessage.UpdateTick.prototype.setReplicationid = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
+proto.ServerMessage.UpdateTick.prototype.clearEntitydata = function() {
+  return this.setEntitydata(undefined);
 };
 
 
 /**
- * optional sint32 x = 3;
- * @return {number}
+ * Returns whether this field is set.
+ * @return {boolean}
  */
-proto.ServerMessage.UpdateTick.prototype.getX = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.ServerMessage.UpdateTick} returns this
- */
-proto.ServerMessage.UpdateTick.prototype.setX = function(value) {
-  return jspb.Message.setProto3IntField(this, 3, value);
-};
-
-
-/**
- * optional sint32 y = 4;
- * @return {number}
- */
-proto.ServerMessage.UpdateTick.prototype.getY = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.ServerMessage.UpdateTick} returns this
- */
-proto.ServerMessage.UpdateTick.prototype.setY = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
+proto.ServerMessage.UpdateTick.prototype.hasEntitydata = function() {
+  return jspb.Message.getField(this, 2) != null;
 };
 
 
@@ -1231,7 +1192,8 @@ proto.ServerMessage.EntityData.toObject = function(includeInstance, msg) {
   var f, obj = {
     x: jspb.Message.getFieldWithDefault(msg, 1, 0),
     y: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    replicationid: jspb.Message.getFieldWithDefault(msg, 3, 0)
+    rotation: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    replicationid: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -1277,6 +1239,10 @@ proto.ServerMessage.EntityData.deserializeBinaryFromReader = function(msg, reade
       msg.setY(value);
       break;
     case 3:
+      var value = /** @type {number} */ (reader.readSint32());
+      msg.setRotation(value);
+      break;
+    case 4:
       var value = /** @type {number} */ (reader.readUint32());
       msg.setReplicationid(value);
       break;
@@ -1323,10 +1289,17 @@ proto.ServerMessage.EntityData.serializeBinaryToWriter = function(message, write
       f
     );
   }
+  f = message.getRotation();
+  if (f !== 0) {
+    writer.writeSint32(
+      3,
+      f
+    );
+  }
   f = message.getReplicationid();
   if (f !== 0) {
     writer.writeUint32(
-      3,
+      4,
       f
     );
   }
@@ -1370,10 +1343,10 @@ proto.ServerMessage.EntityData.prototype.setY = function(value) {
 
 
 /**
- * optional uint32 replicationId = 3;
+ * optional sint32 rotation = 3;
  * @return {number}
  */
-proto.ServerMessage.EntityData.prototype.getReplicationid = function() {
+proto.ServerMessage.EntityData.prototype.getRotation = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
@@ -1382,8 +1355,26 @@ proto.ServerMessage.EntityData.prototype.getReplicationid = function() {
  * @param {number} value
  * @return {!proto.ServerMessage.EntityData} returns this
  */
-proto.ServerMessage.EntityData.prototype.setReplicationid = function(value) {
+proto.ServerMessage.EntityData.prototype.setRotation = function(value) {
   return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * optional uint32 replicationId = 4;
+ * @return {number}
+ */
+proto.ServerMessage.EntityData.prototype.getReplicationid = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.ServerMessage.EntityData} returns this
+ */
+proto.ServerMessage.EntityData.prototype.setReplicationid = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
