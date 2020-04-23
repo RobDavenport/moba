@@ -1,63 +1,24 @@
-use std::collections::{HashMap, VecDeque};
 use std::iter::*;
 use std::time::{Duration, Instant};
 
-use glam::Vec2;
-use legion::{prelude::*, world::World};
-use tokio::sync::mpsc::{Receiver, Sender};
+use legion::prelude::*;
 
-use super::components::all::*;
-use super::game_events::GameEvent;
-use super::input_command::InputCommand;
-use super::systems::*;
+use super::Game;
+use crate::engine::components::all::*;
+use crate::engine::game_events::GameEvent;
+use crate::engine::input_command::InputCommand;
 use crate::engine::messaging::messages::{EntitySnapshot, GameMessage, OutMessage, OutTarget};
 use crate::engine::network::delta_encoder::SnapshotHistory;
 
-pub struct Game {
-    tick_time: f32,
-    world: World,
-    game_time: f32,
-    game_frame: u32,
-    out_reliable: Sender<(OutTarget, OutMessage)>,
-    out_unreliable: Sender<(OutTarget, OutMessage)>,
-    game_in: Receiver<GameMessage>,
-    player_entities: HashMap<PlayerId, Entity>,
-    player_snapshot_histories: HashMap<PlayerId, SnapshotHistory>,
-    replication_counter: u32,
-    game_events: VecDeque<GameEvent>,
-}
-
 impl Game {
-    pub fn new(
-        tick_time: f32,
-        out_reliable: Sender<(OutTarget, OutMessage)>,
-        out_unreliable: Sender<(OutTarget, OutMessage)>,
-        game_in: Receiver<GameMessage>,
-    ) -> Self {
-        Self {
-            tick_time,
-            world: Universe::new().create_world(),
-            game_time: 0.,
-            game_frame: 0,
-            out_reliable,
-            out_unreliable,
-            game_in,
-            player_entities: HashMap::new(),
-            replication_counter: 0,
-            game_events: VecDeque::new(),
-            player_snapshot_histories: HashMap::new(),
-        }
-    }
-
-    pub async fn start_game(&mut self) {
+    pub async fn start_game_loop(&mut self) {
         let mut timer = Instant::now();
         let mut accumulator = 0.;
         let mut game_running = true;
 
-        println!("GAME LOOP INITIATED");
-
-        let mut executor = Executor::new(init_systems(self.tick_time));
         let mut ticker = tokio::time::interval(Duration::from_secs_f32(self.tick_time));
+
+        println!("GAME LOOP INITIATED");
 
         while game_running {
             let dt = timer.elapsed();
@@ -74,7 +35,7 @@ impl Game {
                 while accumulator > self.tick_time {
                     self.game_frame += 1;
                     self.game_time += self.tick_time;
-                    executor.execute(&mut self.world);
+                    self.executor.execute(&mut self.world);
                     accumulator -= self.tick_time;
                 }
 
@@ -116,26 +77,9 @@ impl Game {
     }
 
     fn on_client_connected(&mut self, player_id: PlayerId) {
-        let replication_id = self.get_new_replication_id();
-        let entities = self.world.insert(
-            (),
-            once((
-                Transform::new(Vec2::new(1., 1.), None, None),
-                Replicated {
-                    id: ReplicationId(replication_id),
-                },
-                PlayerControlled { id: player_id },
-                Moving {
-                    base_speed: 125.,
-                    target: MoveTarget::None,
-                },
-                ReceiveInput::new(),
-            )),
-        );
+        let player_entity = self.insert_player(player_id);
 
-        let player_entity = entities.first().unwrap();
-
-        self.player_entities.insert(player_id, *player_entity);
+        self.player_entities.insert(player_id, player_entity);
         self.player_snapshot_histories
             .insert(player_id, SnapshotHistory::new());
     }
@@ -161,6 +105,7 @@ impl Game {
             .map(|(transform, replicated)| EntitySnapshot {
                 x: transform.position.x().into(),
                 y: transform.position.y().into(),
+                rotation: transform.rotation.into(),
                 replication_id: replicated.id,
             })
             .collect();
@@ -215,21 +160,4 @@ impl Game {
             }
         }
     }
-
-    fn get_new_replication_id(&mut self) -> u32 {
-        let out = self.replication_counter;
-        self.replication_counter += 1;
-        out
-    }
-}
-
-fn init_systems(tick_time: f32) -> Vec<Box<dyn Schedulable>> {
-    let mut out = Vec::new();
-
-    println!("Initialized game systems with tick time of {}s", tick_time);
-
-    out.push(pawn_input::pawn_input());
-    out.push(pawn_move::pawn_move(tick_time));
-
-    out
 }

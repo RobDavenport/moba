@@ -4,7 +4,6 @@ pub mod attacking;
 pub mod collider;
 pub mod energy;
 pub mod entity_spawner;
-pub mod facing;
 pub mod health;
 pub mod moving;
 pub mod owned;
@@ -18,7 +17,7 @@ pub mod status_effects;
 pub mod team;
 pub mod transform;
 pub mod velocity;
-pub mod visibility;
+pub mod visible;
 
 pub mod all {
     pub use super::abilities::*;
@@ -27,7 +26,6 @@ pub mod all {
     pub use super::collider::*;
     pub use super::energy::*;
     pub use super::entity_spawner::*;
-    pub use super::facing::*;
     pub use super::health::*;
     pub use super::moving::*;
     pub use super::owned::*;
@@ -41,5 +39,5 @@ pub mod all {
     pub use super::team::*;
     pub use super::transform::*;
     pub use super::velocity::*;
-    pub use super::visibility::*;
+    pub use super::visible::*;
 }

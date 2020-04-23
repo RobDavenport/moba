@@ -1,8 +1,8 @@
 import { ServerMessage } from './protobuf/Servermessage_pb'
-import MobaWindow from '../MobaWindow'
+import MobaEngine from '../MobaEngine'
 import NetworkManager from './NetworkManager'
 
-const ServerMessageMap = new Map<integer, Function>([
+const ServerMessageMap = new Map<number, Function>([
   [ServerMessage.MsgdataCase.UPDATETICK, onUpdate],
   [ServerMessage.MsgdataCase.VERIFYUUID, verifyUuid],
   [ServerMessage.MsgdataCase.VERIFIEDUUID, verifiedUuid],
@@ -10,32 +10,29 @@ const ServerMessageMap = new Map<integer, Function>([
   [ServerMessage.MsgdataCase.SNAPSHOT, snapshot]
 ])
 
-function onUpdate(message: ServerMessage.AsObject, dst: MobaWindow, net: NetworkManager) {
+function onUpdate(message: ServerMessage.AsObject, dst: MobaEngine, net: NetworkManager) {
   dst.onServerUpdateTick(message.updatetick)
 }
 
-function verifyUuid(message: ServerMessage.AsObject, dst: MobaWindow, net: NetworkManager) {
+function verifyUuid(message: ServerMessage.AsObject, dst: MobaEngine, net: NetworkManager) {
   net.verifyUuid(message.verifyuuid)
 }
 
-function verifiedUuid(_: ServerMessage.AsObject, dst: MobaWindow, net: NetworkManager) {
+function verifiedUuid(_: ServerMessage.AsObject, dst: MobaEngine, net: NetworkManager) {
   net.verifiedUuid()
 }
 
-function entityDestroyed(message: ServerMessage.AsObject, dst: MobaWindow, net: NetworkManager) {
+function entityDestroyed(message: ServerMessage.AsObject, dst: MobaEngine, net: NetworkManager) {
   dst.onEntityDestroyed(message.entitydestroyed)
 }
 
-function snapshot(message: ServerMessage.AsObject, dst: MobaWindow, net: NetworkManager) {
+function snapshot(message: ServerMessage.AsObject, dst: MobaEngine, net: NetworkManager) {
   if (net.onSnapshot(message.snapshot)) {
     dst.onSnapshot(message.snapshot)
   }
 }
 
-
-//TODO: Remove this, instead push deserialized messages into a centralized queue
-//inside of the game engine/window
-export function handleServerMessage(data: Uint8Array, dst: MobaWindow, net: NetworkManager) {
+export function handleServerMessage(data: Uint8Array, dst: MobaEngine, net: NetworkManager) {
   const message = ServerMessage.deserializeBinary(data)
   const func = ServerMessageMap.get(message.getMsgdataCase());
 

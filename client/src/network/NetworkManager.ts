@@ -1,8 +1,9 @@
 import * as Serializer from './Serializer'
 import * as Deserializer from './Deserializer'
-import MobaWindow from '../MobaWindow'
-import { CartesianPoint } from '../helpers/GameMath'
+import MobaEngine from '../MobaEngine'
+
 import { ServerMessage } from './protobuf/Servermessage_pb'
+import { Vector2 } from '@babylonjs/core/Maths/math'
 
 //const address: string = prompt('Enter game server address.', document.location.hostname)
 const address = document.location.hostname
@@ -11,16 +12,16 @@ const rtcAddress = 'http://' + address + ':8000/sdp'
 
 export default class NetworkManager {
   private ws: WebSocket
-  private gameWindow: MobaWindow
+  private gameEngine: MobaEngine
   private peer: RTCPeerConnection
   private channel: RTCDataChannel
   private socketUuid: string
   private verifier: NodeJS.Timeout
   private serverMessageQueue: Array<Uint8Array>
-  private baseline: integer
+  private baseline: number
 
-  constructor(gameWindow: MobaWindow) {
-    this.gameWindow = gameWindow
+  constructor(gameEngine: MobaEngine) {
+    this.gameEngine = gameEngine
     this.serverMessageQueue = []
     this.initWebsocket()
     this.initWebRTC()
@@ -29,14 +30,16 @@ export default class NetworkManager {
 
   handleMessageQueue(dt: number) {
     this.serverMessageQueue.forEach(data => {
-      Deserializer.handleServerMessage(data as Uint8Array, this.gameWindow, this)
+      Deserializer.handleServerMessage(data as Uint8Array, this.gameEngine, this)
     })
 
     this.serverMessageQueue = []
   }
 
   private verifyWebRTC() {
-    this.channel.send(Serializer.createVerifyRtc(this.socketUuid))
+    if (this.socketUuid) {
+      this.channel.send(Serializer.createVerifyRtc(this.socketUuid))
+    }
   }
 
   private initWebRTC() {
@@ -59,7 +62,7 @@ export default class NetworkManager {
     }
 
     this.channel.onmessage = (evt) => {
-      this.handleServerMessage(evt)
+      this.pushServerMessage(evt)
       //this.serverMessageQueue.push(evt.data as Uint8Array)
     }
 
@@ -116,13 +119,13 @@ export default class NetworkManager {
     }
 
     this.ws.onmessage = (evt) => {
-      this.handleServerMessage(evt)
+      this.pushServerMessage(evt)
       //this.serverMessageQueue.push(evt.data as Uint8Array)
     }
   }
 
   //This might need to change to send unreliable if bad connections end up choppy
-  sendMoveCommand(point: CartesianPoint, isAttackMove: boolean) {
+  sendMoveCommand(point: Vector2, isAttackMove: boolean) {
     this.sendReliable(Serializer.createMove(point, isAttackMove))
   }
 
@@ -161,7 +164,7 @@ export default class NetworkManager {
     return true
   }
 
-  private handleServerMessage({ data }: MessageEvent) {
+  private pushServerMessage({ data }: MessageEvent) {
     this.serverMessageQueue.push(data as Uint8Array);
   }
 }

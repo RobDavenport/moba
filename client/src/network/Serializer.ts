@@ -1,7 +1,7 @@
 import { ClientMessage, Command } from './protobuf/ClientMessage_pb'
-import { CartesianPoint } from '../helpers/GameMath'
+import { Vector2 } from '@babylonjs/core/Maths/math'
 
-export function createSnapshotAck(newBaseline: integer) {
+export function createSnapshotAck(newBaseline: number) {
   let clientMessage = new ClientMessage()
 
   let ack = new ClientMessage.Ack()
@@ -23,7 +23,7 @@ export function createVerifyRtc(uuid: string) {
   return clientMessage.serializeBinary()
 }
 
-export function createMove(point: CartesianPoint, isAttackMove: boolean) {
+export function createMove(point: Vector2, isAttackMove: boolean) {
   let clientMessage = new ClientMessage()
   let command = new Command()
 
@@ -43,7 +43,7 @@ export function createStop() {
   let clientMessage = new ClientMessage()
   let command = new Command()
   command.setStop(new Command.Stop())
-  
+
   clientMessage.setCommand(command)
 
   return clientMessage.serializeBinary()

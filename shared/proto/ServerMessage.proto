@@ -3,9 +3,7 @@ syntax = "proto3";
 message ServerMessage {
   message UpdateTick {
     uint32 frame = 1;
-    uint32 replicationId = 2;
-    sint32 x = 3;
-    sint32 y = 4;
+    EntityData entityData = 2;
   }
   
   message VerifyUuid {
@@ -28,7 +26,8 @@ message ServerMessage {
   message EntityData {
     sint32 x = 1;
     sint32 y = 2;
-    uint32 replicationId = 3;
+    sint32 rotation = 3;
+    uint32 replicationId = 4;
   }
   
   oneof msgData {

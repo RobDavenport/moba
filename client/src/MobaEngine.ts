@@ -1,25 +1,77 @@
 import NetworkManager from './network/NetworkManager'
 import MobaWindow from './MobaWindow'
-import * as GM from './helpers/GameMath'
 import { InputCommand } from './Constants'
 import { ServerMessage } from './network/protobuf/Servermessage_pb'
+
+import { Mesh } from "@babylonjs/core/Meshes/mesh"
+import { Vector3, Vector2, Color3, Color4, Matrix, Angle } from "@babylonjs/core/Maths/math"
+import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
+import '@babylonjs/core/Meshes/Builders/boxBuilder'
 
 export default class MobaEngine {
   private net: NetworkManager
   private gameWindow: MobaWindow
+  private entities: Map<number, Mesh>
+  private lastUpdateFrame: number
 
   constructor(gameWindow: MobaWindow) {
-    this.net = new NetworkManager(gameWindow)
+    this.net = new NetworkManager(this)
     this.gameWindow = gameWindow
+
+    this.entities = new Map()
+  }
+
+  onServerUpdateTick(data: ServerMessage.UpdateTick.AsObject) {
+    if (this.lastUpdateFrame < data.frame) {
+      this.setCharacterPosition(data.entitydata.x, data.entitydata.y, data.entitydata.rotation, data.entitydata.replicationid)
+    } 
+    this.lastUpdateFrame = data.frame
+  }
+
+  onEntityDestroyed(data: ServerMessage.EntityDestroyed.AsObject) {
+    let entity = this.entities.get(data.replicationid)
+
+    if (entity !== undefined) {
+      entity.dispose()
+      this.entities.delete(data.replicationid)
+    }
+  }
+
+  onSnapshot(data: ServerMessage.Snapshot.AsObject) {
+    data.entitydataList.forEach(entity => {
+      this.setCharacterPosition(entity.x, entity.y, entity.rotation, entity.replicationid)
+    })
+  }
+
+  // TODO
+  //   interpolateObjects() {
+  //     this.entities.forEach(obj => obj.interpolate())
+  //   }
+
+  setCharacterPosition(x: number, y: number, rotation: number, id: number) {
+    const entity = this.entities.get(id)
+    if (entity) {
+      //entity.setInterpolatePoint(target.x, target.y)
+      entity.setAbsolutePosition(new Vector3(x, 0, y))
+      entity.setDirection(Vector3.ZeroReadOnly, rotation * (Math.PI / 180))
+    } else {
+      let character = Mesh.CreateBox('char_' + id, 35, this.gameWindow.scene, true)
+      let material = new StandardMaterial('char_' + id + 'mat', this.gameWindow.scene)
+      material.diffuseColor = new Color3(0, 1, 0)
+      character.material = material
+      this.entities.set(id, character)
+    }
   }
 
   update(dt: number) {
     this.net.handleMessageQueue(dt)
-  } 
+  }
 
   onMoveDown() {
-    const { x, y } = this.gameWindow.getPointerPositionWorld()
-    this.net.sendMoveCommand(GM.isometricToCartesian(x, y), false)
+    const result = this.gameWindow.getPointerPositionWorld()
+    if (result !== undefined) {
+      this.net.sendMoveCommand(result, false)
+    }
   }
 
   onMoveUp() {
@@ -211,11 +263,7 @@ export default class MobaEngine {
   }
 
   onToggleFullscreenDown() {
-    if (this.gameWindow.scale.isFullscreen) {
-      this.gameWindow.scale.stopFullscreen()
-    } else {
-      this.gameWindow.scale.startFullscreen()
-    }
+    this.gameWindow.toggleFullscreen()
   }
 
   onToggleFullscreenUp() {

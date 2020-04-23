@@ -8,3 +8,4 @@ pub mod engine_builder;
 pub mod game;
 pub mod game_events;
 pub mod match_id;
+pub mod resources;

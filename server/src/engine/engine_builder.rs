@@ -88,7 +88,8 @@ fn start_game_thread(
 
     tokio::spawn(async move {
         Game::new(tick_time, out_reliable, out_unreliable, game_in)
-            .start_game()
+            .init_game("testMap")
+            .start_game_loop()
             .await //todo this should return the result of the game
     })
 }

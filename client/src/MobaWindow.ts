@@ -1,245 +1,172 @@
-import Phaser from 'phaser'
 import {
   InputCommand,
   defaultKeyBindings,
   PointerButtons,
-  defaultPointerBindings,
   cameraScrollSpeed
 } from './Constants'
 import MobaEngine from './MobaEngine'
-import * as GM from './helpers/GameMath'
 import { ServerMessage } from './network/protobuf/Servermessage_pb'
-import { CartesianPoint } from './helpers/GameMath'
-import { InterpolatedSprite } from './InterpolatedSprite'
+import InputManager from './InputManager'
 
-const mapWidth = 16
-const mapHeight = 16
+import { RayHelper, ArcRotateCamera } from '@babylonjs/core'
 
-export default class MobaWindow extends Phaser.Scene {
-  private keyMapping: Map<Phaser.Input.Keyboard.Key, InputCommand>
-  private pointerMapping: Map<PointerButtons, InputCommand>
-  private entities: Map<integer, InterpolatedSprite>
-  private lastUpdateFrame: integer;
+import { Engine } from "@babylonjs/core/Engines/engine"
+import { Scene } from "@babylonjs/core/scene"
+import { Vector3, Vector2, Color4 } from "@babylonjs/core/Maths/math"
+import { TargetCamera } from "@babylonjs/core/Cameras/targetCamera"
+import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight"
+import { Mesh } from "@babylonjs/core/Meshes/mesh"
 
+import { ActionManager } from '@babylonjs/core/Actions/actionManager'
+import { PointerEventTypes } from '@babylonjs/core/Events/pointerEvents'
+import { KeyboardEventTypes } from '@babylonjs/core/Events/keyboardEvents'
+import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
+import '@babylonjs/core/Meshes/Builders/groundBuilder'
+import '@babylonjs/core/Meshes/Builders/boxBuilder'
+
+import { Image } from '@babylonjs/gui/2D/controls/image'
+import { AdvancedDynamicTexture } from '@babylonjs/gui/2D/advancedDynamicTexture'
+import '@babylonjs/core/Culling/ray'
+
+//TODO:
+// Update function
+// Interpolate objects / animate
+
+// Update Camera
+// scroll an amount based on cameraAxis * speed
+// And if the mouse is locked...
+//    Scroll edges of screen
+
+export default class MobaWindow {
   private gameEngine: MobaEngine
-  private cursor: Phaser.GameObjects.Image
-
+  private engine: Engine
+  public scene: Scene
+  private mainCamera: TargetCamera
+  private keyBindings: Map<string, InputCommand>
+  private inputManager: InputManager
   private cameraLocked: boolean
-  private cameraAxis: { x: number, y: number }
+  private cameraAxis: Vector2
   private cameraScrollSpeed: number
+  private cursor: Image
+  private guiTexture: AdvancedDynamicTexture
+  private ground: Mesh
 
-
-  constructor() {
-    super('moba')
-    this.keyMapping = new Map()
-    this.pointerMapping = new Map()
-    this.gameEngine = new MobaEngine(this);
-
-    this.entities = new Map()
-
-    this.cameraLocked = true;
-
-    this.cameraAxis = { x: 0, y: 0 }
-    this.cameraScrollSpeed = cameraScrollSpeed
-    this.lastUpdateFrame = 0
+  constructor(canvas: HTMLCanvasElement) {
+    this.keyBindings = new Map()
+    this.engine = new Engine(canvas)
+    canvas.oncontextmenu = () => { return false; }
+    this.inputManager = new InputManager()
+    this.gameEngine = new MobaEngine(this)
+    this.scene = new Scene(this.engine)
+    this.scene.actionManager = new ActionManager(this.scene)
   }
 
-  preload() {
-    this.load.image('background', './assets/art/backgrounds/background.png')
-    this.load.image('character', './assets/art/characters/character.png')
+  init() {
+    this.scene.clearColor = new Color4(0.1, 0.1, 0.1)
+    this.mainCamera = new TargetCamera('mainCamera', new Vector3(0, 1200, -700), this.scene)
+    //this.mainCamera = new ArcRotateCamera('testCamera', 1, 1, 10, new Vector3(3, 12, -7), this.scene)
+    this.mainCamera.setTarget(new Vector3(0, 0, 0))
+    //this.mainCamera.attachControl(canvas, true)
+    this.mainCamera.update()
 
-    this.load.image('tile', './assets/art/tiles/floor_E.png')
+    let light = new HemisphericLight('light1', new Vector3(0, 1, 0), this.scene)
+    light.intensity = 0.7
 
-    this.load.image('cursor', './assets/art/ui/cursorNormal.png')
-    this.load.image('cursorAttack', './assets/art/ui/cursorAttack.png')
+    this.ground = Mesh.CreateGround('ground1', 1024, 1024, 10, this.scene)
+    this.ground.material = new StandardMaterial('gridmat', this.scene)
+    this.ground.isPickable = true
+
+    this.cameraLocked = true
+    this.cameraAxis = new Vector2(0, 0)
+    this.cameraScrollSpeed = 15
+
+    //TODO: Allow re-bindings of keys
+    //this.bindDefaultPointer()
+    this.bindPointer()
+    this.bindDefaultKeys()
+    this.initInputHandler()
+
+    this.guiTexture = AdvancedDynamicTexture.CreateFullscreenUI('UI')
+    this.initCursor()
   }
 
-  create() {
-    this.add.image(0, 0, 'background')
-
-    const mid = {
-      x: this.game.renderer.width / 2,
-      y: this.game.renderer.height / 2,
-    }
-
-    this.cursor = this.add.sprite(mid.x, mid.y, 'cursor')
-    this.cameras.main.scrollX = -mid.x
-    this.cameras.main.scrollY = -mid.y
-
-    this.cursor.depth = 999999999
-    this.cursor.setScrollFactor(0, 0)
-    this.cursor.setOrigin(0, 0)
-
-    this.input.mouse.disableContextMenu()
-    this.setDefaultKeyBindings()
-    this.setDefaultPointerBindings()
-
-    this.initTilemap()
-
-    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-
-      if (!this.input.mouse.locked) {
-        this.input.mouse.requestPointerLock()
-        this.cursor.setPosition(Math.round(pointer.x), Math.round(pointer.y))
+  bindPointer() {
+    // Request screen lock on mouse down
+    this.scene.onPointerObservable.add((data) => {
+      if (!this.engine.isPointerLock) {
+        this.engine.enterPointerlock()
+        this.cursor.leftInPixels = data.event.clientX
+        this.cursor.topInPixels = data.event.clientY
       }
+    }, PointerEventTypes.POINTERDOWN)
 
-      const btn = pointer.button
-      const cmd = this.pointerMapping.get(btn)
-      if (cmd) {
-        this.gameEngine.CommandMap.get(cmd)?.[0].call(this.gameEngine)
-      } else {
-        console.log('cmd not found: ' + cmd)
-      }
-    })
+    // Handle various mouse inputs
+    this.scene.onPointerObservable.add((data) => {
+      const primaryPressed = (data.event.buttons & PointerButtons.PRIMARY) === PointerButtons.PRIMARY
+      const rightPressed = (data.event.buttons & PointerButtons.RIGHT) === PointerButtons.RIGHT
 
-    this.input.on('pointerup', (pointer: Phaser.Input.Pointer) => {
-      const btn = pointer.button
-      const cmd = this.pointerMapping.get(btn)
-      if (cmd) {
-        this.gameEngine.CommandMap.get(cmd)?.[1].call(this.gameEngine)
-      } else {
-        console.log('cmd not found: ' + cmd)
+      this.inputManager.setKey(PointerButtons.PRIMARY, primaryPressed)
+      this.inputManager.setKey(PointerButtons.RIGHT, rightPressed)
+
+      if (this.engine.isPointerLock) {
+        this.cursor.leftInPixels += data.event.movementX
+        this.cursor.topInPixels += data.event.movementY
+
+        this.clampCursor()
       }
     })
-
   }
 
-  update(_, dt) {
-    this.handleKeyInputs()
+  bindDefaultKeys() {
+    defaultKeyBindings.forEach((value, key) => {
+      this.keyBindings.set(key, value)
+    })
+  }
+
+  initInputHandler() {
+    this.scene.onKeyboardObservable.add((data) => {
+      this.inputManager.setKey(data.event.key, data.type === KeyboardEventTypes.KEYDOWN)
+    })
+
+    this.scene.registerBeforeRender(() => this.update())
+  }
+
+  update() {
+    this.updateInput()
     this.updateCursor()
-    if (this.cameraLocked === true) {
+    this.gameEngine.update(this.engine.getDeltaTime())
+  }
 
+  initCursor() {
+    this.cursor = new Image('cursor', 'assets/art/ui/cursorNormal.png')
+    this.cursor.horizontalAlignment = 0
+    this.cursor.verticalAlignment = 0
+    this.cursor.widthInPixels = 30
+    this.cursor.heightInPixels = 30
+    this.guiTexture.addControl(this.cursor)
+  }
+
+  start() {
+    console.log('starting game')
+    this.engine.runRenderLoop(() => {
+      this.scene.render();
+    })
+  }
+
+  rightClickPredicate(mesh: Mesh) {
+    return mesh == this.ground
+  }
+
+  getPointerPositionWorld() {
+    const result = this.scene.pick(this.cursor.leftInPixels, this.cursor.topInPixels, this.rightClickPredicate.bind(this), true)
+    if (result.hit) {
+      return new Vector2(result.pickedPoint.x, result.pickedPoint.z)
     } else {
-      this.updateCamera(dt)
-    }
-    this.gameEngine.update(dt)
-    this.interpolateObjects() //TODO: use a snapshot buffer for interpolation?
-  }
-
-  // Input Code
-  setDefaultKeyBindings() {
-    defaultKeyBindings.forEach((inputCommand, keyCode, _) => {
-      const inputKey = this.input.keyboard.addKey(keyCode)
-      this.keyMapping.set(inputKey, inputCommand)
-    })
-  }
-
-  handleKeyInputs() {
-    this.keyMapping.forEach((inputCommand, key, _) => {
-      if (Phaser.Input.Keyboard.JustDown(key)) {
-        this.gameEngine.CommandMap.get(inputCommand)[0].call(this.gameEngine)
-      } else if (Phaser.Input.Keyboard.JustUp(key)) {
-        this.gameEngine.CommandMap.get(inputCommand)[1].call(this.gameEngine)
-      }
-    })
-  }
-
-  setDefaultPointerBindings() {
-    defaultPointerBindings.forEach((inputCommand, keyCode, _) => {
-      this.pointerMapping.set(keyCode, inputCommand)
-    })
-  }
-
-  setCharacterPosition(point: GM.CartesianPoint, index: number) {
-    const entity = this.entities.get(index)
-    if (entity) {
-      const target = point.toIsometric()
-      entity.setInterpolatePoint(target.x, target.y)
-    } else {
-      const character = new InterpolatedSprite(this.add.sprite(0, 0, 'character'));
-      character.sprite.depth = 999999
-
-      this.entities.set(index, character)
+      return undefined
     }
   }
 
-  initTilemap() {
-
-    const tileWidth = 256
-    const tileHeight = 128
-
-    // TODO FIX THIS
-    const yOffset = tileHeight * mapHeight / 2
-
-    for (let x = 0; x < mapWidth; x++) {
-      for (let y = 0; y < mapHeight; y++) {
-        let tilePoint = GM.tileIndexToCoordinate(x, y, tileWidth, tileHeight)
-
-        let tile = this.add.image(tilePoint.x, tilePoint.y - yOffset, 'tile')
-        tile.depth = tilePoint.y
-      }
-    }
-  }
-
-  onServerUpdateTick(data: ServerMessage.UpdateTick.AsObject) {
-    if (this.lastUpdateFrame <= data.frame) {
-      this.setCharacterPosition(new CartesianPoint(data.x, data.y), data.replicationid)
-    } else {
-      console.log('out of order!')
-    }
-    this.lastUpdateFrame = data.frame
-  }
-
-  onEntityDestroyed(data: ServerMessage.EntityDestroyed.AsObject) {
-    let entity = this.entities.get(data.replicationid)
-
-    if (entity !== undefined) {
-      entity.sprite.destroy()
-      this.entities.delete(data.replicationid)
-    }
-  }
-
-  onSnapshot(data: ServerMessage.Snapshot.AsObject) {
-    data.entitydataList.forEach(entity => {
-      this.setCharacterPosition(new CartesianPoint(entity.x, entity.y), entity.replicationid)
-    })
-  }
-
-  interpolateObjects() {
-    this.entities.forEach(obj => obj.interpolate())
-  }
-
-  updateCursor() {
-    this.cursor.x += this.input.activePointer.movementX
-    this.input.activePointer.movementX = 0
-    this.cursor.y += this.input.activePointer.movementY
-    this.input.activePointer.movementY = 0
-
-    this.cursor.x = Phaser.Math.Clamp(this.cursor.x, 0, this.game.renderer.width)
-    this.cursor.y = Phaser.Math.Clamp(this.cursor.y, 0, this.game.renderer.height)
-  }
-
-  updateCamera(dt: number) {
-    this.cameras.main.scrollX += this.cameraScrollSpeed * this.cameraAxis.x * dt
-    this.cameras.main.scrollY += this.cameraScrollSpeed * this.cameraAxis.y * dt
-
-    if (this.input.mouse.locked) {
-      if (this.cursor.x === 0) {
-        this.cameras.main.scrollX -= this.cameraScrollSpeed * dt
-      } else if (this.cursor.x === this.game.renderer.width) {
-        this.cameras.main.scrollX += this.cameraScrollSpeed * dt
-      }
-
-      if (this.cursor.y === 0) {
-        this.cameras.main.scrollY -= this.cameraScrollSpeed * dt
-      } else if (this.cursor.y === this.game.renderer.height) {
-        this.cameras.main.scrollY += this.cameraScrollSpeed * dt
-      }
-    }
-
-    this.cameras.main.scrollX = Math.round(this.cameras.main.scrollX)
-    this.cameras.main.scrollY = Math.round(this.cameras.main.scrollY)
-  }
-
-  startFocusHero() {
-    console.log('start focus hero')
-  }
-
-  stopFocusHero() {
-    console.log('stop focus hero')
-  }
-
-
+  // CAMERA CONTROLS
   scrollUp(isDown: boolean) {
     if (isDown) {
       this.cameraAxis.y += -1
@@ -272,17 +199,51 @@ export default class MobaWindow extends Phaser.Scene {
     }
   }
 
-  getPointerPositionScreen() {
-    return {
-      x: this.cursor.x,
-      y: this.cursor.y
+  startFocusHero() {
+    //TODO
+  }
+
+  stopFocusHero() {
+    //TODO
+  }
+
+  updateInput() {
+    this.keyBindings.forEach((val, key) => {
+      if (this.inputManager.justPressed(key)) {
+        this.gameEngine.CommandMap.get(val)[0].call(this.gameEngine)
+      } else if (this.inputManager.justReleased(key)) {
+        this.gameEngine.CommandMap.get(val)[1].call(this.gameEngine)
+      }
+    })
+
+    this.inputManager.update()
+  }
+
+  updateCursor() {
+    //this.clampCursor()
+  }
+
+  clampCursor() {
+    if (this.cursor.leftInPixels < 0) {
+      this.cursor.leftInPixels = 0
+    } else {
+      const width = this.engine.getRenderWidth()
+      if (this.cursor.leftInPixels > width) {
+        this.cursor.leftInPixels = width
+      }
+    }
+
+    if (this.cursor.topInPixels < 0) {
+      this.cursor.topInPixels = 0
+    } else {
+      const height = this.engine.getRenderHeight()
+      if (this.cursor.topInPixels > height) {
+        this.cursor.topInPixels = height
+      }
     }
   }
 
-  getPointerPositionWorld() {
-    return {
-      x: this.cursor.x + this.cameras.main.scrollX,
-      y: this.cursor.y + this.cameras.main.scrollY
-    }
+  toggleFullscreen() {
+    this.engine.switchFullscreen(false)
   }
 }

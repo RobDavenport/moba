@@ -12,9 +12,7 @@ pub enum OutMessage {
     },
     UpdateTick {
         frame: u32,
-        x: NetworkedFloat,
-        y: NetworkedFloat,
-        replication_id: ReplicationId,
+        entity_snapshot: EntitySnapshot,
     },
     EntityDestroyed {
         frame: u32,
@@ -29,6 +27,7 @@ pub struct EntitySnapshot {
     pub replication_id: ReplicationId,
     pub x: NetworkedFloat,
     pub y: NetworkedFloat,
+    pub rotation: NetworkedFloat,
 }
 
 impl Ord for EntitySnapshot {
@@ -89,10 +88,8 @@ impl OutMessage {
         match self {
             Self::UpdateTick {
                 frame,
-                x,
-                y,
-                replication_id,
-            } => update_tick(frame, x, y, replication_id),
+                entity_snapshot,
+            } => update_tick(frame, entity_snapshot),
             Self::VerifyUuid(uuid) => verify_uuid(uuid),
             Self::VerifiedUuid => verified_uuid(),
             Self::EntityDestroyed {
@@ -108,19 +105,19 @@ impl OutMessage {
     }
 }
 
-fn update_tick(
-    frame: u32,
-    x: NetworkedFloat,
-    y: NetworkedFloat,
-    replication_id: ReplicationId,
-) -> Vec<u8> {
+fn update_tick(frame: u32, entity_snapshot: EntitySnapshot) -> Vec<u8> {
     let mut output = ServerMessage::new();
 
     let mut inner = ServerMessage_UpdateTick::new();
     inner.set_frame(frame);
-    inner.set_replicationId(replication_id.0);
-    inner.set_x(x.into());
-    inner.set_y(y.into());
+
+    let mut entity_data = ServerMessage_EntityData::new();
+    entity_data.set_replicationId(entity_snapshot.replication_id.0);
+    entity_data.set_x(entity_snapshot.x.into());
+    entity_data.set_y(entity_snapshot.y.into());
+    entity_data.set_rotation(entity_snapshot.rotation.into());
+
+    inner.set_entityData(entity_data);
 
     output.set_updateTick(inner);
     output.write_to_bytes().unwrap()
@@ -170,6 +167,7 @@ fn snapshot(frame: u32, entities: Vec<EntitySnapshot>, baseline: Option<u32>) ->
                 single_data.set_x(entity.x.into());
                 single_data.set_y(entity.y.into());
                 single_data.set_replicationId(entity.replication_id.0);
+                single_data.set_rotation(entity.rotation.into());
                 single_data
             })
             .collect(),

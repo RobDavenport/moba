@@ -1,4 +1,5 @@
-import Phaser from 'phaser'
-import { defaultPhaserConfig } from './Constants'
+import MobaWindow from './MobaWindow'
 
-const game = new Phaser.Game(defaultPhaserConfig)
+const game = new MobaWindow(document.getElementById('gameCanvas') as HTMLCanvasElement)
+game.init()
+game.start()
