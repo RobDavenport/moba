@@ -1,5 +1,5 @@
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Visibility {
+pub struct Visible {
     pub visibility: VisibilityType,
 }
 

@@ -12,7 +12,7 @@ pub enum OutMessage {
     },
     UpdateTick {
         frame: u32,
-        entitySnapshot: EntitySnapshot,
+        entity_snapshot: EntitySnapshot,
     },
     EntityDestroyed {
         frame: u32,
@@ -88,8 +88,8 @@ impl OutMessage {
         match self {
             Self::UpdateTick {
                 frame,
-                entitySnapshot,
-            } => update_tick(frame, entitySnapshot),
+                entity_snapshot,
+            } => update_tick(frame, entity_snapshot),
             Self::VerifyUuid(uuid) => verify_uuid(uuid),
             Self::VerifiedUuid => verified_uuid(),
             Self::EntityDestroyed {
@@ -105,22 +105,19 @@ impl OutMessage {
     }
 }
 
-fn update_tick(
-    frame: u32,
-    entitySnapshot: EntitySnapshot,
-) -> Vec<u8> {
+fn update_tick(frame: u32, entity_snapshot: EntitySnapshot) -> Vec<u8> {
     let mut output = ServerMessage::new();
 
     let mut inner = ServerMessage_UpdateTick::new();
     inner.set_frame(frame);
 
-    let mut entityData = ServerMessage_EntityData::new();
-    entityData.set_replicationId(entitySnapshot.replication_id.0);
-    entityData.set_x(entitySnapshot.x.into());
-    entityData.set_y(entitySnapshot.y.into());
-    entityData.set_rotation(entitySnapshot.rotation.into());
+    let mut entity_data = ServerMessage_EntityData::new();
+    entity_data.set_replicationId(entity_snapshot.replication_id.0);
+    entity_data.set_x(entity_snapshot.x.into());
+    entity_data.set_y(entity_snapshot.y.into());
+    entity_data.set_rotation(entity_snapshot.rotation.into());
 
-    inner.set_entityData(entityData);
+    inner.set_entityData(entity_data);
 
     output.set_updateTick(inner);
     output.write_to_bytes().unwrap()
