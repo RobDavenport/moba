@@ -85,10 +85,8 @@ impl SnapshotHistory {
             let drain_amount = (frame - baseline.frame) - 1;
             self.history.drain(0..drain_amount as usize);
         } else {
-            println!("nobaseline");
             while let Some(popped) = self.history.front() {
                 if popped.frame == frame {
-                    println!("found the frame");
                     break;
                 } else {
                     self.history.pop_front();

@@ -24,7 +24,7 @@ export default class MobaEngine {
     const frame = data.getFrame()
     if (this.lastUpdateFrame < frame) {
       this.setCharacterPosition(data.getEntitydata())
-    } 
+    }
     this.lastUpdateFrame = frame
   }
 
@@ -48,20 +48,21 @@ export default class MobaEngine {
 
   setCharacterPosition(data: ServerMessage.EntityData) {
     const id = data.getReplicationid();
-    const entity = this.entities.get(id)
+    let entity = this.entities.get(id)
     if (entity) {
       //entity.setInterpolatePoint(target.x, target.y)
-      entity.setAbsolutePosition(new Vector3(data.hasX() ? data.getX() : entity.position.x, 0, data.hasY() ? data.getY() : entity.position.z))
-      if (data.hasRotation()) {
-        entity.setDirection(Vector3.ZeroReadOnly, data.getRotation() * (Math.PI / 180))
-      }
     } else {
-      console.log("new entity: " + id)
       let character = Mesh.CreateBox('char_' + id, 35, this.gameWindow.scene, true)
       let material = new StandardMaterial('char_' + id + 'mat', this.gameWindow.scene)
       material.diffuseColor = new Color3(0, 1, 0)
       character.material = material
       this.entities.set(id, character)
+      entity = character;
+    }
+
+    entity.setAbsolutePosition(new Vector3(data.hasX() ? data.getX() : entity.position.x, 0, data.hasY() ? data.getY() : entity.position.z))
+    if (data.hasRotation()) {
+      entity.setDirection(Vector3.ZeroReadOnly, data.getRotation() * (Math.PI / 180))
     }
   }
 
