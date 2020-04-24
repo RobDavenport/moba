@@ -1,0 +1,4 @@
+{
+  "maps": ["testMap"],
+  "characters": ["bruiser", "mage", "marksman", "support", "tank"]
+}

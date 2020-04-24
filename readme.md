@@ -12,7 +12,7 @@
   - WebRTC Unreliable
   - protobuf
 - Typescript, for the game client
-  - Phaser.io game framework
+  - Babylon.js
 
 ### Other Frameworks & Libraries
 - Google Protocol Buffer - Network serialization and deserialization
@@ -45,3 +45,6 @@ Format code with:
 
 Rebuild protobuf schemas:
 > protoc --plugin=protoc-gen-ts=D:\Development\moba\client\node_modules\.bin\protoc-gen-ts.cmd --js_out="import_style=commonjs,binary:../../client/src/network/protobuf" --ts_out=../../client/src/network/protobuf --rust_out ../../server/src/engine/network/protobuf ClientMessage.proto ServerMessage.proto
+
+Update shared resources (windows):
+> for %a in ("..\server\resources\" "..\client\resources\") do (xcopy /E "resources" "%~a")

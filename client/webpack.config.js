@@ -4,8 +4,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
-
-
 module.exports = (env, args) => {
   const isProductionMode = (args.mode === 'production');
 
@@ -28,7 +26,8 @@ module.exports = (env, args) => {
         TextEncoder: ['text-encoding', 'TextEncoder']
       }),
       new CopyWebpackPlugin([
-        { from: 'assets', to: 'assets' }
+        { from: 'assets', to: 'assets' },
+        { from: 'resources', to: 'resources' }
       ]),
     ],
     module: {
