@@ -25,9 +25,9 @@ pub enum OutMessage {
 #[derive(Clone, Debug)]
 pub struct EntitySnapshot {
     pub replication_id: ReplicationId,
-    pub x: NetworkedFloat,
-    pub y: NetworkedFloat,
-    pub rotation: NetworkedFloat,
+    pub x: Option<NetworkedFloat>,
+    pub y: Option<NetworkedFloat>,
+    pub rotation: Option<NetworkedFloat>,
 }
 
 impl Ord for EntitySnapshot {
@@ -113,9 +113,9 @@ fn update_tick(frame: u32, entity_snapshot: EntitySnapshot) -> Vec<u8> {
 
     let mut entity_data = ServerMessage_EntityData::new();
     entity_data.set_replicationId(entity_snapshot.replication_id.0);
-    entity_data.set_x(entity_snapshot.x.into());
-    entity_data.set_y(entity_snapshot.y.into());
-    entity_data.set_rotation(entity_snapshot.rotation.into());
+    entity_snapshot.x.map(|x| entity_data.set_x(x.into()));
+    entity_snapshot.y.map(|y| entity_data.set_y(y.into()));
+    entity_snapshot.rotation.map(|rot| entity_data.set_rotation(rot.into()));
 
     inner.set_entityData(entity_data);
 
@@ -164,10 +164,10 @@ fn snapshot(frame: u32, entities: Vec<EntitySnapshot>, baseline: Option<u32>) ->
             .into_iter()
             .map(|entity| {
                 let mut single_data = ServerMessage_EntityData::new();
-                single_data.set_x(entity.x.into());
-                single_data.set_y(entity.y.into());
                 single_data.set_replicationId(entity.replication_id.0);
-                single_data.set_rotation(entity.rotation.into());
+                entity.x.map(|x| single_data.set_x(x.into()));
+                entity.y.map(|y| single_data.set_y(y.into()));
+                entity.rotation.map(|rot| single_data.set_rotation(rot.into()));
                 single_data
             })
             .collect(),

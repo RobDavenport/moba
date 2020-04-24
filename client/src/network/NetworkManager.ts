@@ -153,13 +153,14 @@ export default class NetworkManager {
     clearInterval(this.verifier)
   }
 
-  onSnapshot(snapshot: ServerMessage.Snapshot.AsObject): Boolean {
-    if (this.baseline >= snapshot.frame) { //We already have this, so just trash it
+  onSnapshot(snapshot: ServerMessage.Snapshot): Boolean {
+    const frame = snapshot.getFrame()
+    if (this.baseline >= frame) { //We already have this, so just trash it
       return false
     }
 
-    this.baseline = snapshot.frame
-    this.channel.send(Serializer.createSnapshotAck(snapshot.frame))
+    this.baseline = frame
+    this.channel.send(Serializer.createSnapshotAck(frame))
 
     return true
   }

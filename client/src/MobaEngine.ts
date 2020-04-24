@@ -15,17 +15,17 @@ export default class MobaEngine {
   private lastUpdateFrame: number
 
   constructor(gameWindow: MobaWindow) {
+    this.entities = new Map()
     this.net = new NetworkManager(this)
     this.gameWindow = gameWindow
-
-    this.entities = new Map()
   }
 
-  onServerUpdateTick(data: ServerMessage.UpdateTick.AsObject) {
-    if (this.lastUpdateFrame < data.frame) {
-      this.setCharacterPosition(data.entitydata.x, data.entitydata.y, data.entitydata.rotation, data.entitydata.replicationid)
+  onServerUpdateTick(data: ServerMessage.UpdateTick) {
+    const frame = data.getFrame()
+    if (this.lastUpdateFrame < frame) {
+      this.setCharacterPosition(data.getEntitydata())
     } 
-    this.lastUpdateFrame = data.frame
+    this.lastUpdateFrame = frame
   }
 
   onEntityDestroyed(data: ServerMessage.EntityDestroyed.AsObject) {
@@ -37,10 +37,8 @@ export default class MobaEngine {
     }
   }
 
-  onSnapshot(data: ServerMessage.Snapshot.AsObject) {
-    data.entitydataList.forEach(entity => {
-      this.setCharacterPosition(entity.x, entity.y, entity.rotation, entity.replicationid)
-    })
+  onSnapshot(data: ServerMessage.Snapshot) {
+    data.getEntitydataList().forEach(entity => this.setCharacterPosition(entity))
   }
 
   // TODO
@@ -48,13 +46,17 @@ export default class MobaEngine {
   //     this.entities.forEach(obj => obj.interpolate())
   //   }
 
-  setCharacterPosition(x: number, y: number, rotation: number, id: number) {
+  setCharacterPosition(data: ServerMessage.EntityData) {
+    const id = data.getReplicationid();
     const entity = this.entities.get(id)
     if (entity) {
       //entity.setInterpolatePoint(target.x, target.y)
-      entity.setAbsolutePosition(new Vector3(x, 0, y))
-      entity.setDirection(Vector3.ZeroReadOnly, rotation * (Math.PI / 180))
+      entity.setAbsolutePosition(new Vector3(data.hasX() ? data.getX() : entity.position.x, 0, data.hasY() ? data.getY() : entity.position.z))
+      if (data.hasRotation()) {
+        entity.setDirection(Vector3.ZeroReadOnly, data.getRotation() * (Math.PI / 180))
+      }
     } else {
+      console.log("new entity: " + id)
       let character = Mesh.CreateBox('char_' + id, 35, this.gameWindow.scene, true)
       let material = new StandardMaterial('char_' + id + 'mat', this.gameWindow.scene)
       material.diffuseColor = new Color3(0, 1, 0)

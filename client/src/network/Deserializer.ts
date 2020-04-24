@@ -10,25 +10,26 @@ const ServerMessageMap = new Map<number, Function>([
   [ServerMessage.MsgdataCase.SNAPSHOT, snapshot]
 ])
 
-function onUpdate(message: ServerMessage.AsObject, dst: MobaEngine, net: NetworkManager) {
-  dst.onServerUpdateTick(message.updatetick)
+function onUpdate(message: ServerMessage, dst: MobaEngine, net: NetworkManager) {
+  dst.onServerUpdateTick(message.getUpdatetick())
 }
 
-function verifyUuid(message: ServerMessage.AsObject, dst: MobaEngine, net: NetworkManager) {
-  net.verifyUuid(message.verifyuuid)
+function verifyUuid(message: ServerMessage, dst: MobaEngine, net: NetworkManager) {
+  net.verifyUuid(message.toObject().verifyuuid)
 }
 
-function verifiedUuid(_: ServerMessage.AsObject, dst: MobaEngine, net: NetworkManager) {
+function verifiedUuid(_: ServerMessage, dst: MobaEngine, net: NetworkManager) {
   net.verifiedUuid()
 }
 
-function entityDestroyed(message: ServerMessage.AsObject, dst: MobaEngine, net: NetworkManager) {
-  dst.onEntityDestroyed(message.entitydestroyed)
+function entityDestroyed(message: ServerMessage, dst: MobaEngine, net: NetworkManager) {
+  dst.onEntityDestroyed(message.toObject().entitydestroyed)
 }
 
-function snapshot(message: ServerMessage.AsObject, dst: MobaEngine, net: NetworkManager) {
-  if (net.onSnapshot(message.snapshot)) {
-    dst.onSnapshot(message.snapshot)
+function snapshot(message: ServerMessage, dst: MobaEngine, net: NetworkManager) {
+  let snapshot = message.getSnapshot()
+  if (net.onSnapshot(snapshot)) {
+    dst.onSnapshot(snapshot)
   }
 }
 
@@ -37,7 +38,7 @@ export function handleServerMessage(data: Uint8Array, dst: MobaEngine, net: Netw
   const func = ServerMessageMap.get(message.getMsgdataCase());
 
   if (func) {
-    func(message.toObject(), dst, net)
+    func(message, dst, net)
   }
 }
 

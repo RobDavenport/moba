@@ -95,6 +95,7 @@ impl Game {
                     .push_back(GameEvent::ClientDisconnected(player_id));
             }
         }
+        self.player_snapshot_histories.remove(&player_id);
     }
 
     async fn broadcast_state(&mut self) {
@@ -103,9 +104,9 @@ impl Game {
         let mut entities: Vec<EntitySnapshot> = query
             .iter(&mut self.world)
             .map(|(transform, replicated)| EntitySnapshot {
-                x: transform.position.x().into(),
-                y: transform.position.y().into(),
-                rotation: transform.rotation.into(),
+                x: Some(transform.position.x().into()),
+                y: Some(transform.position.y().into()),
+                rotation: Some(transform.rotation.into()),
                 replication_id: replicated.id,
             })
             .collect();
@@ -141,6 +142,7 @@ impl Game {
                     )) {
                         println!("Error in Broadcast State: {}", &e);
                     };
+                    println!("Full Snapshot");
                 }
             }
         }

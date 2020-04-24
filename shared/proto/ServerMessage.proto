@@ -19,15 +19,26 @@ message ServerMessage {
 
   message Snapshot {
     uint32 frame = 1;
-    uint32 baseline = 2;
+    oneof option_baseline {
+      uint32 baseline = 2;
+    }
     repeated EntityData entityData = 3;
   }
 
   message EntityData {
-    sint32 x = 1;
-    sint32 y = 2;
-    sint32 rotation = 3;
-    uint32 replicationId = 4;
+    uint32 replicationId = 1;
+
+    oneof option_x {
+      sint32 x = 2;
+    }
+    oneof option_y {
+      sint32 y = 3;
+    }
+    oneof option_rotation {
+      sint32 rotation = 4;
+    }
+
+    //Health, Energy, Energy Type, Entity Type etc
   }
   
   oneof msgData {

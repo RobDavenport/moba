@@ -14,9 +14,13 @@ var global = Function('return this')();
 
 goog.exportSymbol('proto.ServerMessage', null, global);
 goog.exportSymbol('proto.ServerMessage.EntityData', null, global);
+goog.exportSymbol('proto.ServerMessage.EntityData.OptionRotationCase', null, global);
+goog.exportSymbol('proto.ServerMessage.EntityData.OptionXCase', null, global);
+goog.exportSymbol('proto.ServerMessage.EntityData.OptionYCase', null, global);
 goog.exportSymbol('proto.ServerMessage.EntityDestroyed', null, global);
 goog.exportSymbol('proto.ServerMessage.MsgdataCase', null, global);
 goog.exportSymbol('proto.ServerMessage.Snapshot', null, global);
+goog.exportSymbol('proto.ServerMessage.Snapshot.OptionBaselineCase', null, global);
 goog.exportSymbol('proto.ServerMessage.UpdateTick', null, global);
 goog.exportSymbol('proto.ServerMessage.VerifiedUuid', null, global);
 goog.exportSymbol('proto.ServerMessage.VerifyUuid', null, global);
@@ -136,7 +140,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.ServerMessage.Snapshot = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, proto.ServerMessage.Snapshot.repeatedFields_, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.ServerMessage.Snapshot.repeatedFields_, proto.ServerMessage.Snapshot.oneofGroups_);
 };
 goog.inherits(proto.ServerMessage.Snapshot, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -157,7 +161,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.ServerMessage.EntityData = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, null, proto.ServerMessage.EntityData.oneofGroups_);
 };
 goog.inherits(proto.ServerMessage.EntityData, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -946,6 +950,31 @@ proto.ServerMessage.EntityDestroyed.prototype.setReplicationid = function(value)
  */
 proto.ServerMessage.Snapshot.repeatedFields_ = [3];
 
+/**
+ * Oneof group definitions for this message. Each group defines the field
+ * numbers belonging to that group. When of these fields' value is set, all
+ * other fields in the group are cleared. During deserialization, if multiple
+ * fields are encountered for a group, only the last value seen will be kept.
+ * @private {!Array<!Array<number>>}
+ * @const
+ */
+proto.ServerMessage.Snapshot.oneofGroups_ = [[2]];
+
+/**
+ * @enum {number}
+ */
+proto.ServerMessage.Snapshot.OptionBaselineCase = {
+  OPTION_BASELINE_NOT_SET: 0,
+  BASELINE: 2
+};
+
+/**
+ * @return {proto.ServerMessage.Snapshot.OptionBaselineCase}
+ */
+proto.ServerMessage.Snapshot.prototype.getOptionBaselineCase = function() {
+  return /** @type {proto.ServerMessage.Snapshot.OptionBaselineCase} */(jspb.Message.computeOneofCase(this, proto.ServerMessage.Snapshot.oneofGroups_[0]));
+};
+
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -1066,8 +1095,8 @@ proto.ServerMessage.Snapshot.serializeBinaryToWriter = function(message, writer)
       f
     );
   }
-  f = message.getBaseline();
-  if (f !== 0) {
+  f = /** @type {number} */ (jspb.Message.getField(message, 2));
+  if (f != null) {
     writer.writeUint32(
       2,
       f
@@ -1116,7 +1145,25 @@ proto.ServerMessage.Snapshot.prototype.getBaseline = function() {
  * @return {!proto.ServerMessage.Snapshot} returns this
  */
 proto.ServerMessage.Snapshot.prototype.setBaseline = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
+  return jspb.Message.setOneofField(this, 2, proto.ServerMessage.Snapshot.oneofGroups_[0], value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.ServerMessage.Snapshot} returns this
+ */
+proto.ServerMessage.Snapshot.prototype.clearBaseline = function() {
+  return jspb.Message.setOneofField(this, 2, proto.ServerMessage.Snapshot.oneofGroups_[0], undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.ServerMessage.Snapshot.prototype.hasBaseline = function() {
+  return jspb.Message.getField(this, 2) != null;
 };
 
 
@@ -1159,6 +1206,61 @@ proto.ServerMessage.Snapshot.prototype.clearEntitydataList = function() {
 
 
 
+/**
+ * Oneof group definitions for this message. Each group defines the field
+ * numbers belonging to that group. When of these fields' value is set, all
+ * other fields in the group are cleared. During deserialization, if multiple
+ * fields are encountered for a group, only the last value seen will be kept.
+ * @private {!Array<!Array<number>>}
+ * @const
+ */
+proto.ServerMessage.EntityData.oneofGroups_ = [[2],[3],[4]];
+
+/**
+ * @enum {number}
+ */
+proto.ServerMessage.EntityData.OptionXCase = {
+  OPTION_X_NOT_SET: 0,
+  X: 2
+};
+
+/**
+ * @return {proto.ServerMessage.EntityData.OptionXCase}
+ */
+proto.ServerMessage.EntityData.prototype.getOptionXCase = function() {
+  return /** @type {proto.ServerMessage.EntityData.OptionXCase} */(jspb.Message.computeOneofCase(this, proto.ServerMessage.EntityData.oneofGroups_[0]));
+};
+
+/**
+ * @enum {number}
+ */
+proto.ServerMessage.EntityData.OptionYCase = {
+  OPTION_Y_NOT_SET: 0,
+  Y: 3
+};
+
+/**
+ * @return {proto.ServerMessage.EntityData.OptionYCase}
+ */
+proto.ServerMessage.EntityData.prototype.getOptionYCase = function() {
+  return /** @type {proto.ServerMessage.EntityData.OptionYCase} */(jspb.Message.computeOneofCase(this, proto.ServerMessage.EntityData.oneofGroups_[1]));
+};
+
+/**
+ * @enum {number}
+ */
+proto.ServerMessage.EntityData.OptionRotationCase = {
+  OPTION_ROTATION_NOT_SET: 0,
+  ROTATION: 4
+};
+
+/**
+ * @return {proto.ServerMessage.EntityData.OptionRotationCase}
+ */
+proto.ServerMessage.EntityData.prototype.getOptionRotationCase = function() {
+  return /** @type {proto.ServerMessage.EntityData.OptionRotationCase} */(jspb.Message.computeOneofCase(this, proto.ServerMessage.EntityData.oneofGroups_[2]));
+};
+
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -1190,10 +1292,10 @@ proto.ServerMessage.EntityData.prototype.toObject = function(opt_includeInstance
  */
 proto.ServerMessage.EntityData.toObject = function(includeInstance, msg) {
   var f, obj = {
-    x: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    y: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    rotation: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    replicationid: jspb.Message.getFieldWithDefault(msg, 4, 0)
+    replicationid: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    x: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    y: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    rotation: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -1231,20 +1333,20 @@ proto.ServerMessage.EntityData.deserializeBinaryFromReader = function(msg, reade
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readSint32());
-      msg.setX(value);
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setReplicationid(value);
       break;
     case 2:
       var value = /** @type {number} */ (reader.readSint32());
-      msg.setY(value);
+      msg.setX(value);
       break;
     case 3:
       var value = /** @type {number} */ (reader.readSint32());
-      msg.setRotation(value);
+      msg.setY(value);
       break;
     case 4:
-      var value = /** @type {number} */ (reader.readUint32());
-      msg.setReplicationid(value);
+      var value = /** @type {number} */ (reader.readSint32());
+      msg.setRotation(value);
       break;
     default:
       reader.skipField();
@@ -1275,30 +1377,30 @@ proto.ServerMessage.EntityData.prototype.serializeBinary = function() {
  */
 proto.ServerMessage.EntityData.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getX();
+  f = message.getReplicationid();
   if (f !== 0) {
-    writer.writeSint32(
+    writer.writeUint32(
       1,
       f
     );
   }
-  f = message.getY();
-  if (f !== 0) {
+  f = /** @type {number} */ (jspb.Message.getField(message, 2));
+  if (f != null) {
     writer.writeSint32(
       2,
       f
     );
   }
-  f = message.getRotation();
-  if (f !== 0) {
+  f = /** @type {number} */ (jspb.Message.getField(message, 3));
+  if (f != null) {
     writer.writeSint32(
       3,
       f
     );
   }
-  f = message.getReplicationid();
-  if (f !== 0) {
-    writer.writeUint32(
+  f = /** @type {number} */ (jspb.Message.getField(message, 4));
+  if (f != null) {
+    writer.writeSint32(
       4,
       f
     );
@@ -1307,10 +1409,10 @@ proto.ServerMessage.EntityData.serializeBinaryToWriter = function(message, write
 
 
 /**
- * optional sint32 x = 1;
+ * optional uint32 replicationId = 1;
  * @return {number}
  */
-proto.ServerMessage.EntityData.prototype.getX = function() {
+proto.ServerMessage.EntityData.prototype.getReplicationid = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -1319,16 +1421,16 @@ proto.ServerMessage.EntityData.prototype.getX = function() {
  * @param {number} value
  * @return {!proto.ServerMessage.EntityData} returns this
  */
-proto.ServerMessage.EntityData.prototype.setX = function(value) {
+proto.ServerMessage.EntityData.prototype.setReplicationid = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
 /**
- * optional sint32 y = 2;
+ * optional sint32 x = 2;
  * @return {number}
  */
-proto.ServerMessage.EntityData.prototype.getY = function() {
+proto.ServerMessage.EntityData.prototype.getX = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
@@ -1337,16 +1439,34 @@ proto.ServerMessage.EntityData.prototype.getY = function() {
  * @param {number} value
  * @return {!proto.ServerMessage.EntityData} returns this
  */
-proto.ServerMessage.EntityData.prototype.setY = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
+proto.ServerMessage.EntityData.prototype.setX = function(value) {
+  return jspb.Message.setOneofField(this, 2, proto.ServerMessage.EntityData.oneofGroups_[0], value);
 };
 
 
 /**
- * optional sint32 rotation = 3;
+ * Clears the field making it undefined.
+ * @return {!proto.ServerMessage.EntityData} returns this
+ */
+proto.ServerMessage.EntityData.prototype.clearX = function() {
+  return jspb.Message.setOneofField(this, 2, proto.ServerMessage.EntityData.oneofGroups_[0], undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.ServerMessage.EntityData.prototype.hasX = function() {
+  return jspb.Message.getField(this, 2) != null;
+};
+
+
+/**
+ * optional sint32 y = 3;
  * @return {number}
  */
-proto.ServerMessage.EntityData.prototype.getRotation = function() {
+proto.ServerMessage.EntityData.prototype.getY = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
@@ -1355,16 +1475,34 @@ proto.ServerMessage.EntityData.prototype.getRotation = function() {
  * @param {number} value
  * @return {!proto.ServerMessage.EntityData} returns this
  */
-proto.ServerMessage.EntityData.prototype.setRotation = function(value) {
-  return jspb.Message.setProto3IntField(this, 3, value);
+proto.ServerMessage.EntityData.prototype.setY = function(value) {
+  return jspb.Message.setOneofField(this, 3, proto.ServerMessage.EntityData.oneofGroups_[1], value);
 };
 
 
 /**
- * optional uint32 replicationId = 4;
+ * Clears the field making it undefined.
+ * @return {!proto.ServerMessage.EntityData} returns this
+ */
+proto.ServerMessage.EntityData.prototype.clearY = function() {
+  return jspb.Message.setOneofField(this, 3, proto.ServerMessage.EntityData.oneofGroups_[1], undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.ServerMessage.EntityData.prototype.hasY = function() {
+  return jspb.Message.getField(this, 3) != null;
+};
+
+
+/**
+ * optional sint32 rotation = 4;
  * @return {number}
  */
-proto.ServerMessage.EntityData.prototype.getReplicationid = function() {
+proto.ServerMessage.EntityData.prototype.getRotation = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
@@ -1373,8 +1511,26 @@ proto.ServerMessage.EntityData.prototype.getReplicationid = function() {
  * @param {number} value
  * @return {!proto.ServerMessage.EntityData} returns this
  */
-proto.ServerMessage.EntityData.prototype.setReplicationid = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
+proto.ServerMessage.EntityData.prototype.setRotation = function(value) {
+  return jspb.Message.setOneofField(this, 4, proto.ServerMessage.EntityData.oneofGroups_[2], value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.ServerMessage.EntityData} returns this
+ */
+proto.ServerMessage.EntityData.prototype.clearRotation = function() {
+  return jspb.Message.setOneofField(this, 4, proto.ServerMessage.EntityData.oneofGroups_[2], undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.ServerMessage.EntityData.prototype.hasRotation = function() {
+  return jspb.Message.getField(this, 4) != null;
 };
 
 

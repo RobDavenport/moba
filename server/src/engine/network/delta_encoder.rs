@@ -42,9 +42,10 @@ impl SnapshotHistory {
                 match diff {
                     Diff::FirstMismatch(_len, i, j) => {
                         //Mismatch found at index
+                        let (i_val, i_iter) = i.into_parts();
                         let (j_val, j_iter) = j.into_parts();
-                        out.push(j_val.unwrap().clone());
-                        base_iter = i.into_parts().1;
+                        out.push(get_entity_delta(i_val.unwrap(), j_val.unwrap()));
+                        base_iter = i_iter;
                         next_iter = j_iter;
                     }
                     Diff::Shorter(_len, _i) => {
@@ -76,26 +77,42 @@ impl SnapshotHistory {
     }
 
     pub fn ack_baseline(&mut self, frame: u32) {
-        //println!("got ack {}", frame);
-        let drain_amount = if let Some(baseline) = &self.ack_baseline {
+        if let Some(baseline) = &self.ack_baseline {
             if frame <= baseline.frame {
-                //println!("packet out of order! got {} but already have {}", frame, baseline.frame);
-                //we got an out-of-order packet
-                return;
+                // Early out for out-of-order packet
+                return
             }
-            (frame - baseline.frame) - 1
+            let drain_amount = (frame - baseline.frame) - 1;
+            self.history.drain(0..drain_amount as usize);
         } else {
-            //println!("ack {}, but refreshed", frame);
-            0
-        };
+            println!("nobaseline");
+            while let Some(popped) = self.history.front() {
+                if popped.frame == frame {
+                    println!("found the frame");
+                    break;
+                } else {
+                    self.history.pop_front();
+                }
+            }
+        }
 
-        //println!("will drain {}", drain_amount);
-        self.history.drain(0..drain_amount as usize);
         self.ack_baseline = self.history.pop_front();
+    }
+}
 
-        // if let Some(baseline) = &self.ack_baseline {
-        //     println!("delta = +{} || {} {}", frame - baseline.frame, frame, baseline.frame);
-        //     //println!("baseline frame {}", baseline.frame);
-        // }
+fn get_entity_delta(baseline: &EntitySnapshot, next: &EntitySnapshot) -> EntitySnapshot {
+    EntitySnapshot {
+        replication_id: next.replication_id,
+        rotation: get_delta_field(&baseline.rotation, &next.rotation),
+        x: get_delta_field(&baseline.x, &next.x),
+        y: get_delta_field(&baseline.y, &next.y)
+    }
+}
+
+fn get_delta_field<T: PartialEq + Clone>(base: &Option<T>, next: &Option<T>) -> Option<T> {
+    match (base, next) {
+        (Some(b), Some(n)) => if b != n { Some(n.clone()) } else { None },
+        (None, Some(n)) => Some(n.clone()),
+        _ => None
     }
 }

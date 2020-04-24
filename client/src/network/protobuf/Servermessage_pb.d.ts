@@ -139,6 +139,8 @@ export namespace ServerMessage {
     getFrame(): number;
     setFrame(value: number): void;
 
+    hasBaseline(): boolean;
+    clearBaseline(): void;
     getBaseline(): number;
     setBaseline(value: number): void;
 
@@ -147,6 +149,7 @@ export namespace ServerMessage {
     setEntitydataList(value: Array<ServerMessage.EntityData>): void;
     addEntitydata(value?: ServerMessage.EntityData, index?: number): ServerMessage.EntityData;
 
+    getOptionBaselineCase(): Snapshot.OptionBaselineCase;
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): Snapshot.AsObject;
     static toObject(includeInstance: boolean, msg: Snapshot): Snapshot.AsObject;
@@ -163,21 +166,35 @@ export namespace ServerMessage {
       baseline: number,
       entitydataList: Array<ServerMessage.EntityData.AsObject>,
     }
+
+    export enum OptionBaselineCase {
+      OPTION_BASELINE_NOT_SET = 0,
+      BASELINE = 2,
+    }
   }
 
   export class EntityData extends jspb.Message {
-    getX(): number;
-    setX(value: number): void;
-
-    getY(): number;
-    setY(value: number): void;
-
-    getRotation(): number;
-    setRotation(value: number): void;
-
     getReplicationid(): number;
     setReplicationid(value: number): void;
 
+    hasX(): boolean;
+    clearX(): void;
+    getX(): number;
+    setX(value: number): void;
+
+    hasY(): boolean;
+    clearY(): void;
+    getY(): number;
+    setY(value: number): void;
+
+    hasRotation(): boolean;
+    clearRotation(): void;
+    getRotation(): number;
+    setRotation(value: number): void;
+
+    getOptionXCase(): EntityData.OptionXCase;
+    getOptionYCase(): EntityData.OptionYCase;
+    getOptionRotationCase(): EntityData.OptionRotationCase;
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): EntityData.AsObject;
     static toObject(includeInstance: boolean, msg: EntityData): EntityData.AsObject;
@@ -190,10 +207,25 @@ export namespace ServerMessage {
 
   export namespace EntityData {
     export type AsObject = {
+      replicationid: number,
       x: number,
       y: number,
       rotation: number,
-      replicationid: number,
+    }
+
+    export enum OptionXCase {
+      OPTION_X_NOT_SET = 0,
+      X = 2,
+    }
+
+    export enum OptionYCase {
+      OPTION_Y_NOT_SET = 0,
+      Y = 3,
+    }
+
+    export enum OptionRotationCase {
+      OPTION_ROTATION_NOT_SET = 0,
+      ROTATION = 4,
     }
   }
 

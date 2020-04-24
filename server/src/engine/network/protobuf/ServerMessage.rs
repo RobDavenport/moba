@@ -1261,8 +1261,9 @@ impl ::protobuf::reflect::ProtobufValue for ServerMessage_EntityDestroyed {
 pub struct ServerMessage_Snapshot {
     // message fields
     pub frame: u32,
-    pub baseline: u32,
     pub entityData: ::protobuf::RepeatedField<ServerMessage_EntityData>,
+    // message oneof groups
+    pub option_baseline: ::std::option::Option<ServerMessage_Snapshot_oneof_option_baseline>,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
@@ -1272,6 +1273,11 @@ impl<'a> ::std::default::Default for &'a ServerMessage_Snapshot {
     fn default() -> &'a ServerMessage_Snapshot {
         <ServerMessage_Snapshot as ::protobuf::Message>::default_instance()
     }
+}
+
+#[derive(Clone,PartialEq,Debug)]
+pub enum ServerMessage_Snapshot_oneof_option_baseline {
+    baseline(u32),
 }
 
 impl ServerMessage_Snapshot {
@@ -1298,15 +1304,25 @@ impl ServerMessage_Snapshot {
 
 
     pub fn get_baseline(&self) -> u32 {
-        self.baseline
+        match self.option_baseline {
+            ::std::option::Option::Some(ServerMessage_Snapshot_oneof_option_baseline::baseline(v)) => v,
+            _ => 0,
+        }
     }
     pub fn clear_baseline(&mut self) {
-        self.baseline = 0;
+        self.option_baseline = ::std::option::Option::None;
+    }
+
+    pub fn has_baseline(&self) -> bool {
+        match self.option_baseline {
+            ::std::option::Option::Some(ServerMessage_Snapshot_oneof_option_baseline::baseline(..)) => true,
+            _ => false,
+        }
     }
 
     // Param is passed by value, moved
     pub fn set_baseline(&mut self, v: u32) {
-        self.baseline = v;
+        self.option_baseline = ::std::option::Option::Some(ServerMessage_Snapshot_oneof_option_baseline::baseline(v))
     }
 
     // repeated .ServerMessage.EntityData entityData = 3;
@@ -1360,8 +1376,7 @@ impl ::protobuf::Message for ServerMessage_Snapshot {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
                     }
-                    let tmp = is.read_uint32()?;
-                    self.baseline = tmp;
+                    self.option_baseline = ::std::option::Option::Some(ServerMessage_Snapshot_oneof_option_baseline::baseline(is.read_uint32()?));
                 },
                 3 => {
                     ::protobuf::rt::read_repeated_message_into(wire_type, is, &mut self.entityData)?;
@@ -1381,13 +1396,17 @@ impl ::protobuf::Message for ServerMessage_Snapshot {
         if self.frame != 0 {
             my_size += ::protobuf::rt::value_size(1, self.frame, ::protobuf::wire_format::WireTypeVarint);
         }
-        if self.baseline != 0 {
-            my_size += ::protobuf::rt::value_size(2, self.baseline, ::protobuf::wire_format::WireTypeVarint);
-        }
         for value in &self.entityData {
             let len = value.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         };
+        if let ::std::option::Option::Some(ref v) = self.option_baseline {
+            match v {
+                &ServerMessage_Snapshot_oneof_option_baseline::baseline(v) => {
+                    my_size += ::protobuf::rt::value_size(2, v, ::protobuf::wire_format::WireTypeVarint);
+                },
+            };
+        }
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
         my_size
@@ -1397,14 +1416,18 @@ impl ::protobuf::Message for ServerMessage_Snapshot {
         if self.frame != 0 {
             os.write_uint32(1, self.frame)?;
         }
-        if self.baseline != 0 {
-            os.write_uint32(2, self.baseline)?;
-        }
         for v in &self.entityData {
             os.write_tag(3, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         };
+        if let ::std::option::Option::Some(ref v) = self.option_baseline {
+            match v {
+                &ServerMessage_Snapshot_oneof_option_baseline::baseline(v) => {
+                    os.write_uint32(2, v)?;
+                },
+            };
+        }
         os.write_unknown_fields(self.get_unknown_fields())?;
         ::std::result::Result::Ok(())
     }
@@ -1452,10 +1475,10 @@ impl ::protobuf::Message for ServerMessage_Snapshot {
                     |m: &ServerMessage_Snapshot| { &m.frame },
                     |m: &mut ServerMessage_Snapshot| { &mut m.frame },
                 ));
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeUint32>(
+                fields.push(::protobuf::reflect::accessor::make_singular_u32_accessor::<_>(
                     "baseline",
-                    |m: &ServerMessage_Snapshot| { &m.baseline },
-                    |m: &mut ServerMessage_Snapshot| { &mut m.baseline },
+                    ServerMessage_Snapshot::has_baseline,
+                    ServerMessage_Snapshot::get_baseline,
                 ));
                 fields.push(::protobuf::reflect::accessor::make_repeated_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<ServerMessage_EntityData>>(
                     "entityData",
@@ -1485,7 +1508,7 @@ impl ::protobuf::Message for ServerMessage_Snapshot {
 impl ::protobuf::Clear for ServerMessage_Snapshot {
     fn clear(&mut self) {
         self.frame = 0;
-        self.baseline = 0;
+        self.option_baseline = ::std::option::Option::None;
         self.entityData.clear();
         self.unknown_fields.clear();
     }
@@ -1506,10 +1529,11 @@ impl ::protobuf::reflect::ProtobufValue for ServerMessage_Snapshot {
 #[derive(PartialEq,Clone,Default)]
 pub struct ServerMessage_EntityData {
     // message fields
-    pub x: i32,
-    pub y: i32,
-    pub rotation: i32,
     pub replicationId: u32,
+    // message oneof groups
+    pub option_x: ::std::option::Option<ServerMessage_EntityData_oneof_option_x>,
+    pub option_y: ::std::option::Option<ServerMessage_EntityData_oneof_option_y>,
+    pub option_rotation: ::std::option::Option<ServerMessage_EntityData_oneof_option_rotation>,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
@@ -1521,57 +1545,27 @@ impl<'a> ::std::default::Default for &'a ServerMessage_EntityData {
     }
 }
 
+#[derive(Clone,PartialEq,Debug)]
+pub enum ServerMessage_EntityData_oneof_option_x {
+    x(i32),
+}
+
+#[derive(Clone,PartialEq,Debug)]
+pub enum ServerMessage_EntityData_oneof_option_y {
+    y(i32),
+}
+
+#[derive(Clone,PartialEq,Debug)]
+pub enum ServerMessage_EntityData_oneof_option_rotation {
+    rotation(i32),
+}
+
 impl ServerMessage_EntityData {
     pub fn new() -> ServerMessage_EntityData {
         ::std::default::Default::default()
     }
 
-    // sint32 x = 1;
-
-
-    pub fn get_x(&self) -> i32 {
-        self.x
-    }
-    pub fn clear_x(&mut self) {
-        self.x = 0;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_x(&mut self, v: i32) {
-        self.x = v;
-    }
-
-    // sint32 y = 2;
-
-
-    pub fn get_y(&self) -> i32 {
-        self.y
-    }
-    pub fn clear_y(&mut self) {
-        self.y = 0;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_y(&mut self, v: i32) {
-        self.y = v;
-    }
-
-    // sint32 rotation = 3;
-
-
-    pub fn get_rotation(&self) -> i32 {
-        self.rotation
-    }
-    pub fn clear_rotation(&mut self) {
-        self.rotation = 0;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_rotation(&mut self, v: i32) {
-        self.rotation = v;
-    }
-
-    // uint32 replicationId = 4;
+    // uint32 replicationId = 1;
 
 
     pub fn get_replicationId(&self) -> u32 {
@@ -1584,6 +1578,81 @@ impl ServerMessage_EntityData {
     // Param is passed by value, moved
     pub fn set_replicationId(&mut self, v: u32) {
         self.replicationId = v;
+    }
+
+    // sint32 x = 2;
+
+
+    pub fn get_x(&self) -> i32 {
+        match self.option_x {
+            ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_x::x(v)) => v,
+            _ => 0,
+        }
+    }
+    pub fn clear_x(&mut self) {
+        self.option_x = ::std::option::Option::None;
+    }
+
+    pub fn has_x(&self) -> bool {
+        match self.option_x {
+            ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_x::x(..)) => true,
+            _ => false,
+        }
+    }
+
+    // Param is passed by value, moved
+    pub fn set_x(&mut self, v: i32) {
+        self.option_x = ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_x::x(v))
+    }
+
+    // sint32 y = 3;
+
+
+    pub fn get_y(&self) -> i32 {
+        match self.option_y {
+            ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_y::y(v)) => v,
+            _ => 0,
+        }
+    }
+    pub fn clear_y(&mut self) {
+        self.option_y = ::std::option::Option::None;
+    }
+
+    pub fn has_y(&self) -> bool {
+        match self.option_y {
+            ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_y::y(..)) => true,
+            _ => false,
+        }
+    }
+
+    // Param is passed by value, moved
+    pub fn set_y(&mut self, v: i32) {
+        self.option_y = ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_y::y(v))
+    }
+
+    // sint32 rotation = 4;
+
+
+    pub fn get_rotation(&self) -> i32 {
+        match self.option_rotation {
+            ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_rotation::rotation(v)) => v,
+            _ => 0,
+        }
+    }
+    pub fn clear_rotation(&mut self) {
+        self.option_rotation = ::std::option::Option::None;
+    }
+
+    pub fn has_rotation(&self) -> bool {
+        match self.option_rotation {
+            ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_rotation::rotation(..)) => true,
+            _ => false,
+        }
+    }
+
+    // Param is passed by value, moved
+    pub fn set_rotation(&mut self, v: i32) {
+        self.option_rotation = ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_rotation::rotation(v))
     }
 }
 
@@ -1600,29 +1669,26 @@ impl ::protobuf::Message for ServerMessage_EntityData {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
                     }
-                    let tmp = is.read_sint32()?;
-                    self.x = tmp;
+                    let tmp = is.read_uint32()?;
+                    self.replicationId = tmp;
                 },
                 2 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
                     }
-                    let tmp = is.read_sint32()?;
-                    self.y = tmp;
+                    self.option_x = ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_x::x(is.read_sint32()?));
                 },
                 3 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
                     }
-                    let tmp = is.read_sint32()?;
-                    self.rotation = tmp;
+                    self.option_y = ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_y::y(is.read_sint32()?));
                 },
                 4 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
                     }
-                    let tmp = is.read_uint32()?;
-                    self.replicationId = tmp;
+                    self.option_rotation = ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_rotation::rotation(is.read_sint32()?));
                 },
                 _ => {
                     ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
@@ -1636,17 +1702,29 @@ impl ::protobuf::Message for ServerMessage_EntityData {
     #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
-        if self.x != 0 {
-            my_size += ::protobuf::rt::value_varint_zigzag_size(1, self.x);
-        }
-        if self.y != 0 {
-            my_size += ::protobuf::rt::value_varint_zigzag_size(2, self.y);
-        }
-        if self.rotation != 0 {
-            my_size += ::protobuf::rt::value_varint_zigzag_size(3, self.rotation);
-        }
         if self.replicationId != 0 {
-            my_size += ::protobuf::rt::value_size(4, self.replicationId, ::protobuf::wire_format::WireTypeVarint);
+            my_size += ::protobuf::rt::value_size(1, self.replicationId, ::protobuf::wire_format::WireTypeVarint);
+        }
+        if let ::std::option::Option::Some(ref v) = self.option_x {
+            match v {
+                &ServerMessage_EntityData_oneof_option_x::x(v) => {
+                    my_size += ::protobuf::rt::value_varint_zigzag_size(2, v);
+                },
+            };
+        }
+        if let ::std::option::Option::Some(ref v) = self.option_y {
+            match v {
+                &ServerMessage_EntityData_oneof_option_y::y(v) => {
+                    my_size += ::protobuf::rt::value_varint_zigzag_size(3, v);
+                },
+            };
+        }
+        if let ::std::option::Option::Some(ref v) = self.option_rotation {
+            match v {
+                &ServerMessage_EntityData_oneof_option_rotation::rotation(v) => {
+                    my_size += ::protobuf::rt::value_varint_zigzag_size(4, v);
+                },
+            };
         }
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
@@ -1654,17 +1732,29 @@ impl ::protobuf::Message for ServerMessage_EntityData {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if self.x != 0 {
-            os.write_sint32(1, self.x)?;
-        }
-        if self.y != 0 {
-            os.write_sint32(2, self.y)?;
-        }
-        if self.rotation != 0 {
-            os.write_sint32(3, self.rotation)?;
-        }
         if self.replicationId != 0 {
-            os.write_uint32(4, self.replicationId)?;
+            os.write_uint32(1, self.replicationId)?;
+        }
+        if let ::std::option::Option::Some(ref v) = self.option_x {
+            match v {
+                &ServerMessage_EntityData_oneof_option_x::x(v) => {
+                    os.write_sint32(2, v)?;
+                },
+            };
+        }
+        if let ::std::option::Option::Some(ref v) = self.option_y {
+            match v {
+                &ServerMessage_EntityData_oneof_option_y::y(v) => {
+                    os.write_sint32(3, v)?;
+                },
+            };
+        }
+        if let ::std::option::Option::Some(ref v) = self.option_rotation {
+            match v {
+                &ServerMessage_EntityData_oneof_option_rotation::rotation(v) => {
+                    os.write_sint32(4, v)?;
+                },
+            };
         }
         os.write_unknown_fields(self.get_unknown_fields())?;
         ::std::result::Result::Ok(())
@@ -1708,25 +1798,25 @@ impl ::protobuf::Message for ServerMessage_EntityData {
         unsafe {
             descriptor.get(|| {
                 let mut fields = ::std::vec::Vec::new();
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeSint32>(
-                    "x",
-                    |m: &ServerMessage_EntityData| { &m.x },
-                    |m: &mut ServerMessage_EntityData| { &mut m.x },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeSint32>(
-                    "y",
-                    |m: &ServerMessage_EntityData| { &m.y },
-                    |m: &mut ServerMessage_EntityData| { &mut m.y },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeSint32>(
-                    "rotation",
-                    |m: &ServerMessage_EntityData| { &m.rotation },
-                    |m: &mut ServerMessage_EntityData| { &mut m.rotation },
-                ));
                 fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeUint32>(
                     "replicationId",
                     |m: &ServerMessage_EntityData| { &m.replicationId },
                     |m: &mut ServerMessage_EntityData| { &mut m.replicationId },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_i32_accessor::<_>(
+                    "x",
+                    ServerMessage_EntityData::has_x,
+                    ServerMessage_EntityData::get_x,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_i32_accessor::<_>(
+                    "y",
+                    ServerMessage_EntityData::has_y,
+                    ServerMessage_EntityData::get_y,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_i32_accessor::<_>(
+                    "rotation",
+                    ServerMessage_EntityData::has_rotation,
+                    ServerMessage_EntityData::get_rotation,
                 ));
                 ::protobuf::reflect::MessageDescriptor::new::<ServerMessage_EntityData>(
                     "ServerMessage_EntityData",
@@ -1750,10 +1840,10 @@ impl ::protobuf::Message for ServerMessage_EntityData {
 
 impl ::protobuf::Clear for ServerMessage_EntityData {
     fn clear(&mut self) {
-        self.x = 0;
-        self.y = 0;
-        self.rotation = 0;
         self.replicationId = 0;
+        self.option_x = ::std::option::Option::None;
+        self.option_y = ::std::option::Option::None;
+        self.option_rotation = ::std::option::Option::None;
         self.unknown_fields.clear();
     }
 }
@@ -1771,7 +1861,7 @@ impl ::protobuf::reflect::ProtobufValue for ServerMessage_EntityData {
 }
 
 static file_descriptor_proto_data: &'static [u8] = b"\
-    \n\x13ServerMessage.proto\"\x9f\x06\n\rServerMessage\x12;\n\nupdateTick\
+    \n\x13ServerMessage.proto\"\xe7\x06\n\rServerMessage\x12;\n\nupdateTick\
     \x18\x01\x20\x01(\x0b2\x19.ServerMessage.UpdateTickH\0R\nupdateTick\x125\
     \n\x08snapshot\x18\x02\x20\x01(\x0b2\x17.ServerMessage.SnapshotH\0R\x08s\
     napshot\x12J\n\x0fentityDestroyed\x18\x05\x20\x01(\x0b2\x1e.ServerMessag\
@@ -1783,75 +1873,82 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     R\nentityData\x1a\x20\n\nVerifyUuid\x12\x12\n\x04uuid\x18\x01\x20\x01(\t\
     R\x04uuid\x1a\x0e\n\x0cVerifiedUuid\x1aM\n\x0fEntityDestroyed\x12\x14\n\
     \x05frame\x18\x01\x20\x01(\rR\x05frame\x12$\n\rreplicationId\x18\x02\x20\
-    \x01(\rR\rreplicationId\x1aw\n\x08Snapshot\x12\x14\n\x05frame\x18\x01\
-    \x20\x01(\rR\x05frame\x12\x1a\n\x08baseline\x18\x02\x20\x01(\rR\x08basel\
-    ine\x129\n\nentityData\x18\x03\x20\x03(\x0b2\x19.ServerMessage.EntityDat\
-    aR\nentityData\x1aj\n\nEntityData\x12\x0c\n\x01x\x18\x01\x20\x01(\x11R\
-    \x01x\x12\x0c\n\x01y\x18\x02\x20\x01(\x11R\x01y\x12\x1a\n\x08rotation\
-    \x18\x03\x20\x01(\x11R\x08rotation\x12$\n\rreplicationId\x18\x04\x20\x01\
-    (\rR\rreplicationIdB\t\n\x07msgDataJ\x84\n\n\x06\x12\x04\0\0'\x01\n\x08\
-    \n\x01\x0c\x12\x03\0\0\x12\n\n\n\x02\x04\0\x12\x04\x02\0'\x01\n\n\n\x03\
-    \x04\0\x01\x12\x03\x02\x08\x15\n\x0c\n\x04\x04\0\x03\0\x12\x04\x03\x02\
-    \x06\x03\n\x0c\n\x05\x04\0\x03\0\x01\x12\x03\x03\n\x14\n\r\n\x06\x04\0\
-    \x03\0\x02\0\x12\x03\x04\x04\x15\n\x0e\n\x07\x04\0\x03\0\x02\0\x05\x12\
-    \x03\x04\x04\n\n\x0e\n\x07\x04\0\x03\0\x02\0\x01\x12\x03\x04\x0b\x10\n\
-    \x0e\n\x07\x04\0\x03\0\x02\0\x03\x12\x03\x04\x13\x14\n\r\n\x06\x04\0\x03\
-    \0\x02\x01\x12\x03\x05\x04\x1e\n\x0e\n\x07\x04\0\x03\0\x02\x01\x06\x12\
-    \x03\x05\x04\x0e\n\x0e\n\x07\x04\0\x03\0\x02\x01\x01\x12\x03\x05\x0f\x19\
-    \n\x0e\n\x07\x04\0\x03\0\x02\x01\x03\x12\x03\x05\x1c\x1d\n\x0c\n\x04\x04\
-    \0\x03\x01\x12\x04\x08\x02\n\x03\n\x0c\n\x05\x04\0\x03\x01\x01\x12\x03\
-    \x08\n\x14\n\r\n\x06\x04\0\x03\x01\x02\0\x12\x03\t\x04\x14\n\x0e\n\x07\
-    \x04\0\x03\x01\x02\0\x05\x12\x03\t\x04\n\n\x0e\n\x07\x04\0\x03\x01\x02\0\
-    \x01\x12\x03\t\x0b\x0f\n\x0e\n\x07\x04\0\x03\x01\x02\0\x03\x12\x03\t\x12\
-    \x13\n\x0b\n\x04\x04\0\x03\x02\x12\x03\x0c\x02\x1a\n\x0c\n\x05\x04\0\x03\
-    \x02\x01\x12\x03\x0c\n\x16\n\x0c\n\x04\x04\0\x03\x03\x12\x04\x0e\x02\x11\
-    \x03\n\x0c\n\x05\x04\0\x03\x03\x01\x12\x03\x0e\n\x19\n\r\n\x06\x04\0\x03\
-    \x03\x02\0\x12\x03\x0f\x04\x15\n\x0e\n\x07\x04\0\x03\x03\x02\0\x05\x12\
-    \x03\x0f\x04\n\n\x0e\n\x07\x04\0\x03\x03\x02\0\x01\x12\x03\x0f\x0b\x10\n\
-    \x0e\n\x07\x04\0\x03\x03\x02\0\x03\x12\x03\x0f\x13\x14\n\r\n\x06\x04\0\
-    \x03\x03\x02\x01\x12\x03\x10\x04\x1d\n\x0e\n\x07\x04\0\x03\x03\x02\x01\
-    \x05\x12\x03\x10\x04\n\n\x0e\n\x07\x04\0\x03\x03\x02\x01\x01\x12\x03\x10\
-    \x0b\x18\n\x0e\n\x07\x04\0\x03\x03\x02\x01\x03\x12\x03\x10\x1b\x1c\n\x0c\
-    \n\x04\x04\0\x03\x04\x12\x04\x13\x02\x17\x03\n\x0c\n\x05\x04\0\x03\x04\
-    \x01\x12\x03\x13\n\x12\n\r\n\x06\x04\0\x03\x04\x02\0\x12\x03\x14\x04\x15\
-    \n\x0e\n\x07\x04\0\x03\x04\x02\0\x05\x12\x03\x14\x04\n\n\x0e\n\x07\x04\0\
-    \x03\x04\x02\0\x01\x12\x03\x14\x0b\x10\n\x0e\n\x07\x04\0\x03\x04\x02\0\
-    \x03\x12\x03\x14\x13\x14\n\r\n\x06\x04\0\x03\x04\x02\x01\x12\x03\x15\x04\
-    \x18\n\x0e\n\x07\x04\0\x03\x04\x02\x01\x05\x12\x03\x15\x04\n\n\x0e\n\x07\
-    \x04\0\x03\x04\x02\x01\x01\x12\x03\x15\x0b\x13\n\x0e\n\x07\x04\0\x03\x04\
-    \x02\x01\x03\x12\x03\x15\x16\x17\n\r\n\x06\x04\0\x03\x04\x02\x02\x12\x03\
-    \x16\x04'\n\x0e\n\x07\x04\0\x03\x04\x02\x02\x04\x12\x03\x16\x04\x0c\n\
-    \x0e\n\x07\x04\0\x03\x04\x02\x02\x06\x12\x03\x16\r\x17\n\x0e\n\x07\x04\0\
-    \x03\x04\x02\x02\x01\x12\x03\x16\x18\"\n\x0e\n\x07\x04\0\x03\x04\x02\x02\
-    \x03\x12\x03\x16%&\n\x0c\n\x04\x04\0\x03\x05\x12\x04\x19\x02\x1e\x03\n\
-    \x0c\n\x05\x04\0\x03\x05\x01\x12\x03\x19\n\x14\n\r\n\x06\x04\0\x03\x05\
-    \x02\0\x12\x03\x1a\x04\x11\n\x0e\n\x07\x04\0\x03\x05\x02\0\x05\x12\x03\
-    \x1a\x04\n\n\x0e\n\x07\x04\0\x03\x05\x02\0\x01\x12\x03\x1a\x0b\x0c\n\x0e\
-    \n\x07\x04\0\x03\x05\x02\0\x03\x12\x03\x1a\x0f\x10\n\r\n\x06\x04\0\x03\
-    \x05\x02\x01\x12\x03\x1b\x04\x11\n\x0e\n\x07\x04\0\x03\x05\x02\x01\x05\
-    \x12\x03\x1b\x04\n\n\x0e\n\x07\x04\0\x03\x05\x02\x01\x01\x12\x03\x1b\x0b\
-    \x0c\n\x0e\n\x07\x04\0\x03\x05\x02\x01\x03\x12\x03\x1b\x0f\x10\n\r\n\x06\
-    \x04\0\x03\x05\x02\x02\x12\x03\x1c\x04\x18\n\x0e\n\x07\x04\0\x03\x05\x02\
-    \x02\x05\x12\x03\x1c\x04\n\n\x0e\n\x07\x04\0\x03\x05\x02\x02\x01\x12\x03\
-    \x1c\x0b\x13\n\x0e\n\x07\x04\0\x03\x05\x02\x02\x03\x12\x03\x1c\x16\x17\n\
-    \r\n\x06\x04\0\x03\x05\x02\x03\x12\x03\x1d\x04\x1d\n\x0e\n\x07\x04\0\x03\
-    \x05\x02\x03\x05\x12\x03\x1d\x04\n\n\x0e\n\x07\x04\0\x03\x05\x02\x03\x01\
-    \x12\x03\x1d\x0b\x18\n\x0e\n\x07\x04\0\x03\x05\x02\x03\x03\x12\x03\x1d\
-    \x1b\x1c\n\x0c\n\x04\x04\0\x08\0\x12\x04\x20\x02&\x03\n\x0c\n\x05\x04\0\
-    \x08\0\x01\x12\x03\x20\x08\x0f\n\x0b\n\x04\x04\0\x02\0\x12\x03!\x04\x1e\
-    \n\x0c\n\x05\x04\0\x02\0\x06\x12\x03!\x04\x0e\n\x0c\n\x05\x04\0\x02\0\
-    \x01\x12\x03!\x0f\x19\n\x0c\n\x05\x04\0\x02\0\x03\x12\x03!\x1c\x1d\n\x0b\
-    \n\x04\x04\0\x02\x01\x12\x03\"\x04\x1a\n\x0c\n\x05\x04\0\x02\x01\x06\x12\
-    \x03\"\x04\x0c\n\x0c\n\x05\x04\0\x02\x01\x01\x12\x03\"\r\x15\n\x0c\n\x05\
-    \x04\0\x02\x01\x03\x12\x03\"\x18\x19\n\x0b\n\x04\x04\0\x02\x02\x12\x03#\
-    \x04(\n\x0c\n\x05\x04\0\x02\x02\x06\x12\x03#\x04\x13\n\x0c\n\x05\x04\0\
-    \x02\x02\x01\x12\x03#\x14#\n\x0c\n\x05\x04\0\x02\x02\x03\x12\x03#&'\n\
-    \x0b\n\x04\x04\0\x02\x03\x12\x03$\x04\x1f\n\x0c\n\x05\x04\0\x02\x03\x06\
-    \x12\x03$\x04\x0e\n\x0c\n\x05\x04\0\x02\x03\x01\x12\x03$\x0f\x19\n\x0c\n\
-    \x05\x04\0\x02\x03\x03\x12\x03$\x1c\x1e\n\x0b\n\x04\x04\0\x02\x04\x12\
-    \x03%\x04#\n\x0c\n\x05\x04\0\x02\x04\x06\x12\x03%\x04\x10\n\x0c\n\x05\
-    \x04\0\x02\x04\x01\x12\x03%\x11\x1d\n\x0c\n\x05\x04\0\x02\x04\x03\x12\
-    \x03%\x20\"b\x06proto3\
+    \x01(\rR\rreplicationId\x1a\x8c\x01\n\x08Snapshot\x12\x14\n\x05frame\x18\
+    \x01\x20\x01(\rR\x05frame\x12\x1c\n\x08baseline\x18\x02\x20\x01(\rH\0R\
+    \x08baseline\x129\n\nentityData\x18\x03\x20\x03(\x0b2\x19.ServerMessage.\
+    EntityDataR\nentityDataB\x11\n\x0foption_baseline\x1a\x9b\x01\n\nEntityD\
+    ata\x12$\n\rreplicationId\x18\x01\x20\x01(\rR\rreplicationId\x12\x0e\n\
+    \x01x\x18\x02\x20\x01(\x11H\0R\x01x\x12\x0e\n\x01y\x18\x03\x20\x01(\x11H\
+    \x01R\x01y\x12\x1c\n\x08rotation\x18\x04\x20\x01(\x11H\x02R\x08rotationB\
+    \n\n\x08option_xB\n\n\x08option_yB\x11\n\x0foption_rotationB\t\n\x07msgD\
+    ataJ\x84\x0b\n\x06\x12\x04\0\02\x01\n\x08\n\x01\x0c\x12\x03\0\0\x12\n\n\
+    \n\x02\x04\0\x12\x04\x02\02\x01\n\n\n\x03\x04\0\x01\x12\x03\x02\x08\x15\
+    \n\x0c\n\x04\x04\0\x03\0\x12\x04\x03\x02\x06\x03\n\x0c\n\x05\x04\0\x03\0\
+    \x01\x12\x03\x03\n\x14\n\r\n\x06\x04\0\x03\0\x02\0\x12\x03\x04\x04\x15\n\
+    \x0e\n\x07\x04\0\x03\0\x02\0\x05\x12\x03\x04\x04\n\n\x0e\n\x07\x04\0\x03\
+    \0\x02\0\x01\x12\x03\x04\x0b\x10\n\x0e\n\x07\x04\0\x03\0\x02\0\x03\x12\
+    \x03\x04\x13\x14\n\r\n\x06\x04\0\x03\0\x02\x01\x12\x03\x05\x04\x1e\n\x0e\
+    \n\x07\x04\0\x03\0\x02\x01\x06\x12\x03\x05\x04\x0e\n\x0e\n\x07\x04\0\x03\
+    \0\x02\x01\x01\x12\x03\x05\x0f\x19\n\x0e\n\x07\x04\0\x03\0\x02\x01\x03\
+    \x12\x03\x05\x1c\x1d\n\x0c\n\x04\x04\0\x03\x01\x12\x04\x08\x02\n\x03\n\
+    \x0c\n\x05\x04\0\x03\x01\x01\x12\x03\x08\n\x14\n\r\n\x06\x04\0\x03\x01\
+    \x02\0\x12\x03\t\x04\x14\n\x0e\n\x07\x04\0\x03\x01\x02\0\x05\x12\x03\t\
+    \x04\n\n\x0e\n\x07\x04\0\x03\x01\x02\0\x01\x12\x03\t\x0b\x0f\n\x0e\n\x07\
+    \x04\0\x03\x01\x02\0\x03\x12\x03\t\x12\x13\n\x0b\n\x04\x04\0\x03\x02\x12\
+    \x03\x0c\x02\x1a\n\x0c\n\x05\x04\0\x03\x02\x01\x12\x03\x0c\n\x16\n\x0c\n\
+    \x04\x04\0\x03\x03\x12\x04\x0e\x02\x11\x03\n\x0c\n\x05\x04\0\x03\x03\x01\
+    \x12\x03\x0e\n\x19\n\r\n\x06\x04\0\x03\x03\x02\0\x12\x03\x0f\x04\x15\n\
+    \x0e\n\x07\x04\0\x03\x03\x02\0\x05\x12\x03\x0f\x04\n\n\x0e\n\x07\x04\0\
+    \x03\x03\x02\0\x01\x12\x03\x0f\x0b\x10\n\x0e\n\x07\x04\0\x03\x03\x02\0\
+    \x03\x12\x03\x0f\x13\x14\n\r\n\x06\x04\0\x03\x03\x02\x01\x12\x03\x10\x04\
+    \x1d\n\x0e\n\x07\x04\0\x03\x03\x02\x01\x05\x12\x03\x10\x04\n\n\x0e\n\x07\
+    \x04\0\x03\x03\x02\x01\x01\x12\x03\x10\x0b\x18\n\x0e\n\x07\x04\0\x03\x03\
+    \x02\x01\x03\x12\x03\x10\x1b\x1c\n\x0c\n\x04\x04\0\x03\x04\x12\x04\x13\
+    \x02\x19\x03\n\x0c\n\x05\x04\0\x03\x04\x01\x12\x03\x13\n\x12\n\r\n\x06\
+    \x04\0\x03\x04\x02\0\x12\x03\x14\x04\x15\n\x0e\n\x07\x04\0\x03\x04\x02\0\
+    \x05\x12\x03\x14\x04\n\n\x0e\n\x07\x04\0\x03\x04\x02\0\x01\x12\x03\x14\
+    \x0b\x10\n\x0e\n\x07\x04\0\x03\x04\x02\0\x03\x12\x03\x14\x13\x14\n\x0e\n\
+    \x06\x04\0\x03\x04\x08\0\x12\x04\x15\x04\x17\x05\n\x0e\n\x07\x04\0\x03\
+    \x04\x08\0\x01\x12\x03\x15\n\x19\n\r\n\x06\x04\0\x03\x04\x02\x01\x12\x03\
+    \x16\x06\x1a\n\x0e\n\x07\x04\0\x03\x04\x02\x01\x05\x12\x03\x16\x06\x0c\n\
+    \x0e\n\x07\x04\0\x03\x04\x02\x01\x01\x12\x03\x16\r\x15\n\x0e\n\x07\x04\0\
+    \x03\x04\x02\x01\x03\x12\x03\x16\x18\x19\n\r\n\x06\x04\0\x03\x04\x02\x02\
+    \x12\x03\x18\x04'\n\x0e\n\x07\x04\0\x03\x04\x02\x02\x04\x12\x03\x18\x04\
+    \x0c\n\x0e\n\x07\x04\0\x03\x04\x02\x02\x06\x12\x03\x18\r\x17\n\x0e\n\x07\
+    \x04\0\x03\x04\x02\x02\x01\x12\x03\x18\x18\"\n\x0e\n\x07\x04\0\x03\x04\
+    \x02\x02\x03\x12\x03\x18%&\n\x0c\n\x04\x04\0\x03\x05\x12\x04\x1b\x02)\
+    \x03\n\x0c\n\x05\x04\0\x03\x05\x01\x12\x03\x1b\n\x14\n\r\n\x06\x04\0\x03\
+    \x05\x02\0\x12\x03\x1c\x04\x1d\n\x0e\n\x07\x04\0\x03\x05\x02\0\x05\x12\
+    \x03\x1c\x04\n\n\x0e\n\x07\x04\0\x03\x05\x02\0\x01\x12\x03\x1c\x0b\x18\n\
+    \x0e\n\x07\x04\0\x03\x05\x02\0\x03\x12\x03\x1c\x1b\x1c\n\x0e\n\x06\x04\0\
+    \x03\x05\x08\0\x12\x04\x1e\x04\x20\x05\n\x0e\n\x07\x04\0\x03\x05\x08\0\
+    \x01\x12\x03\x1e\n\x12\n\r\n\x06\x04\0\x03\x05\x02\x01\x12\x03\x1f\x06\
+    \x13\n\x0e\n\x07\x04\0\x03\x05\x02\x01\x05\x12\x03\x1f\x06\x0c\n\x0e\n\
+    \x07\x04\0\x03\x05\x02\x01\x01\x12\x03\x1f\r\x0e\n\x0e\n\x07\x04\0\x03\
+    \x05\x02\x01\x03\x12\x03\x1f\x11\x12\n\x0e\n\x06\x04\0\x03\x05\x08\x01\
+    \x12\x04!\x04#\x05\n\x0e\n\x07\x04\0\x03\x05\x08\x01\x01\x12\x03!\n\x12\
+    \n\r\n\x06\x04\0\x03\x05\x02\x02\x12\x03\"\x06\x13\n\x0e\n\x07\x04\0\x03\
+    \x05\x02\x02\x05\x12\x03\"\x06\x0c\n\x0e\n\x07\x04\0\x03\x05\x02\x02\x01\
+    \x12\x03\"\r\x0e\n\x0e\n\x07\x04\0\x03\x05\x02\x02\x03\x12\x03\"\x11\x12\
+    \n\x0e\n\x06\x04\0\x03\x05\x08\x02\x12\x04$\x04&\x05\n\x0e\n\x07\x04\0\
+    \x03\x05\x08\x02\x01\x12\x03$\n\x19\n\r\n\x06\x04\0\x03\x05\x02\x03\x12\
+    \x03%\x06\x1a\n\x0e\n\x07\x04\0\x03\x05\x02\x03\x05\x12\x03%\x06\x0c\n\
+    \x0e\n\x07\x04\0\x03\x05\x02\x03\x01\x12\x03%\r\x15\n\x0e\n\x07\x04\0\
+    \x03\x05\x02\x03\x03\x12\x03%\x18\x19\n\x0c\n\x04\x04\0\x08\0\x12\x04+\
+    \x021\x03\n\x0c\n\x05\x04\0\x08\0\x01\x12\x03+\x08\x0f\n\x0b\n\x04\x04\0\
+    \x02\0\x12\x03,\x04\x1e\n\x0c\n\x05\x04\0\x02\0\x06\x12\x03,\x04\x0e\n\
+    \x0c\n\x05\x04\0\x02\0\x01\x12\x03,\x0f\x19\n\x0c\n\x05\x04\0\x02\0\x03\
+    \x12\x03,\x1c\x1d\n\x0b\n\x04\x04\0\x02\x01\x12\x03-\x04\x1a\n\x0c\n\x05\
+    \x04\0\x02\x01\x06\x12\x03-\x04\x0c\n\x0c\n\x05\x04\0\x02\x01\x01\x12\
+    \x03-\r\x15\n\x0c\n\x05\x04\0\x02\x01\x03\x12\x03-\x18\x19\n\x0b\n\x04\
+    \x04\0\x02\x02\x12\x03.\x04(\n\x0c\n\x05\x04\0\x02\x02\x06\x12\x03.\x04\
+    \x13\n\x0c\n\x05\x04\0\x02\x02\x01\x12\x03.\x14#\n\x0c\n\x05\x04\0\x02\
+    \x02\x03\x12\x03.&'\n\x0b\n\x04\x04\0\x02\x03\x12\x03/\x04\x1f\n\x0c\n\
+    \x05\x04\0\x02\x03\x06\x12\x03/\x04\x0e\n\x0c\n\x05\x04\0\x02\x03\x01\
+    \x12\x03/\x0f\x19\n\x0c\n\x05\x04\0\x02\x03\x03\x12\x03/\x1c\x1e\n\x0b\n\
+    \x04\x04\0\x02\x04\x12\x030\x04#\n\x0c\n\x05\x04\0\x02\x04\x06\x12\x030\
+    \x04\x10\n\x0c\n\x05\x04\0\x02\x04\x01\x12\x030\x11\x1d\n\x0c\n\x05\x04\
+    \0\x02\x04\x03\x12\x030\x20\"b\x06proto3\
 ";
 
 static mut file_descriptor_proto_lazy: ::protobuf::lazy::Lazy<::protobuf::descriptor::FileDescriptorProto> = ::protobuf::lazy::Lazy {
