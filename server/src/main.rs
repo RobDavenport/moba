@@ -1,10 +1,12 @@
 #![recursion_limit = "1024"]
 use std::env::var_os;
+use std::sync::Arc;
 
 use futures::join;
 
 mod engine;
 use engine::engine_builder::*;
+use engine::resources::resource_manager::ResourceManager;
 
 const WEB_SERVICE_ADDR: &str = "0.0.0.0";
 const TICKS_PER_SECOND: u8 = 30;
@@ -37,7 +39,9 @@ async fn main() {
         public_address: ip,
     };
 
-    let (game, network, sdp) = build_engine(game_config).await;
+    let resource_manager = Arc::new(ResourceManager::new());
+
+    let (game, network, sdp) = build_engine(game_config, &resource_manager).await;
 
     println!("engine running...");
 

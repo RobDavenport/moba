@@ -1,11 +1,13 @@
+use std::sync::Arc;
+
 use tokio::sync::mpsc::{channel, Receiver, Sender};
 use webrtc_unreliable::Server as RtcServer;
 
 use super::game::Game;
-use crate::engine::messaging::messages::*;
-
 use super::network::network_manager::NetworkManager;
 use super::network::service::{start_rtc_server, start_service};
+use crate::engine::messaging::messages::*;
+use crate::engine::resources::resource_manager::ResourceManager;
 
 const CHANNEL_BUFFER_SIZE: usize = 512;
 
@@ -17,6 +19,7 @@ pub struct GameConfig {
 
 pub async fn build_engine(
     config: GameConfig,
+    resource_manager: &Arc<ResourceManager>,
 ) -> (
     tokio::task::JoinHandle<()>,
     tokio::task::JoinHandle<()>,
@@ -55,6 +58,7 @@ pub async fn build_engine(
         out_reliable,
         out_unreliable,
         game_in,
+        resource_manager,
     );
 
     (game_handle, network_handle, service)
@@ -83,12 +87,17 @@ fn start_game_thread(
     out_reliable: Sender<(OutTarget, OutMessage)>,
     out_unreliable: Sender<(OutTarget, OutMessage)>,
     game_in: Receiver<GameMessage>,
+    resource_manager: &Arc<ResourceManager>,
 ) -> tokio::task::JoinHandle<()> {
     let tick_time = 1. / ticks_per_second as f32;
+    let inner = resource_manager.clone();
 
     tokio::spawn(async move {
+        let map = inner.get_map("testMap").await.unwrap();
+        let characters = Vec::new();
+
         Game::new(tick_time, out_reliable, out_unreliable, game_in)
-            .init_game("testMap")
+            .init_game(map, characters)
             .start_game_loop()
             .await //todo this should return the result of the game
     })

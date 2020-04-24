@@ -2,25 +2,21 @@ use std::iter::*;
 
 use legion::prelude::*;
 
-use crate::engine::resources::{map_data::*, map_loader};
+use crate::engine::resources::character_data::*;
+use crate::engine::resources::map_data::*;
 use crate::engine::systems::*;
 
 use super::Game;
 
 impl Game {
-    pub fn init_game(&mut self, map_name: &str) -> &mut Self {
-        self.load_map(map_name);
+    pub fn init_game(&mut self, map_data: MapData, characters: Vec<CharacterData>) -> &mut Self {
+        self.init_map(map_data);
+        self.init_characters(characters);
 
         self
     }
 
-    pub fn load_map(&mut self, map_name: &str) {
-        let map_data = map_loader::load_map_data(map_name);
-
-        self.init_entities_from_map_data(map_data);
-    }
-
-    fn init_entities_from_map_data(&mut self, map_data: MapData) {
+    fn init_map(&mut self, map_data: MapData) {
         let mut cores = Vec::new();
         let mut towers = Vec::new();
         let mut spawners = Vec::new();
@@ -42,6 +38,10 @@ impl Game {
         self.insert_cores(cores);
         self.insert_towers(towers);
         self.insert_spawners(spawners);
+    }
+
+    fn init_characters(&mut self, character_data: Vec<CharacterData>) {
+        //TODO: this func
     }
 }
 
