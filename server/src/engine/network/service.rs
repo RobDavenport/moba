@@ -80,11 +80,14 @@ async fn ws_connected(ws: warp::ws::WebSocket, mut manager_out: Sender<WSClientM
     println!("Ws connected. User id: {} with uuid: {}", my_id, &uuid);
 
     let (mut sender, mut receiver) = ws.split();
-    sender
+    match sender
         .send(Message::binary(
             OutMessage::VerifyUuid(uuid.clone()).to_proto_bytes(),
         ))
-        .await;
+        .await {
+            Ok(_) => (),
+            Err(e) => println!("{}", e)
+        };
 
     manager_out.try_send(WSClientMessage::Connected(
         my_id,
@@ -93,7 +96,7 @@ async fn ws_connected(ws: warp::ws::WebSocket, mut manager_out: Sender<WSClientM
             socket_addr: None,
             socket_uuid: uuid,
         },
-    ));
+    )).unwrap();
 
     while let Some(result) = receiver.next().await {
         let msg = match result {
@@ -103,9 +106,9 @@ async fn ws_connected(ws: warp::ws::WebSocket, mut manager_out: Sender<WSClientM
                 break;
             }
         };
-        manager_out.try_send(WSClientMessage::Packet(my_id, msg.into_bytes()));
+        manager_out.try_send(WSClientMessage::Packet(my_id, msg.into_bytes())).unwrap();
     }
 
     //Client disconnected
-    manager_out.try_send(WSClientMessage::Disconnected(my_id));
+    manager_out.try_send(WSClientMessage::Disconnected(my_id)).unwrap();
 }

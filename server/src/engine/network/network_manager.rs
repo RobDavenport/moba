@@ -106,7 +106,7 @@ fn on_ws_in_msg(
                     match protomsgtype {
                         ClientMessage_oneof_msgData::command(command_msg) => {
                             if let Some(out_msg) = handle_client_command(command_msg, id) {
-                                game_sender.try_send(out_msg);
+                                game_sender.try_send(out_msg).unwrap();
                             };
                         }
                         ClientMessage_oneof_msgData::veryfiyRtc(..) => (),
@@ -137,9 +137,12 @@ async fn on_rtc_in_msg(
                             println!("User found!");
                             val.socket_addr = Some(msg.remote_addr);
                             unreliable_ids.insert(msg.remote_addr, *key);
-                            val.ws_client_out
+                            match val.ws_client_out
                                 .send(Message::binary(OutMessage::VerifiedUuid.to_proto_bytes()))
-                                .await;
+                                .await {
+                                    Ok(_) => (),
+                                    Err(e) => println!("{}", e)
+                                };
                             break;
                         }
                     }
@@ -147,7 +150,7 @@ async fn on_rtc_in_msg(
                 ClientMessage_oneof_msgData::command(command_msg) => {
                     if let Some(player_id) = unreliable_ids.get(&msg.remote_addr) {
                         if let Some(out_msg) = handle_client_command(command_msg, *player_id) {
-                            game_out.try_send(out_msg);
+                            game_out.try_send(out_msg).unwrap();
                         };
                     }
                 }
@@ -156,7 +159,7 @@ async fn on_rtc_in_msg(
                         game_out.try_send(GameMessage::Ack {
                             id: *player_id,
                             new_baseline: ack_msg.newBaseline,
-                        });
+                        }).unwrap();
                     }
                 }
             }
@@ -172,12 +175,15 @@ async fn handle_reliable_out_msg(
     let output = Message::binary(out_msg.to_proto_bytes());
 
     for idx in out_indexes {
-        clients
+        match clients
             .get_mut(&idx)
             .unwrap()
             .ws_client_out
             .send(output.clone())
-            .await;
+            .await {
+                Ok(_) => (),
+                Err(e) => println!("{}", e)
+            };
     }
 }
 
@@ -192,7 +198,10 @@ async fn handle_unreliable_out_msg(
     for idx in out_indexes {
         if let Some(client) = clients.get(&idx) {
             if let Some(addr) = client.socket_addr {
-                rtc_server.send(&output, MessageType::Binary, &addr).await;
+                match rtc_server.send(&output, MessageType::Binary, &addr).await {
+                    Ok(_) => (),
+                    Err(e) => println!("{}", e)
+                };
             }
         }
     }
