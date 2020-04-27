@@ -16,19 +16,19 @@ pub fn pawn_input() -> Box<dyn Schedulable> {
                                 moving.target = MoveTarget::Location(loc);
                             }
                         }
-                        Some(InputCommand::Attack(target_entity)) => println!("TODO: ATTACK"),
-                        Some(InputCommand::MoveDelta(delta)) => println!("TODO: MOVEDELTA"),
+                        Some(InputCommand::Attack(_target_entity)) => println!("TODO: ATTACK"),
+                        Some(InputCommand::MoveDelta(_delta)) => println!("TODO: MOVEDELTA"),
                         Some(InputCommand::Recall) => println!("TODO: RECALL"),
                         Some(InputCommand::Stop) => {
                             if let Some(mut moving) = world.get_component_mut::<Moving>(entity) {
                                 moving.target = MoveTarget::None;
                             }
                         }
-                        Some(InputCommand::UseAbility(idx)) => println!("TODO: USEABILITY"),
-                        Some(InputCommand::UseAimedAbility(idx, target_loc)) => {
+                        Some(InputCommand::UseAbility(_idx)) => println!("TODO: USEABILITY"),
+                        Some(InputCommand::UseAimedAbility(_idx, _target_loc)) => {
                             println!("TODO: USEAIMEDABILITY")
                         }
-                        Some(InputCommand::UseTargettedAbility(idx, target_entity)) => {
+                        Some(InputCommand::UseTargettedAbility(_idx, _target_entity)) => {
                             println!("TODO: USETARGETTEDABILITY")
                         }
                         None => (),

@@ -57,16 +57,6 @@ impl Game {
                 //Waypoints
             )
         });
-
-        // pub struct TimedEvent {
-        //     pub event_type: TimedEventType,
-        //     pub execute_frame: u32,
-        //     pub name: String,
-        //     pub owner: Option<Entity>,
-
-        //     pub execute: fn(&mut World) -> ()
-        // }
-
         // TODO:
         // Attach TimedEvents to these spawners
         // FOR TESTING ONLY!
@@ -103,8 +93,4 @@ impl Game {
             .first()
             .unwrap()
     }
-}
-
-fn spawn(world: &mut World) {
-    println!("POW!");
 }

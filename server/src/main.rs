@@ -2,7 +2,7 @@
 use std::env::var_os;
 use std::sync::Arc;
 
-use futures::join;
+use futures::try_join;
 
 mod engine;
 use engine::engine_builder::*;
@@ -45,5 +45,5 @@ async fn main() {
 
     println!("engine running...");
 
-    join!(game, network, sdp,);
+    try_join!(game, network, sdp,).unwrap();
 }

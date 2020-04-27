@@ -4,6 +4,7 @@ use std::cmp::Ordering;
 //Messages that are broadcasted from the Server to Game Clients only
 //Change this to a struct? that implements toProtobuf ?
 #[derive(Clone, Debug)]
+#[allow(dead_code)]
 pub enum OutMessage {
     Snapshot {
         baseline: Option<u32>,
@@ -50,6 +51,7 @@ impl PartialEq for EntitySnapshot {
 
 impl Eq for EntitySnapshot {}
 
+#[allow(dead_code)]
 pub enum OutTarget {
     All,
     Single(PlayerId),

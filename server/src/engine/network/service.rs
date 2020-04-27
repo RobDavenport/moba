@@ -52,7 +52,7 @@ pub async fn start_service(
                             );
                             Ok::<_, Rejection>(resp)
                         }
-                        Err(err) => Err::<_, Rejection>(warp::reject()),
+                        Err(_err) => Err::<_, Rejection>(warp::reject()),
                     }
                 }
             });

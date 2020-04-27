@@ -1,7 +1,9 @@
+#[allow(dead_code)]
 pub struct StatusEffects {
     effects: Vec<StatusEffect>,
 }
 
+#[allow(dead_code)]
 pub enum StatusEffect {
     MoveSpeed(f32),
     AttackSpeed(f32),

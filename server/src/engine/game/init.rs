@@ -40,7 +40,7 @@ impl Game {
         self.insert_spawners(spawners);
     }
 
-    fn init_characters(&mut self, character_data: Vec<CharacterData>) {
+    fn init_characters(&mut self, _character_data: Vec<CharacterData>) {
         //TODO: this func
     }
 }

@@ -6,10 +6,7 @@ use legion::prelude::*;
 
 use super::Game;
 use crate::engine::components::all::*;
-use crate::engine::events::{
-    game_event::GameEvent,
-    timed_event::{TimedEvent, TimedEventType},
-};
+use crate::engine::events::{game_event::GameEvent, timed_event::TimedEventType};
 use crate::engine::input_command::InputCommand;
 use crate::engine::messaging::messages::{EntitySnapshot, GameMessage, OutMessage, OutTarget};
 use crate::engine::network::delta_encoder::SnapshotHistory;
@@ -18,7 +15,7 @@ impl Game {
     pub async fn start_game_loop(&mut self) {
         let mut timer = Instant::now();
         let mut accumulator = 0.;
-        let mut game_running = true;
+        let game_running = true;
 
         let mut ticker = tokio::time::interval(Duration::from_secs_f32(self.tick_time));
 

@@ -9,25 +9,24 @@ pub struct TimedEvent {
     pub name: String,
     pub owner: Option<Entity>,
     // TODO: Add Optional params like Location, Target, etc
-
     pub execute: fn(&mut World) -> (),
 }
 
-
 #[derive(Clone, Copy)]
+#[allow(dead_code)]
 pub enum TimedEventType {
     Once,
     Repeating(u32),
 }
 
 impl TimedEvent {
-  pub fn new_repeated(&self, offset: u32) -> Self {
-      Self {
-          execute_frame: self.execute_frame + offset,
-          name: self.name.clone(),
-          ..*self
-      }
-  }
+    pub fn new_repeated(&self, offset: u32) -> Self {
+        Self {
+            execute_frame: self.execute_frame + offset,
+            name: self.name.clone(),
+            ..*self
+        }
+    }
 }
 
 impl Ord for TimedEvent {

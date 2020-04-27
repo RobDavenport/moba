@@ -1,6 +1,7 @@
 use glam::Vec2;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[allow(dead_code)]
 pub enum InputCommand {
     Move(Vec2, bool),
     MoveDelta(Vec2),

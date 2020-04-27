@@ -84,6 +84,7 @@ impl ResourceManager {
         }
     }
 
+    #[allow(dead_code)]
     pub async fn get_character(&self, name: &str) -> Option<CharacterData> {
         match self.characters.read().await.get(name) {
             Some(data) => Some(data.clone()),

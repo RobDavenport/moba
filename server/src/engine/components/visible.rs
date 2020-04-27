@@ -4,6 +4,7 @@ pub struct Visible {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[allow(dead_code)]
 pub enum VisibilityType {
     VisibleAll,
     VisibleInRange,

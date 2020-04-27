@@ -11,12 +11,14 @@ pub struct Attacking {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[allow(dead_code)]
 pub enum AttackingState {
     Ready,
     WindingUp,
     Cooldown,
 }
 
+#[allow(dead_code)]
 impl Attacking {
     pub fn attacks_per_second(&self) -> f32 {
         todo!()
