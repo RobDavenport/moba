@@ -132,19 +132,16 @@ impl Game {
                             println!("Error in Broadcast State: {}", &e);
                         };
                     }
-                } else {
-                    if let Err(e) = self.out_unreliable.try_send((
-                        OutTarget::Single(*id),
-                        OutMessage::Snapshot {
-                            frame: self.game_frame,
-                            entities: entities.clone(),
-                            baseline: None,
-                        },
-                    )) {
-                        println!("Error in Broadcast State: {}", &e);
-                    };
-                    println!("Full Snapshot");
-                }
+                } else if let Err(e) = self.out_unreliable.try_send((
+                    OutTarget::Single(*id),
+                    OutMessage::Snapshot {
+                        frame: self.game_frame,
+                        entities: entities.clone(),
+                        baseline: None,
+                    },
+                )) {
+                    println!("Error in Broadcast State: {}", &e);
+            };
             }
         }
 

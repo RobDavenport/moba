@@ -17,15 +17,13 @@ use crate::engine::{
 static NEXT_USER_ID: AtomicU32 = AtomicU32::new(0);
 
 pub async fn start_rtc_server(listen_addr: String, public_addr: String) -> RtcServer {
-    let rtc_server = tokio::spawn(RtcServer::new(
+    tokio::spawn(RtcServer::new(
         listen_addr.parse().unwrap(),
         public_addr.parse().unwrap(),
     ))
     .await
     .unwrap()
-    .expect("rtc server failed to start");
-
-    rtc_server
+    .expect("rtc server failed to start")
 }
 
 pub async fn start_service(
@@ -82,21 +80,24 @@ async fn ws_connected(ws: warp::ws::WebSocket, mut manager_out: Sender<WSClientM
     let (mut sender, mut receiver) = ws.split();
     match sender
         .send(Message::binary(
-            OutMessage::VerifyUuid(uuid.clone()).to_proto_bytes(),
+            OutMessage::VerifyUuid(uuid.clone()).into_proto_bytes(),
         ))
-        .await {
-            Ok(_) => (),
-            Err(e) => println!("{}", e)
-        };
+        .await
+    {
+        Ok(_) => (),
+        Err(e) => println!("{}", e),
+    };
 
-    manager_out.try_send(WSClientMessage::Connected(
-        my_id,
-        ClientData {
-            ws_client_out: sender,
-            socket_addr: None,
-            socket_uuid: uuid,
-        },
-    )).unwrap();
+    manager_out
+        .try_send(WSClientMessage::Connected(
+            my_id,
+            ClientData {
+                ws_client_out: sender,
+                socket_addr: None,
+                socket_uuid: uuid,
+            },
+        ))
+        .unwrap();
 
     while let Some(result) = receiver.next().await {
         let msg = match result {
@@ -106,9 +107,13 @@ async fn ws_connected(ws: warp::ws::WebSocket, mut manager_out: Sender<WSClientM
                 break;
             }
         };
-        manager_out.try_send(WSClientMessage::Packet(my_id, msg.into_bytes())).unwrap();
+        manager_out
+            .try_send(WSClientMessage::Packet(my_id, msg.into_bytes()))
+            .unwrap();
     }
 
     //Client disconnected
-    manager_out.try_send(WSClientMessage::Disconnected(my_id)).unwrap();
+    manager_out
+        .try_send(WSClientMessage::Disconnected(my_id))
+        .unwrap();
 }

@@ -35,7 +35,7 @@ async fn main() {
 
     let game_config = GameConfig {
         ticks_per_second: TICKS_PER_SECOND,
-        service_address: service_address,
+        service_address,
         public_address: ip,
     };
 
