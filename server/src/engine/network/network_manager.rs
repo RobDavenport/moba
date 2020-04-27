@@ -120,7 +120,7 @@ fn on_ws_in_msg(
 
 async fn on_rtc_in_msg(
     msg: MessageResult,
-    msg_buf: &Vec<u8>,
+    msg_buf: &[u8],
     clients: &mut HashMap<PlayerId, ClientData>,
     game_out: &mut Sender<GameMessage>,
     unreliable_ids: &mut HashMap<std::net::SocketAddr, PlayerId>,

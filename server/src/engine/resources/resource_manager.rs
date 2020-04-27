@@ -108,9 +108,9 @@ fn load_resource<T: DeserializeOwned>(resource: ResourceToLoad) -> T {
         ),
     };
 
-    let contents =
-        fs::read_to_string(path).expect(&format!("FAILED TO READ FILE: {}", &resource.name));
+    let contents = fs::read_to_string(path)
+        .unwrap_or_else(|_| panic!("FAILED TO READ FILE: {}", &resource.name));
 
     serde_json::from_str::<T>(&contents)
-        .expect(&format!("FAILED TO PARSE JSON: {}", &resource.name))
+        .unwrap_or_else(|_| panic!("FAILED TO PARSE JSON: {}", &resource.name))
 }

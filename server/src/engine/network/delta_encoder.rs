@@ -26,7 +26,7 @@ impl SnapshotHistory {
     pub fn encode_delta(
         &mut self,
         frame: u32,
-        entities: &Vec<EntitySnapshot>,
+        entities: &[EntitySnapshot],
     ) -> Option<(u32, Vec<EntitySnapshot>)> {
         if self.history.len() == SNAPSHOT_HISTORY_MAX_SIZE {
             drop(self.history.pop_front());
@@ -69,7 +69,7 @@ impl SnapshotHistory {
         };
 
         self.history.push_back(SnapshotData {
-            entity_data: entities.clone(),
+            entity_data: entities.to_vec(),
             frame,
         });
 

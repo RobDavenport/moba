@@ -115,9 +115,15 @@ fn update_tick(frame: u32, entity_snapshot: EntitySnapshot) -> Vec<u8> {
 
     let mut entity_data = ServerMessage_EntityData::new();
     entity_data.set_replicationId(entity_snapshot.replication_id.0);
-    if let Some(x) = entity_snapshot.x { entity_data.set_x(x.into()) };
-    if let Some(y) = entity_snapshot.y { entity_data.set_y(y.into()) };
-    if let Some(rot) = entity_snapshot.rotation { entity_data.set_rotation(rot.into())};
+    if let Some(x) = entity_snapshot.x {
+        entity_data.set_x(x.into())
+    };
+    if let Some(y) = entity_snapshot.y {
+        entity_data.set_y(y.into())
+    };
+    if let Some(rot) = entity_snapshot.rotation {
+        entity_data.set_rotation(rot.into())
+    };
 
     inner.set_entityData(entity_data);
 
@@ -167,11 +173,15 @@ fn snapshot(frame: u32, entities: Vec<EntitySnapshot>, baseline: Option<u32>) ->
             .map(|entity| {
                 let mut single_data = ServerMessage_EntityData::new();
                 single_data.set_replicationId(entity.replication_id.0);
-                if let Some(x) = entity.x { single_data.set_x(x.into()) };
-                if let Some(y) = entity.y { single_data.set_y(y.into()) };
-                entity
-                    .rotation
-                    .map(|rot| single_data.set_rotation(rot.into()));
+                if let Some(x) = entity.x {
+                    single_data.set_x(x.into())
+                };
+                if let Some(y) = entity.y {
+                    single_data.set_y(y.into())
+                };
+                if let Some(rot) = entity.rotation {
+                    single_data.set_rotation(rot.into())
+                }
                 single_data
             })
             .collect(),

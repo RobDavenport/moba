@@ -15,16 +15,15 @@ impl Game {
     pub async fn start_game_loop(&mut self) {
         let mut timer = Instant::now();
         let mut accumulator = 0.;
-        let game_running = true;
 
         let mut ticker = tokio::time::interval(Duration::from_secs_f32(self.tick_time));
 
         println!("GAME LOOP INITIATED");
 
-        while game_running {
+        loop {
             let dt = timer.elapsed();
             let frame_time = dt.as_secs_f32();
-            timer = timer + dt;
+            timer += dt;
 
             accumulator += frame_time;
 
@@ -112,14 +111,14 @@ impl Game {
             })
             .collect();
 
-        if entities.len() > 0 {
+        if !entities.is_empty() {
             entities.sort_unstable();
 
             for (id, history) in self.player_snapshot_histories.iter_mut() {
                 if let Some((baseline, delta_entities)) =
                     history.encode_delta(self.game_frame, &entities)
                 {
-                    if delta_entities.len() > 0 {
+                    if !delta_entities.is_empty() {
                         //println!("d {} => {}", baseline, self.game_frame);
                         if let Err(e) = self.out_unreliable.try_send((
                             OutTarget::Single(*id),
@@ -141,7 +140,7 @@ impl Game {
                     },
                 )) {
                     println!("Error in Broadcast State: {}", &e);
-            };
+                };
             }
         }
 
