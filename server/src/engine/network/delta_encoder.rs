@@ -80,7 +80,7 @@ impl SnapshotHistory {
         if let Some(baseline) = &self.ack_baseline {
             if frame <= baseline.frame {
                 // Early out for out-of-order packet
-                return
+                return;
             }
             let drain_amount = (frame - baseline.frame) - 1;
             self.history.drain(0..drain_amount as usize);
@@ -103,14 +103,20 @@ fn get_entity_delta(baseline: &EntitySnapshot, next: &EntitySnapshot) -> EntityS
         replication_id: next.replication_id,
         rotation: get_delta_field(&baseline.rotation, &next.rotation),
         x: get_delta_field(&baseline.x, &next.x),
-        y: get_delta_field(&baseline.y, &next.y)
+        y: get_delta_field(&baseline.y, &next.y),
     }
 }
 
 fn get_delta_field<T: PartialEq + Clone>(base: &Option<T>, next: &Option<T>) -> Option<T> {
     match (base, next) {
-        (Some(b), Some(n)) => if b != n { Some(n.clone()) } else { None },
+        (Some(b), Some(n)) => {
+            if b != n {
+                Some(n.clone())
+            } else {
+                None
+            }
+        }
         (None, Some(n)) => Some(n.clone()),
-        _ => None
+        _ => None,
     }
 }

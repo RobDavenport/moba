@@ -1,10 +1,10 @@
-use std::collections::{HashMap, VecDeque};
+use std::collections::{BinaryHeap, HashMap, VecDeque};
 
 use legion::{prelude::*, world::World};
 use tokio::sync::mpsc::{Receiver, Sender};
 
 use crate::engine::components::all::*;
-use crate::engine::game_events::GameEvent;
+use crate::engine::events::{game_event::GameEvent, timed_event::TimedEvent};
 use crate::engine::messaging::messages::{GameMessage, OutMessage, OutTarget};
 use crate::engine::network::delta_encoder::SnapshotHistory;
 
@@ -30,6 +30,7 @@ pub struct Game {
     player_snapshot_histories: HashMap<PlayerId, SnapshotHistory>,
     replication_counter: u32,
     game_events: VecDeque<GameEvent>,
+    timed_events: BinaryHeap<TimedEvent>,
     executor: Executor,
 }
 
@@ -53,6 +54,7 @@ impl Game {
             game_events: VecDeque::new(),
             player_snapshot_histories: HashMap::new(),
             executor: Executor::new(init::init_systems(tick_time)),
+            timed_events: BinaryHeap::new(),
         }
     }
 

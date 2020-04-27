@@ -1,3 +1,4 @@
+use std::collections::binary_heap::PeekMut;
 use std::iter::*;
 use std::time::{Duration, Instant};
 
@@ -5,7 +6,10 @@ use legion::prelude::*;
 
 use super::Game;
 use crate::engine::components::all::*;
-use crate::engine::game_events::GameEvent;
+use crate::engine::events::{
+    game_event::GameEvent,
+    timed_event::{TimedEvent, TimedEventType},
+};
 use crate::engine::input_command::InputCommand;
 use crate::engine::messaging::messages::{EntitySnapshot, GameMessage, OutMessage, OutTarget};
 use crate::engine::network::delta_encoder::SnapshotHistory;
@@ -147,6 +151,32 @@ impl Game {
             }
         }
 
+        self.handle_events();
+    }
+
+    fn handle_events(&mut self) {
+        // Priority Queue
+        let mut next_events = Vec::new();
+        while let Some(event) = self.timed_events.peek_mut() {
+            if event.execute_frame <= self.game_frame {
+                match event.event_type {
+                    TimedEventType::Repeating(offset) => {
+                        next_events.push(event.new_repeated(offset))
+                    }
+                    TimedEventType::Once => (),
+                }
+                (event.execute)(&mut self.world);
+                PeekMut::pop(event);
+            } else {
+                break;
+            }
+        }
+
+        for event in next_events.into_iter() {
+            self.timed_events.push(event)
+        }
+
+        // Normal "Game Events" Vec
         for event in self.game_events.drain(..) {
             if let Err(e) = match event {
                 GameEvent::EntityDestroyed(id) => self.out_reliable.try_send((

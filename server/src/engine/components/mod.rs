@@ -3,7 +3,6 @@ pub mod ai_controlled;
 pub mod attacking;
 pub mod collider;
 pub mod energy;
-pub mod entity_spawner;
 pub mod health;
 pub mod moving;
 pub mod owned;
@@ -25,7 +24,6 @@ pub mod all {
     pub use super::attacking::*;
     pub use super::collider::*;
     pub use super::energy::*;
-    pub use super::entity_spawner::*;
     pub use super::health::*;
     pub use super::moving::*;
     pub use super::owned::*;

@@ -115,7 +115,9 @@ fn update_tick(frame: u32, entity_snapshot: EntitySnapshot) -> Vec<u8> {
     entity_data.set_replicationId(entity_snapshot.replication_id.0);
     entity_snapshot.x.map(|x| entity_data.set_x(x.into()));
     entity_snapshot.y.map(|y| entity_data.set_y(y.into()));
-    entity_snapshot.rotation.map(|rot| entity_data.set_rotation(rot.into()));
+    entity_snapshot
+        .rotation
+        .map(|rot| entity_data.set_rotation(rot.into()));
 
     inner.set_entityData(entity_data);
 
@@ -167,7 +169,9 @@ fn snapshot(frame: u32, entities: Vec<EntitySnapshot>, baseline: Option<u32>) ->
                 single_data.set_replicationId(entity.replication_id.0);
                 entity.x.map(|x| single_data.set_x(x.into()));
                 entity.y.map(|y| single_data.set_y(y.into()));
-                entity.rotation.map(|rot| single_data.set_rotation(rot.into()));
+                entity
+                    .rotation
+                    .map(|rot| single_data.set_rotation(rot.into()));
                 single_data
             })
             .collect(),

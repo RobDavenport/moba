@@ -3,6 +3,7 @@ use legion::prelude::*;
 
 use super::Game;
 use crate::engine::components::all::*;
+use crate::engine::events::timed_event::*;
 use crate::engine::resources::map_data::*;
 
 impl Game {
@@ -48,7 +49,39 @@ impl Game {
         self.world.insert((), component_set);
     }
 
-    pub fn insert_spawners(&mut self, spawners: Vec<(usize, SpawnerData)>) {}
+    pub fn insert_spawners(&mut self, spawners: Vec<(usize, SpawnerData)>) {
+        let component_set = spawners.into_iter().map(|(team_id, spawner_data)| {
+            (
+                Transform::new(spawner_data.pos, None, None),
+                Team::new(TeamId(team_id as u32)),
+                //Waypoints
+            )
+        });
+
+        // pub struct TimedEvent {
+        //     pub event_type: TimedEventType,
+        //     pub execute_frame: u32,
+        //     pub name: String,
+        //     pub owner: Option<Entity>,
+
+        //     pub execute: fn(&mut World) -> ()
+        // }
+
+        // TODO:
+        // Attach TimedEvents to these spawners
+        // FOR TESTING ONLY!
+        self.timed_events.push(TimedEvent {
+            event_type: TimedEventType::Repeating(60),
+            execute_frame: 60,
+            name: "Test Event".to_string(),
+            owner: None,
+            execute: |_unused: &mut World| {
+                println!("fast");
+            },
+        });
+
+        self.world.insert((), component_set);
+    }
 
     pub fn insert_player(&mut self, player_id: PlayerId) -> Entity {
         let replicated = Replicated::new_for_game(self);
@@ -70,4 +103,8 @@ impl Game {
             .first()
             .unwrap()
     }
+}
+
+fn spawn(world: &mut World) {
+    println!("POW!");
 }
