@@ -1515,11 +1515,11 @@ proto.ServerMessage.EntityData.deserializeBinaryFromReader = function(msg, reade
       msg.setRotation(value);
       break;
     case 5:
-      var value = /** @type {number} */ (reader.readUint32());
+      var value = /** @type {number} */ (reader.readSint32());
       msg.setHealth(value);
       break;
     case 6:
-      var value = /** @type {number} */ (reader.readUint32());
+      var value = /** @type {number} */ (reader.readSint32());
       msg.setEnergy(value);
       break;
     case 7:
@@ -1586,14 +1586,14 @@ proto.ServerMessage.EntityData.serializeBinaryToWriter = function(message, write
   }
   f = /** @type {number} */ (jspb.Message.getField(message, 5));
   if (f != null) {
-    writer.writeUint32(
+    writer.writeSint32(
       5,
       f
     );
   }
   f = /** @type {number} */ (jspb.Message.getField(message, 6));
   if (f != null) {
-    writer.writeUint32(
+    writer.writeSint32(
       6,
       f
     );
@@ -1736,7 +1736,7 @@ proto.ServerMessage.EntityData.prototype.hasRotation = function() {
 
 
 /**
- * optional uint32 health = 5;
+ * optional sint32 health = 5;
  * @return {number}
  */
 proto.ServerMessage.EntityData.prototype.getHealth = function() {
@@ -1772,7 +1772,7 @@ proto.ServerMessage.EntityData.prototype.hasHealth = function() {
 
 
 /**
- * optional uint32 energy = 6;
+ * optional sint32 energy = 6;
  * @return {number}
  */
 proto.ServerMessage.EntityData.prototype.getEnergy = function() {
@@ -2155,11 +2155,11 @@ proto.ServerMessage.EntityTypeData.CharacterData.deserializeBinaryFromReader = f
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readUint32());
+      var value = /** @type {number} */ (reader.readSint32());
       msg.setMaxhealth(value);
       break;
     case 2:
-      var value = /** @type {number} */ (reader.readUint32());
+      var value = /** @type {number} */ (reader.readSint32());
       msg.setMaxenergy(value);
       break;
     case 3:
@@ -2197,14 +2197,14 @@ proto.ServerMessage.EntityTypeData.CharacterData.serializeBinaryToWriter = funct
   var f = undefined;
   f = /** @type {number} */ (jspb.Message.getField(message, 1));
   if (f != null) {
-    writer.writeUint32(
+    writer.writeSint32(
       1,
       f
     );
   }
   f = /** @type {number} */ (jspb.Message.getField(message, 2));
   if (f != null) {
-    writer.writeUint32(
+    writer.writeSint32(
       2,
       f
     );
@@ -2229,7 +2229,7 @@ proto.ServerMessage.EntityTypeData.CharacterData.EnergyType = {
 };
 
 /**
- * optional uint32 maxHealth = 1;
+ * optional sint32 maxHealth = 1;
  * @return {number}
  */
 proto.ServerMessage.EntityTypeData.CharacterData.prototype.getMaxhealth = function() {
@@ -2265,7 +2265,7 @@ proto.ServerMessage.EntityTypeData.CharacterData.prototype.hasMaxhealth = functi
 
 
 /**
- * optional uint32 maxEnergy = 2;
+ * optional sint32 maxEnergy = 2;
  * @return {number}
  */
 proto.ServerMessage.EntityTypeData.CharacterData.prototype.getMaxenergy = function() {

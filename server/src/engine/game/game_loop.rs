@@ -104,10 +104,13 @@ impl Game {
         let mut entities: Vec<EntitySnapshot> = query
             .iter(&mut self.world)
             .map(|(transform, replicated)| EntitySnapshot {
+                replication_id: replicated.id,
                 x: Some(transform.position.x().into()),
                 y: Some(transform.position.y().into()),
                 rotation: Some(transform.rotation.into()),
-                replication_id: replicated.id,
+                health: None, //TODO
+                energy: None, //TODO
+                entity_type: Some(replicated.entity_type),
             })
             .collect();
 

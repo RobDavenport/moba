@@ -39,11 +39,11 @@ message ServerMessage {
     }
 
     oneof option_health {
-      uint32 health = 5;
+      sint32 health = 5;
     }
 
     oneof option_energy {
-      uint32 energy = 6;
+      sint32 energy = 6;
     }
 
     oneof option_entity_type_data {
@@ -55,11 +55,11 @@ message ServerMessage {
 
     message CharacterData {
       oneof option_max_health {
-        uint32 maxHealth = 1;
+        sint32 maxHealth = 1;
       }
 
       oneof option_max_energy {
-        uint32 maxEnergy = 2;
+        sint32 maxEnergy = 2;
       }
 
       oneof option_energy_type {

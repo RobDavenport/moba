@@ -104,6 +104,9 @@ fn get_entity_delta(baseline: &EntitySnapshot, next: &EntitySnapshot) -> EntityS
         rotation: get_delta_field(&baseline.rotation, &next.rotation),
         x: get_delta_field(&baseline.x, &next.x),
         y: get_delta_field(&baseline.y, &next.y),
+        energy: get_delta_field(&baseline.energy, &next.energy),
+        health: get_delta_field(&baseline.health, &next.health),
+        entity_type: get_delta_field(&baseline.entity_type, &next.entity_type),
     }
 }
 

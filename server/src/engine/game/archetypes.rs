@@ -11,7 +11,7 @@ impl Game {
         let component_set = cores
             .into_iter()
             .map(|(team_id, core)| {
-                let replicated = Replicated::new_for_game(self);
+                let replicated = Replicated::new_for_game(self, ReplicatedEntityType::Core);
                 (
                     Transform::new(core.pos, None, None),
                     Team::new(TeamId(team_id as u32)),
@@ -31,7 +31,7 @@ impl Game {
         let component_set = towers
             .into_iter()
             .map(|(team_id, tower)| {
-                let replicated = Replicated::new_for_game(self);
+                let replicated = Replicated::new_for_game(self, ReplicatedEntityType::Tower);
                 (
                     Transform::new(tower.pos, None, None),
                     // TODO
@@ -75,7 +75,7 @@ impl Game {
     }
 
     pub fn insert_player(&mut self, player_id: PlayerId) -> Entity {
-        let replicated = Replicated::new_for_game(self);
+        let replicated = Replicated::new_for_game(self, ReplicatedEntityType::Character);
         *self
             .world
             .insert(
