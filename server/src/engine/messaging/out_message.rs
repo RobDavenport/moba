@@ -32,6 +32,7 @@ pub struct EntitySnapshot {
     pub health: Option<NetworkedFloat>,
     pub energy: Option<NetworkedFloat>,
     pub entity_type: Option<ReplicatedEntityType>,
+    // TODO Add EntityState from Protobuf
 }
 
 impl Ord for EntitySnapshot {
@@ -48,7 +49,13 @@ impl PartialOrd for EntitySnapshot {
 
 impl PartialEq for EntitySnapshot {
     fn eq(&self, other: &Self) -> bool {
-        self.replication_id == other.replication_id && self.x == other.x && self.y == other.y
+        self.replication_id == other.replication_id
+            && self.x == other.x
+            && self.y == other.y
+            && self.rotation == other.rotation
+            && self.health == other.health
+            && self.energy == other.energy
+            && self.entity_type == other.entity_type
     }
 }
 
@@ -189,6 +196,12 @@ fn entity_snapshot_into_proto_msg(entity: EntitySnapshot) -> ServerMessage_Entit
     if let Some(energy) = entity.energy {
         single_data.set_energy(energy.into())
     };
+
+    // TODO add state
+    //if let Some(state) = entity.state {
+    //
+    //}
+
     if let Some(entity_type) = entity.entity_type {
         let mut type_data = ServerMessage_EntityTypeData::new();
 

@@ -8,6 +8,8 @@ use crate::engine::events::{game_event::GameEvent, timed_event::TimedEvent};
 use crate::engine::messaging::messages::{GameMessage, OutMessage, OutTarget};
 use crate::engine::network::delta_encoder::SnapshotHistory;
 
+use crate::engine::input_command::*;
+
 pub mod archetypes;
 pub mod game_loop;
 pub mod init;
@@ -46,7 +48,6 @@ impl Game {
         out_unreliable: Sender<(OutTarget, OutMessage)>,
         game_in: Receiver<GameMessage>,
     ) -> Self {
-        let replicated_entities = HashMap::new();
         Self {
             tick_time,
             world: Universe::new().create_world(),
@@ -59,9 +60,9 @@ impl Game {
             replication_counter: 0,
             game_events: VecDeque::new(),
             player_snapshot_histories: HashMap::new(),
-            executor: Executor::new(init::init_systems(tick_time, &replicated_entities)),
+            executor: Executor::new(init::init_systems(tick_time)),
             timed_events: BinaryHeap::new(),
-            replicated_entities: replicated_entities,
+            replicated_entities: HashMap::new(),
             player_inputs: HashMap::new(),
         }
     }
@@ -70,5 +71,35 @@ impl Game {
         let out = self.replication_counter;
         self.replication_counter += 1;
         ReplicationId(out)
+    }
+}
+
+impl InputCommand {
+    pub fn into_game(
+        self,
+        replicated_entities: &HashMap<ReplicationId, Entity>,
+    ) -> InputCommandGame {
+        match self {
+            InputCommand::Move(a, b) => InputCommandGame::Move(a, b),
+            InputCommand::MoveDelta(a) => InputCommandGame::MoveDelta(a),
+            InputCommand::Attack(entity) => {
+                if let Some(target) = replicated_entities.get(&ReplicationId(entity)) {
+                    InputCommandGame::Attack(*target)
+                } else {
+                    InputCommandGame::Invalid
+                }
+            }
+            InputCommand::Stop => InputCommandGame::Stop,
+            InputCommand::Recall => InputCommandGame::Recall,
+            InputCommand::UseAbility(a) => InputCommandGame::UseAbility(a),
+            InputCommand::UseAimedAbility(a, b) => InputCommandGame::UseAimedAbility(a, b),
+            InputCommand::UseTargetedAbility(a, entity) => {
+                if let Some(target) = replicated_entities.get(&ReplicationId(entity)) {
+                    InputCommandGame::UseTargetedAbility(a, *target)
+                } else {
+                    InputCommandGame::Invalid
+                }
+            }
+        }
     }
 }

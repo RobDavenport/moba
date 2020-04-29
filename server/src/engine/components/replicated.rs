@@ -19,6 +19,7 @@ impl Replicated {
 pub struct ReplicationId(pub u32);
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[allow(dead_code)]
 pub enum ReplicatedEntityType {
     Character,
     Minion,

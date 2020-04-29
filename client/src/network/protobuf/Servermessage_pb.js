@@ -14,7 +14,9 @@ var global = Function('return this')();
 
 goog.exportSymbol('proto.ServerMessage', null, global);
 goog.exportSymbol('proto.ServerMessage.EntityData', null, global);
+goog.exportSymbol('proto.ServerMessage.EntityData.EntityState', null, global);
 goog.exportSymbol('proto.ServerMessage.EntityData.OptionEnergyCase', null, global);
+goog.exportSymbol('proto.ServerMessage.EntityData.OptionEntityStateCase', null, global);
 goog.exportSymbol('proto.ServerMessage.EntityData.OptionEntityTypeDataCase', null, global);
 goog.exportSymbol('proto.ServerMessage.EntityData.OptionHealthCase', null, global);
 goog.exportSymbol('proto.ServerMessage.EntityData.OptionRotationCase', null, global);
@@ -1332,7 +1334,7 @@ proto.ServerMessage.Snapshot.prototype.clearEntitydataList = function() {
  * @private {!Array<!Array<number>>}
  * @const
  */
-proto.ServerMessage.EntityData.oneofGroups_ = [[2],[3],[4],[5],[6],[7]];
+proto.ServerMessage.EntityData.oneofGroups_ = [[2],[3],[4],[5],[6],[7],[8]];
 
 /**
  * @enum {number}
@@ -1412,16 +1414,31 @@ proto.ServerMessage.EntityData.prototype.getOptionEnergyCase = function() {
 /**
  * @enum {number}
  */
+proto.ServerMessage.EntityData.OptionEntityStateCase = {
+  OPTION_ENTITY_STATE_NOT_SET: 0,
+  ENTITYSTATE: 7
+};
+
+/**
+ * @return {proto.ServerMessage.EntityData.OptionEntityStateCase}
+ */
+proto.ServerMessage.EntityData.prototype.getOptionEntityStateCase = function() {
+  return /** @type {proto.ServerMessage.EntityData.OptionEntityStateCase} */(jspb.Message.computeOneofCase(this, proto.ServerMessage.EntityData.oneofGroups_[5]));
+};
+
+/**
+ * @enum {number}
+ */
 proto.ServerMessage.EntityData.OptionEntityTypeDataCase = {
   OPTION_ENTITY_TYPE_DATA_NOT_SET: 0,
-  ENTITYTYPEDATA: 7
+  ENTITYTYPEDATA: 8
 };
 
 /**
  * @return {proto.ServerMessage.EntityData.OptionEntityTypeDataCase}
  */
 proto.ServerMessage.EntityData.prototype.getOptionEntityTypeDataCase = function() {
-  return /** @type {proto.ServerMessage.EntityData.OptionEntityTypeDataCase} */(jspb.Message.computeOneofCase(this, proto.ServerMessage.EntityData.oneofGroups_[5]));
+  return /** @type {proto.ServerMessage.EntityData.OptionEntityTypeDataCase} */(jspb.Message.computeOneofCase(this, proto.ServerMessage.EntityData.oneofGroups_[6]));
 };
 
 
@@ -1461,6 +1478,7 @@ proto.ServerMessage.EntityData.toObject = function(includeInstance, msg) {
     rotation: jspb.Message.getFieldWithDefault(msg, 4, 0),
     health: jspb.Message.getFieldWithDefault(msg, 5, 0),
     energy: jspb.Message.getFieldWithDefault(msg, 6, 0),
+    entitystate: jspb.Message.getFieldWithDefault(msg, 7, 0),
     entitytypedata: (f = msg.getEntitytypedata()) && proto.ServerMessage.EntityTypeData.toObject(includeInstance, f)
   };
 
@@ -1523,6 +1541,10 @@ proto.ServerMessage.EntityData.deserializeBinaryFromReader = function(msg, reade
       msg.setEnergy(value);
       break;
     case 7:
+      var value = /** @type {!proto.ServerMessage.EntityData.EntityState} */ (reader.readEnum());
+      msg.setEntitystate(value);
+      break;
+    case 8:
       var value = new proto.ServerMessage.EntityTypeData;
       reader.readMessage(value,proto.ServerMessage.EntityTypeData.deserializeBinaryFromReader);
       msg.setEntitytypedata(value);
@@ -1598,16 +1620,33 @@ proto.ServerMessage.EntityData.serializeBinaryToWriter = function(message, write
       f
     );
   }
+  f = /** @type {!proto.ServerMessage.EntityData.EntityState} */ (jspb.Message.getField(message, 7));
+  if (f != null) {
+    writer.writeEnum(
+      7,
+      f
+    );
+  }
   f = message.getEntitytypedata();
   if (f != null) {
     writer.writeMessage(
-      7,
+      8,
       f,
       proto.ServerMessage.EntityTypeData.serializeBinaryToWriter
     );
   }
 };
 
+
+/**
+ * @enum {number}
+ */
+proto.ServerMessage.EntityData.EntityState = {
+  IDLE: 0,
+  WALKING: 1,
+  ATTACK_WIND: 2,
+  ATTACK_COOLDOWN: 3
+};
 
 /**
  * optional uint32 replicationId = 1;
@@ -1808,12 +1847,48 @@ proto.ServerMessage.EntityData.prototype.hasEnergy = function() {
 
 
 /**
- * optional EntityTypeData entityTypeData = 7;
+ * optional EntityState entityState = 7;
+ * @return {!proto.ServerMessage.EntityData.EntityState}
+ */
+proto.ServerMessage.EntityData.prototype.getEntitystate = function() {
+  return /** @type {!proto.ServerMessage.EntityData.EntityState} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
+};
+
+
+/**
+ * @param {!proto.ServerMessage.EntityData.EntityState} value
+ * @return {!proto.ServerMessage.EntityData} returns this
+ */
+proto.ServerMessage.EntityData.prototype.setEntitystate = function(value) {
+  return jspb.Message.setOneofField(this, 7, proto.ServerMessage.EntityData.oneofGroups_[5], value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.ServerMessage.EntityData} returns this
+ */
+proto.ServerMessage.EntityData.prototype.clearEntitystate = function() {
+  return jspb.Message.setOneofField(this, 7, proto.ServerMessage.EntityData.oneofGroups_[5], undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.ServerMessage.EntityData.prototype.hasEntitystate = function() {
+  return jspb.Message.getField(this, 7) != null;
+};
+
+
+/**
+ * optional EntityTypeData entityTypeData = 8;
  * @return {?proto.ServerMessage.EntityTypeData}
  */
 proto.ServerMessage.EntityData.prototype.getEntitytypedata = function() {
   return /** @type{?proto.ServerMessage.EntityTypeData} */ (
-    jspb.Message.getWrapperField(this, proto.ServerMessage.EntityTypeData, 7));
+    jspb.Message.getWrapperField(this, proto.ServerMessage.EntityTypeData, 8));
 };
 
 
@@ -1822,7 +1897,7 @@ proto.ServerMessage.EntityData.prototype.getEntitytypedata = function() {
  * @return {!proto.ServerMessage.EntityData} returns this
 */
 proto.ServerMessage.EntityData.prototype.setEntitytypedata = function(value) {
-  return jspb.Message.setOneofWrapperField(this, 7, proto.ServerMessage.EntityData.oneofGroups_[5], value);
+  return jspb.Message.setOneofWrapperField(this, 8, proto.ServerMessage.EntityData.oneofGroups_[6], value);
 };
 
 
@@ -1840,7 +1915,7 @@ proto.ServerMessage.EntityData.prototype.clearEntitytypedata = function() {
  * @return {boolean}
  */
 proto.ServerMessage.EntityData.prototype.hasEntitytypedata = function() {
-  return jspb.Message.getField(this, 7) != null;
+  return jspb.Message.getField(this, 8) != null;
 };
 
 

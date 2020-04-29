@@ -46,8 +46,18 @@ message ServerMessage {
       sint32 energy = 6;
     }
 
+    oneof option_entity_state {
+      EntityState entityState = 7;
+    }
+    enum EntityState {
+      IDLE = 0;
+      WALKING = 1;
+      ATTACK_WIND = 2;
+      ATTACK_COOLDOWN = 3;
+    }
+
     oneof option_entity_type_data {
-      EntityTypeData entityTypeData = 7;
+      EntityTypeData entityTypeData = 8;
     }
   }
 

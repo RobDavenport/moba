@@ -11,6 +11,25 @@ pub struct Attacking {
     pub target: Option<Entity>,
 }
 
+impl Attacking {
+    pub fn new(
+        range: f32,
+        reload_time: f32,
+        wind_up_time: f32,
+        attacking_type: AttackingType,
+    ) -> Self {
+        Self {
+            range,
+            reload_time,
+            wind_up_time,
+            state: AttackingState::Ready,
+            attacking_type,
+            timer: 0.,
+            target: None,
+        }
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[allow(dead_code)]
 pub enum AttackingState {
@@ -20,6 +39,7 @@ pub enum AttackingState {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[allow(dead_code)]
 pub enum AttackingType {
     Instant,
     Projectile, //TODO

@@ -202,6 +202,11 @@ export namespace ServerMessage {
     getEnergy(): number;
     setEnergy(value: number): void;
 
+    hasEntitystate(): boolean;
+    clearEntitystate(): void;
+    getEntitystate(): ServerMessage.EntityData.EntityStateMap[keyof ServerMessage.EntityData.EntityStateMap];
+    setEntitystate(value: ServerMessage.EntityData.EntityStateMap[keyof ServerMessage.EntityData.EntityStateMap]): void;
+
     hasEntitytypedata(): boolean;
     clearEntitytypedata(): void;
     getEntitytypedata(): ServerMessage.EntityTypeData | undefined;
@@ -212,6 +217,7 @@ export namespace ServerMessage {
     getOptionRotationCase(): EntityData.OptionRotationCase;
     getOptionHealthCase(): EntityData.OptionHealthCase;
     getOptionEnergyCase(): EntityData.OptionEnergyCase;
+    getOptionEntityStateCase(): EntityData.OptionEntityStateCase;
     getOptionEntityTypeDataCase(): EntityData.OptionEntityTypeDataCase;
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): EntityData.AsObject;
@@ -231,8 +237,18 @@ export namespace ServerMessage {
       rotation: number,
       health: number,
       energy: number,
+      entitystate: ServerMessage.EntityData.EntityStateMap[keyof ServerMessage.EntityData.EntityStateMap],
       entitytypedata?: ServerMessage.EntityTypeData.AsObject,
     }
+
+    export interface EntityStateMap {
+      IDLE: 0;
+      WALKING: 1;
+      ATTACK_WIND: 2;
+      ATTACK_COOLDOWN: 3;
+    }
+
+    export const EntityState: EntityStateMap;
 
     export enum OptionXCase {
       OPTION_X_NOT_SET = 0,
@@ -259,9 +275,14 @@ export namespace ServerMessage {
       ENERGY = 6,
     }
 
+    export enum OptionEntityStateCase {
+      OPTION_ENTITY_STATE_NOT_SET = 0,
+      ENTITYSTATE = 7,
+    }
+
     export enum OptionEntityTypeDataCase {
       OPTION_ENTITY_TYPE_DATA_NOT_SET = 0,
-      ENTITYTYPEDATA = 7,
+      ENTITYTYPEDATA = 8,
     }
   }
 

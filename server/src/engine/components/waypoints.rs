@@ -1,5 +1,6 @@
 use glam::Vec2;
 
+#[allow(dead_code)]
 pub struct Waypoints {
     waypoints: Vec<Vec2>,
 }

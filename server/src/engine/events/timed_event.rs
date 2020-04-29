@@ -1,7 +1,5 @@
 use core::cmp::Ordering;
 
-use legion::prelude::*;
-
 use super::event_data::EventData;
 use crate::engine::game::Game;
 

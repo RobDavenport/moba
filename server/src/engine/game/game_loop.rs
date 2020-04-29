@@ -43,7 +43,6 @@ impl Game {
 
                 self.broadcast_state().await;
             }
-
             ticker.tick().await;
         }
     }
@@ -70,9 +69,18 @@ impl Game {
     }
 
     fn handle_input_command(&mut self, id: PlayerId, command: InputCommand) {
-        if let Some(mut recieve_input) = self.player_inputs.get_mut(&id) {
-            recieve_input.next_command = Some(command)
-        };
+        if let Some(mut input) = self.player_inputs.get_mut(&id) {
+            input.next_command = Some(command.into_game(&self.replicated_entities))
+        }
+        // if let Some(player_entity) = self.player_entities.get_mut(&id) {
+        //     if let Some(mut input) = self
+        //         .world
+        //         .get_component_mut::<ReceiveInputs>(*player_entity)
+        //     {
+        //         input.next_command = Some(command.into_game(&self.replicated_entities));
+        //         println!("got inputs safely");
+        //     }
+        // };
     }
 
     fn on_client_connected(&mut self, player_id: PlayerId) {
@@ -98,15 +106,15 @@ impl Game {
     }
 
     async fn broadcast_state(&mut self) {
-        let query = <(Read<Transform>, Read<Replicated>)>::query();
+        let query = <(Read<Position>, Read<Rotation>, Read<Replicated>)>::query();
 
         let mut entities: Vec<EntitySnapshot> = query
             .iter(&mut self.world)
-            .map(|(transform, replicated)| EntitySnapshot {
+            .map(|(transform, rotation, replicated)| EntitySnapshot {
                 replication_id: replicated.id,
-                x: Some(transform.position.x().into()),
-                y: Some(transform.position.y().into()),
-                rotation: Some(transform.rotation.into()),
+                x: Some(transform.0.x().into()),
+                y: Some(transform.0.y().into()),
+                rotation: Some(rotation.0.into()),
                 health: None, //TODO
                 energy: None, //TODO
                 entity_type: Some(replicated.entity_type),
