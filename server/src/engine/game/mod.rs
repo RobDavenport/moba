@@ -11,11 +11,14 @@ use crate::engine::network::delta_encoder::SnapshotHistory;
 pub mod archetypes;
 pub mod game_loop;
 pub mod init;
+pub mod input;
+use input::InputQueue;
 
 pub mod prelude {
     pub use super::archetypes::*;
     pub use super::game_loop::*;
     pub use super::init::*;
+    pub use super::input::*;
 }
 
 pub struct Game {
@@ -28,6 +31,8 @@ pub struct Game {
     game_in: Receiver<GameMessage>,
     player_entities: HashMap<PlayerId, Entity>,
     player_snapshot_histories: HashMap<PlayerId, SnapshotHistory>,
+    player_inputs: HashMap<PlayerId, InputQueue>,
+    replicated_entities: HashMap<ReplicationId, Entity>,
     replication_counter: u32,
     game_events: VecDeque<GameEvent>,
     timed_events: BinaryHeap<TimedEvent>,
@@ -41,6 +46,7 @@ impl Game {
         out_unreliable: Sender<(OutTarget, OutMessage)>,
         game_in: Receiver<GameMessage>,
     ) -> Self {
+        let replicated_entities = HashMap::new();
         Self {
             tick_time,
             world: Universe::new().create_world(),
@@ -53,8 +59,10 @@ impl Game {
             replication_counter: 0,
             game_events: VecDeque::new(),
             player_snapshot_histories: HashMap::new(),
-            executor: Executor::new(init::init_systems(tick_time)),
+            executor: Executor::new(init::init_systems(tick_time, &replicated_entities)),
             timed_events: BinaryHeap::new(),
+            replicated_entities: replicated_entities,
+            player_inputs: HashMap::new(),
         }
     }
 

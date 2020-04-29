@@ -12,10 +12,12 @@ export default class MobaEngine {
   private net: NetworkManager
   private gameWindow: MobaWindow
   private entities: Map<number, Mesh>
+  public meshes: Map<Mesh, number>
   private lastUpdateFrame: number
 
   constructor(gameWindow: MobaWindow) {
     this.entities = new Map()
+    this.meshes = new Map()
     this.net = new NetworkManager(this)
     this.gameWindow = gameWindow
   }
@@ -57,6 +59,7 @@ export default class MobaEngine {
       material.diffuseColor = new Color3(0, 1, 0)
       character.material = material
       this.entities.set(id, character)
+      this.meshes.set(character, id)
       entity = character;
     }
 
@@ -71,9 +74,22 @@ export default class MobaEngine {
   }
 
   onMoveDown() {
-    const result = this.gameWindow.getPointerPositionWorld()
-    if (result !== undefined) {
-      this.net.sendMoveCommand(result, false)
+    const attackResult = this.gameWindow.getAttackEntity()
+    if (attackResult !== undefined) {
+      let targetId = this.meshes.get(attackResult as Mesh)
+      if (targetId !== undefined) {
+        console.log("mesh found")
+        this.net.sendAttackCommand(targetId)
+      } else {
+        console.log("mesh not found")
+      }
+
+      return
+    }
+
+    const moveResult = this.gameWindow.getPointerPositionWorld()
+    if (moveResult !== undefined) {
+      this.net.sendMoveCommand(moveResult, false)
     }
   }
 

@@ -21,11 +21,10 @@ pub fn handle_client_command(command_msg: Command, id: PlayerId) -> Option<GameM
             println!("TODO: Ability");
             None
         }
-        Some(Command_oneof_command::attack(_cmd)) => {
-            // TODO: THIS
-            println!("TODO: Attack");
-            None
-        }
+        Some(Command_oneof_command::attack(cmd)) => Some(GameMessage::InputCommand {
+            id,
+            command: InputCommand::Attack(cmd.target),
+        }),
         Some(Command_oneof_command::stop(_cmd)) => Some(GameMessage::InputCommand {
             id,
             command: InputCommand::Stop,

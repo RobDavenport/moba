@@ -1,6 +1,7 @@
 use glam::Vec2;
 use legion::prelude::*;
 
+use super::helpers;
 use crate::engine::components::all::*;
 
 // TODO:
@@ -21,8 +22,13 @@ pub fn pawn_move(tick_time: f32) -> Box<dyn Schedulable> {
             for (mut transform, mut moving) in query.iter(&mut world) {
                 match moving.target {
                     MoveTarget::Location(location) => {
-                        if move_to_location(&mut transform, location, moving.base_speed, tick_time)
-                        {
+                        helpers::look_at_location(&mut transform, location);
+                        if helpers::move_to_location(
+                            &mut transform,
+                            location,
+                            moving.base_speed,
+                            tick_time,
+                        ) {
                             moving.target = MoveTarget::None;
                         }
                     }
@@ -33,27 +39,4 @@ pub fn pawn_move(tick_time: f32) -> Box<dyn Schedulable> {
                 }
             }
         })
-}
-
-// Returns true if we reached the destination
-fn move_to_location(
-    transform: &mut Transform,
-    location: Vec2,
-    movement_speed: f32,
-    tick_time: f32,
-) -> bool {
-    let distance = location - transform.position;
-    transform.rotation = distance.x().atan2(distance.y()) * (180.0 / std::f32::consts::PI);
-    let travel_distance = movement_speed * tick_time;
-
-    if distance.length() > travel_distance {
-        let direction = distance.normalize();
-        let travel_vec = direction * travel_distance;
-        transform.position += travel_vec;
-        false
-    } else {
-        //It's closer than we can travel in a frame, so just set the position
-        transform.position = location;
-        true
-    }
 }

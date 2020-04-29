@@ -1,4 +1,4 @@
-use crate::engine::components::all::{PlayerId, ReplicationId, ReplicatedEntityType};
+use crate::engine::components::all::{PlayerId, ReplicatedEntityType, ReplicationId};
 use std::cmp::Ordering;
 
 //Messages that are broadcasted from the Server to Game Clients only
@@ -31,7 +31,7 @@ pub struct EntitySnapshot {
     pub rotation: Option<NetworkedFloat>,
     pub health: Option<NetworkedFloat>,
     pub energy: Option<NetworkedFloat>,
-    pub entity_type: Option<ReplicatedEntityType>
+    pub entity_type: Option<ReplicatedEntityType>,
 }
 
 impl Ord for EntitySnapshot {
@@ -191,21 +191,21 @@ fn entity_snapshot_into_proto_msg(entity: EntitySnapshot) -> ServerMessage_Entit
     };
     if let Some(entity_type) = entity.entity_type {
         let mut type_data = ServerMessage_EntityTypeData::new();
-        
+
         //TODO Finish these as more data comes
         match entity_type {
             ReplicatedEntityType::Character => {
                 type_data.set_characterData(ServerMessage_EntityTypeData_CharacterData::new())
-            },
+            }
             ReplicatedEntityType::Minion => {
                 type_data.set_minionData(ServerMessage_EntityTypeData_MinionData::new())
-            },
+            }
             ReplicatedEntityType::Tower => {
                 type_data.set_towerData(ServerMessage_EntityTypeData_TowerData::new())
-            },
+            }
             ReplicatedEntityType::Core => {
                 type_data.set_coreData(ServerMessage_EntityTypeData_CoreData::new())
-            },
+            }
         };
 
         single_data.set_entityTypeData(type_data);

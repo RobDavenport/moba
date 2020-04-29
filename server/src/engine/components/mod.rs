@@ -8,7 +8,6 @@ pub mod moving;
 pub mod owned;
 pub mod player_controlled;
 pub mod provides_vision;
-pub mod receive_input;
 pub mod replicated;
 pub mod respawns;
 pub mod search_hostile;
@@ -30,7 +29,6 @@ pub mod all {
     pub use super::owned::*;
     pub use super::player_controlled::*;
     pub use super::provides_vision::*;
-    pub use super::receive_input::*;
     pub use super::replicated::*;
     pub use super::respawns::*;
     pub use super::search_hostile::*;

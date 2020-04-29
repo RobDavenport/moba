@@ -1,12 +1,13 @@
+use std::collections::HashMap;
 use std::iter::*;
 
 use legion::prelude::*;
 
+use super::Game;
+use crate::engine::components::replicated::ReplicationId;
 use crate::engine::resources::character_data::*;
 use crate::engine::resources::map_data::*;
 use crate::engine::systems::*;
-
-use super::Game;
 
 impl Game {
     pub fn init_game(&mut self, map_data: MapData, characters: Vec<CharacterData>) -> &mut Self {
@@ -45,13 +46,16 @@ impl Game {
     }
 }
 
-pub fn init_systems(tick_time: f32) -> Vec<Box<dyn Schedulable>> {
+pub fn init_systems(
+    tick_time: f32,
+    replicated_entities: &HashMap<ReplicationId, Entity>,
+) -> Vec<Box<dyn Schedulable>> {
     let mut out = Vec::new();
 
     println!("Initialized game systems with tick time of {}s", tick_time);
 
-    out.push(pawn_input::pawn_input());
     out.push(pawn_move::pawn_move(tick_time));
+    out.push(pawn_attack::pawn_attack(tick_time));
 
     out
 }

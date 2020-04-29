@@ -2,8 +2,8 @@ use core::cmp::Ordering;
 
 use legion::prelude::*;
 
-use crate::engine::game::Game;
 use super::event_data::EventData;
+use crate::engine::game::Game;
 
 pub struct TimedEvent {
     pub event_type: TimedEventType,

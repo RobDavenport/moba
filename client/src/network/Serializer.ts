@@ -58,3 +58,16 @@ export function createRecall() {
 
   return clientMessage.serializeBinary()
 }
+
+export function createAttack(targetId: number) {
+  let clientMessage = new ClientMessage()
+  let command = new Command()
+
+  let attackCommand = new Command.Attack()
+  attackCommand.setTarget(targetId)
+
+  command.setAttack(attackCommand)
+  clientMessage.setCommand(command)
+
+  return clientMessage.serializeBinary()
+}

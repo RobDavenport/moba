@@ -15,7 +15,7 @@ impl Replicated {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ReplicationId(pub u32);
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -23,5 +23,5 @@ pub enum ReplicatedEntityType {
     Character,
     Minion,
     Tower,
-    Core
+    Core,
 }

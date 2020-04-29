@@ -153,17 +153,32 @@ export default class MobaWindow {
     })
   }
 
-  rightClickPredicate(mesh: Mesh) {
-    return mesh == this.ground
+  // TODO: Move these meshes into Engine
+  moveClickPredicate(mesh: Mesh) {
+    return mesh === this.ground
   }
 
   getPointerPositionWorld() {
-    const result = this.scene.pick(this.cursor.leftInPixels, this.cursor.topInPixels, this.rightClickPredicate.bind(this), true)
+    const result = this.scene.pick(this.cursor.leftInPixels, this.cursor.topInPixels, this.moveClickPredicate.bind(this), true)
     if (result.hit) {
       return new Vector2(result.pickedPoint.x, result.pickedPoint.z)
     } else {
       return undefined
     }
+  }
+
+  entityClickPredicate(mesh: Mesh) {
+    return this.gameEngine.meshes.has(mesh)
+  }
+
+  getAttackEntity() {
+    const result = this.scene.pick(this.cursor.leftInPixels, this.cursor.topInPixels, this.entityClickPredicate.bind(this), true)
+    if (result.hit) {
+      return result.pickedMesh
+    } else {
+      return undefined
+    }
+
   }
 
   // CAMERA CONTROLS

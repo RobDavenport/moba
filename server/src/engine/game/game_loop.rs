@@ -31,6 +31,8 @@ impl Game {
                 self.handle_message(game_message);
             }
 
+            self.input_tick();
+
             if accumulator > self.tick_time {
                 while accumulator > self.tick_time {
                     self.game_frame += 1;
@@ -68,10 +70,7 @@ impl Game {
     }
 
     fn handle_input_command(&mut self, id: PlayerId, command: InputCommand) {
-        if let Some(mut recieve_input) = self
-            .world
-            .get_component_mut::<ReceiveInput>(*self.player_entities.get(&id).unwrap())
-        {
+        if let Some(mut recieve_input) = self.player_inputs.get_mut(&id) {
             recieve_input.next_command = Some(command)
         };
     }
@@ -166,10 +165,12 @@ impl Game {
             } else {
                 break;
             }
-        };
+        }
 
         execute_events.into_iter().for_each(|e| (e.execute)(self));
-        next_events.into_iter().for_each(|e| self.timed_events.push(e));
+        next_events
+            .into_iter()
+            .for_each(|e| self.timed_events.push(e));
 
         // Normal "Game Events" Vec
         for event in self.game_events.drain(..) {

@@ -129,6 +129,10 @@ export default class NetworkManager {
     this.sendReliable(Serializer.createMove(point, isAttackMove))
   }
 
+  sendAttackCommand(target: number) {
+    this.sendReliable(Serializer.createAttack(target))
+  }
+
   sendStopCommand() {
     this.sendReliable(Serializer.createStop())
   }

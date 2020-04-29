@@ -64,7 +64,6 @@ message ServerMessage {
 
       oneof option_energy_type {
         EnergyType energyType = 3;
-        //TODO - mana, energy, none, etc
       }
       enum EnergyType {
         NONE = 0;

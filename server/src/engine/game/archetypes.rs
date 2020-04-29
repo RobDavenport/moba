@@ -2,16 +2,19 @@ use glam::Vec2;
 use legion::prelude::*;
 
 use super::Game;
+use super::InputQueue;
 use crate::engine::components::all::*;
 use crate::engine::events::timed_event::*;
 use crate::engine::resources::map_data::*;
 
 impl Game {
     pub fn insert_cores(&mut self, cores: Vec<(usize, CoreData)>) {
+        let mut replication_ids = Vec::new();
         let component_set = cores
             .into_iter()
             .map(|(team_id, core)| {
                 let replicated = Replicated::new_for_game(self, ReplicatedEntityType::Core);
+                replication_ids.push(replicated.id.clone());
                 (
                     Transform::new(core.pos, None, None),
                     Team::new(TeamId(team_id as u32)),
@@ -24,14 +27,19 @@ impl Game {
             })
             .collect::<Vec<_>>();
 
-        self.world.insert((), component_set);
+        let inserted_entities = self.world.insert((), component_set);
+        for (id, entity) in replication_ids.into_iter().zip(inserted_entities) {
+            self.replicated_entities.insert(id, *entity);
+        }
     }
 
     pub fn insert_towers(&mut self, towers: Vec<(usize, TowerData)>) {
+        let mut replication_ids = Vec::new();
         let component_set = towers
             .into_iter()
             .map(|(team_id, tower)| {
                 let replicated = Replicated::new_for_game(self, ReplicatedEntityType::Tower);
+                replication_ids.push(replicated.id.clone());
                 (
                     Transform::new(tower.pos, None, None),
                     // TODO
@@ -47,7 +55,10 @@ impl Game {
             })
             .collect::<Vec<_>>();
 
-        self.world.insert((), component_set);
+        let inserted_entities = self.world.insert((), component_set);
+        for (id, entity) in replication_ids.into_iter().zip(inserted_entities) {
+            self.replicated_entities.insert(id, *entity);
+        }
     }
 
     pub fn insert_spawners(&mut self, spawners: Vec<(usize, SpawnerData)>) {
@@ -76,7 +87,7 @@ impl Game {
 
     pub fn insert_player(&mut self, player_id: PlayerId) -> Entity {
         let replicated = Replicated::new_for_game(self, ReplicatedEntityType::Character);
-        *self
+        let entity = self
             .world
             .insert(
                 (),
@@ -88,10 +99,25 @@ impl Game {
                         base_speed: 125.,
                         target: MoveTarget::None,
                     },
-                    ReceiveInput::new(),
+                    Attacking {
+                        attacking_type: AttackingType::Projectile,
+                        range: 50.,
+                        reload_time: 1.,
+                        state: AttackingState::Ready,
+                        target: None,
+                        timer: 0.,
+                        wind_up_time: 0.25,
+                    },
                 )),
             )
             .first()
-            .unwrap()
+            .unwrap();
+
+        self.replicated_entities
+            .insert(replicated.id.clone(), *entity);
+
+        self.player_inputs.insert(player_id, InputQueue::new());
+
+        *entity
     }
 }
