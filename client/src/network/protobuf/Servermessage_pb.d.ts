@@ -192,9 +192,27 @@ export namespace ServerMessage {
     getRotation(): number;
     setRotation(value: number): void;
 
+    hasHealth(): boolean;
+    clearHealth(): void;
+    getHealth(): number;
+    setHealth(value: number): void;
+
+    hasEnergy(): boolean;
+    clearEnergy(): void;
+    getEnergy(): number;
+    setEnergy(value: number): void;
+
+    hasEntitytypedata(): boolean;
+    clearEntitytypedata(): void;
+    getEntitytypedata(): ServerMessage.EntityTypeData | undefined;
+    setEntitytypedata(value?: ServerMessage.EntityTypeData): void;
+
     getOptionXCase(): EntityData.OptionXCase;
     getOptionYCase(): EntityData.OptionYCase;
     getOptionRotationCase(): EntityData.OptionRotationCase;
+    getOptionHealthCase(): EntityData.OptionHealthCase;
+    getOptionEnergyCase(): EntityData.OptionEnergyCase;
+    getOptionEntityTypeDataCase(): EntityData.OptionEntityTypeDataCase;
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): EntityData.AsObject;
     static toObject(includeInstance: boolean, msg: EntityData): EntityData.AsObject;
@@ -211,6 +229,9 @@ export namespace ServerMessage {
       x: number,
       y: number,
       rotation: number,
+      health: number,
+      energy: number,
+      entitytypedata?: ServerMessage.EntityTypeData.AsObject,
     }
 
     export enum OptionXCase {
@@ -226,6 +247,178 @@ export namespace ServerMessage {
     export enum OptionRotationCase {
       OPTION_ROTATION_NOT_SET = 0,
       ROTATION = 4,
+    }
+
+    export enum OptionHealthCase {
+      OPTION_HEALTH_NOT_SET = 0,
+      HEALTH = 5,
+    }
+
+    export enum OptionEnergyCase {
+      OPTION_ENERGY_NOT_SET = 0,
+      ENERGY = 6,
+    }
+
+    export enum OptionEntityTypeDataCase {
+      OPTION_ENTITY_TYPE_DATA_NOT_SET = 0,
+      ENTITYTYPEDATA = 7,
+    }
+  }
+
+  export class EntityTypeData extends jspb.Message {
+    hasCharacterdata(): boolean;
+    clearCharacterdata(): void;
+    getCharacterdata(): ServerMessage.EntityTypeData.CharacterData | undefined;
+    setCharacterdata(value?: ServerMessage.EntityTypeData.CharacterData): void;
+
+    hasMiniondata(): boolean;
+    clearMiniondata(): void;
+    getMiniondata(): ServerMessage.EntityTypeData.MinionData | undefined;
+    setMiniondata(value?: ServerMessage.EntityTypeData.MinionData): void;
+
+    hasTowerdata(): boolean;
+    clearTowerdata(): void;
+    getTowerdata(): ServerMessage.EntityTypeData.TowerData | undefined;
+    setTowerdata(value?: ServerMessage.EntityTypeData.TowerData): void;
+
+    hasCoredata(): boolean;
+    clearCoredata(): void;
+    getCoredata(): ServerMessage.EntityTypeData.CoreData | undefined;
+    setCoredata(value?: ServerMessage.EntityTypeData.CoreData): void;
+
+    getEntitydataCase(): EntityTypeData.EntitydataCase;
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): EntityTypeData.AsObject;
+    static toObject(includeInstance: boolean, msg: EntityTypeData): EntityTypeData.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: EntityTypeData, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): EntityTypeData;
+    static deserializeBinaryFromReader(message: EntityTypeData, reader: jspb.BinaryReader): EntityTypeData;
+  }
+
+  export namespace EntityTypeData {
+    export type AsObject = {
+      characterdata?: ServerMessage.EntityTypeData.CharacterData.AsObject,
+      miniondata?: ServerMessage.EntityTypeData.MinionData.AsObject,
+      towerdata?: ServerMessage.EntityTypeData.TowerData.AsObject,
+      coredata?: ServerMessage.EntityTypeData.CoreData.AsObject,
+    }
+
+    export class CharacterData extends jspb.Message {
+      hasMaxhealth(): boolean;
+      clearMaxhealth(): void;
+      getMaxhealth(): number;
+      setMaxhealth(value: number): void;
+
+      hasMaxenergy(): boolean;
+      clearMaxenergy(): void;
+      getMaxenergy(): number;
+      setMaxenergy(value: number): void;
+
+      hasEnergytype(): boolean;
+      clearEnergytype(): void;
+      getEnergytype(): ServerMessage.EntityTypeData.CharacterData.EnergyTypeMap[keyof ServerMessage.EntityTypeData.CharacterData.EnergyTypeMap];
+      setEnergytype(value: ServerMessage.EntityTypeData.CharacterData.EnergyTypeMap[keyof ServerMessage.EntityTypeData.CharacterData.EnergyTypeMap]): void;
+
+      getOptionMaxHealthCase(): CharacterData.OptionMaxHealthCase;
+      getOptionMaxEnergyCase(): CharacterData.OptionMaxEnergyCase;
+      getOptionEnergyTypeCase(): CharacterData.OptionEnergyTypeCase;
+      serializeBinary(): Uint8Array;
+      toObject(includeInstance?: boolean): CharacterData.AsObject;
+      static toObject(includeInstance: boolean, msg: CharacterData): CharacterData.AsObject;
+      static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+      static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+      static serializeBinaryToWriter(message: CharacterData, writer: jspb.BinaryWriter): void;
+      static deserializeBinary(bytes: Uint8Array): CharacterData;
+      static deserializeBinaryFromReader(message: CharacterData, reader: jspb.BinaryReader): CharacterData;
+    }
+
+    export namespace CharacterData {
+      export type AsObject = {
+        maxhealth: number,
+        maxenergy: number,
+        energytype: ServerMessage.EntityTypeData.CharacterData.EnergyTypeMap[keyof ServerMessage.EntityTypeData.CharacterData.EnergyTypeMap],
+      }
+
+      export interface EnergyTypeMap {
+        NONE: 0;
+        MANA: 1;
+        ENERGY: 2;
+      }
+
+      export const EnergyType: EnergyTypeMap;
+
+      export enum OptionMaxHealthCase {
+        OPTION_MAX_HEALTH_NOT_SET = 0,
+        MAXHEALTH = 1,
+      }
+
+      export enum OptionMaxEnergyCase {
+        OPTION_MAX_ENERGY_NOT_SET = 0,
+        MAXENERGY = 2,
+      }
+
+      export enum OptionEnergyTypeCase {
+        OPTION_ENERGY_TYPE_NOT_SET = 0,
+        ENERGYTYPE = 3,
+      }
+    }
+
+    export class MinionData extends jspb.Message {
+      serializeBinary(): Uint8Array;
+      toObject(includeInstance?: boolean): MinionData.AsObject;
+      static toObject(includeInstance: boolean, msg: MinionData): MinionData.AsObject;
+      static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+      static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+      static serializeBinaryToWriter(message: MinionData, writer: jspb.BinaryWriter): void;
+      static deserializeBinary(bytes: Uint8Array): MinionData;
+      static deserializeBinaryFromReader(message: MinionData, reader: jspb.BinaryReader): MinionData;
+    }
+
+    export namespace MinionData {
+      export type AsObject = {
+      }
+    }
+
+    export class TowerData extends jspb.Message {
+      serializeBinary(): Uint8Array;
+      toObject(includeInstance?: boolean): TowerData.AsObject;
+      static toObject(includeInstance: boolean, msg: TowerData): TowerData.AsObject;
+      static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+      static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+      static serializeBinaryToWriter(message: TowerData, writer: jspb.BinaryWriter): void;
+      static deserializeBinary(bytes: Uint8Array): TowerData;
+      static deserializeBinaryFromReader(message: TowerData, reader: jspb.BinaryReader): TowerData;
+    }
+
+    export namespace TowerData {
+      export type AsObject = {
+      }
+    }
+
+    export class CoreData extends jspb.Message {
+      serializeBinary(): Uint8Array;
+      toObject(includeInstance?: boolean): CoreData.AsObject;
+      static toObject(includeInstance: boolean, msg: CoreData): CoreData.AsObject;
+      static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+      static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+      static serializeBinaryToWriter(message: CoreData, writer: jspb.BinaryWriter): void;
+      static deserializeBinary(bytes: Uint8Array): CoreData;
+      static deserializeBinaryFromReader(message: CoreData, reader: jspb.BinaryReader): CoreData;
+    }
+
+    export namespace CoreData {
+      export type AsObject = {
+      }
+    }
+
+    export enum EntitydataCase {
+      ENTITYDATA_NOT_SET = 0,
+      CHARACTERDATA = 1,
+      MINIONDATA = 2,
+      TOWERDATA = 3,
+      COREDATA = 4,
     }
   }
 

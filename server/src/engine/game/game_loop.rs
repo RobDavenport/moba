@@ -150,6 +150,7 @@ impl Game {
     fn handle_events(&mut self) {
         // Priority Queue
         let mut next_events = Vec::new();
+        let mut execute_events = Vec::new();
         while let Some(event) = self.timed_events.peek_mut() {
             if event.execute_frame <= self.game_frame {
                 match event.event_type {
@@ -158,16 +159,14 @@ impl Game {
                     }
                     TimedEventType::Once => (),
                 }
-                (event.execute)(&mut self.world);
-                PeekMut::pop(event);
+                execute_events.push(PeekMut::pop(event));
             } else {
                 break;
             }
-        }
+        };
 
-        for event in next_events.into_iter() {
-            self.timed_events.push(event)
-        }
+        execute_events.into_iter().for_each(|e| (e.execute)(self));
+        next_events.into_iter().for_each(|e| self.timed_events.push(e));
 
         // Normal "Game Events" Vec
         for event in self.game_events.drain(..) {

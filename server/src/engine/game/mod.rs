@@ -20,7 +20,7 @@ pub mod prelude {
 
 pub struct Game {
     tick_time: f32,
-    pub world: World,
+    world: World,
     game_time: f32,
     game_frame: u32,
     out_reliable: Sender<(OutTarget, OutMessage)>,

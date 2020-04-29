@@ -1534,6 +1534,9 @@ pub struct ServerMessage_EntityData {
     pub option_x: ::std::option::Option<ServerMessage_EntityData_oneof_option_x>,
     pub option_y: ::std::option::Option<ServerMessage_EntityData_oneof_option_y>,
     pub option_rotation: ::std::option::Option<ServerMessage_EntityData_oneof_option_rotation>,
+    pub option_health: ::std::option::Option<ServerMessage_EntityData_oneof_option_health>,
+    pub option_energy: ::std::option::Option<ServerMessage_EntityData_oneof_option_energy>,
+    pub option_entity_type_data: ::std::option::Option<ServerMessage_EntityData_oneof_option_entity_type_data>,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
@@ -1558,6 +1561,21 @@ pub enum ServerMessage_EntityData_oneof_option_y {
 #[derive(Clone,PartialEq,Debug)]
 pub enum ServerMessage_EntityData_oneof_option_rotation {
     rotation(i32),
+}
+
+#[derive(Clone,PartialEq,Debug)]
+pub enum ServerMessage_EntityData_oneof_option_health {
+    health(u32),
+}
+
+#[derive(Clone,PartialEq,Debug)]
+pub enum ServerMessage_EntityData_oneof_option_energy {
+    energy(u32),
+}
+
+#[derive(Clone,PartialEq,Debug)]
+pub enum ServerMessage_EntityData_oneof_option_entity_type_data {
+    entityTypeData(ServerMessage_EntityTypeData),
 }
 
 impl ServerMessage_EntityData {
@@ -1654,10 +1672,114 @@ impl ServerMessage_EntityData {
     pub fn set_rotation(&mut self, v: i32) {
         self.option_rotation = ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_rotation::rotation(v))
     }
+
+    // uint32 health = 5;
+
+
+    pub fn get_health(&self) -> u32 {
+        match self.option_health {
+            ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_health::health(v)) => v,
+            _ => 0,
+        }
+    }
+    pub fn clear_health(&mut self) {
+        self.option_health = ::std::option::Option::None;
+    }
+
+    pub fn has_health(&self) -> bool {
+        match self.option_health {
+            ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_health::health(..)) => true,
+            _ => false,
+        }
+    }
+
+    // Param is passed by value, moved
+    pub fn set_health(&mut self, v: u32) {
+        self.option_health = ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_health::health(v))
+    }
+
+    // uint32 energy = 6;
+
+
+    pub fn get_energy(&self) -> u32 {
+        match self.option_energy {
+            ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_energy::energy(v)) => v,
+            _ => 0,
+        }
+    }
+    pub fn clear_energy(&mut self) {
+        self.option_energy = ::std::option::Option::None;
+    }
+
+    pub fn has_energy(&self) -> bool {
+        match self.option_energy {
+            ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_energy::energy(..)) => true,
+            _ => false,
+        }
+    }
+
+    // Param is passed by value, moved
+    pub fn set_energy(&mut self, v: u32) {
+        self.option_energy = ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_energy::energy(v))
+    }
+
+    // .ServerMessage.EntityTypeData entityTypeData = 7;
+
+
+    pub fn get_entityTypeData(&self) -> &ServerMessage_EntityTypeData {
+        match self.option_entity_type_data {
+            ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_entity_type_data::entityTypeData(ref v)) => v,
+            _ => ServerMessage_EntityTypeData::default_instance(),
+        }
+    }
+    pub fn clear_entityTypeData(&mut self) {
+        self.option_entity_type_data = ::std::option::Option::None;
+    }
+
+    pub fn has_entityTypeData(&self) -> bool {
+        match self.option_entity_type_data {
+            ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_entity_type_data::entityTypeData(..)) => true,
+            _ => false,
+        }
+    }
+
+    // Param is passed by value, moved
+    pub fn set_entityTypeData(&mut self, v: ServerMessage_EntityTypeData) {
+        self.option_entity_type_data = ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_entity_type_data::entityTypeData(v))
+    }
+
+    // Mutable pointer to the field.
+    pub fn mut_entityTypeData(&mut self) -> &mut ServerMessage_EntityTypeData {
+        if let ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_entity_type_data::entityTypeData(_)) = self.option_entity_type_data {
+        } else {
+            self.option_entity_type_data = ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_entity_type_data::entityTypeData(ServerMessage_EntityTypeData::new()));
+        }
+        match self.option_entity_type_data {
+            ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_entity_type_data::entityTypeData(ref mut v)) => v,
+            _ => panic!(),
+        }
+    }
+
+    // Take field
+    pub fn take_entityTypeData(&mut self) -> ServerMessage_EntityTypeData {
+        if self.has_entityTypeData() {
+            match self.option_entity_type_data.take() {
+                ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_entity_type_data::entityTypeData(v)) => v,
+                _ => panic!(),
+            }
+        } else {
+            ServerMessage_EntityTypeData::new()
+        }
+    }
 }
 
 impl ::protobuf::Message for ServerMessage_EntityData {
     fn is_initialized(&self) -> bool {
+        if let Some(ServerMessage_EntityData_oneof_option_entity_type_data::entityTypeData(ref v)) = self.option_entity_type_data {
+            if !v.is_initialized() {
+                return false;
+            }
+        }
         true
     }
 
@@ -1689,6 +1811,24 @@ impl ::protobuf::Message for ServerMessage_EntityData {
                         return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
                     }
                     self.option_rotation = ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_rotation::rotation(is.read_sint32()?));
+                },
+                5 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    self.option_health = ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_health::health(is.read_uint32()?));
+                },
+                6 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    self.option_energy = ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_energy::energy(is.read_uint32()?));
+                },
+                7 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    self.option_entity_type_data = ::std::option::Option::Some(ServerMessage_EntityData_oneof_option_entity_type_data::entityTypeData(is.read_message()?));
                 },
                 _ => {
                     ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
@@ -1726,6 +1866,28 @@ impl ::protobuf::Message for ServerMessage_EntityData {
                 },
             };
         }
+        if let ::std::option::Option::Some(ref v) = self.option_health {
+            match v {
+                &ServerMessage_EntityData_oneof_option_health::health(v) => {
+                    my_size += ::protobuf::rt::value_size(5, v, ::protobuf::wire_format::WireTypeVarint);
+                },
+            };
+        }
+        if let ::std::option::Option::Some(ref v) = self.option_energy {
+            match v {
+                &ServerMessage_EntityData_oneof_option_energy::energy(v) => {
+                    my_size += ::protobuf::rt::value_size(6, v, ::protobuf::wire_format::WireTypeVarint);
+                },
+            };
+        }
+        if let ::std::option::Option::Some(ref v) = self.option_entity_type_data {
+            match v {
+                &ServerMessage_EntityData_oneof_option_entity_type_data::entityTypeData(ref v) => {
+                    let len = v.compute_size();
+                    my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+                },
+            };
+        }
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
         my_size
@@ -1753,6 +1915,29 @@ impl ::protobuf::Message for ServerMessage_EntityData {
             match v {
                 &ServerMessage_EntityData_oneof_option_rotation::rotation(v) => {
                     os.write_sint32(4, v)?;
+                },
+            };
+        }
+        if let ::std::option::Option::Some(ref v) = self.option_health {
+            match v {
+                &ServerMessage_EntityData_oneof_option_health::health(v) => {
+                    os.write_uint32(5, v)?;
+                },
+            };
+        }
+        if let ::std::option::Option::Some(ref v) = self.option_energy {
+            match v {
+                &ServerMessage_EntityData_oneof_option_energy::energy(v) => {
+                    os.write_uint32(6, v)?;
+                },
+            };
+        }
+        if let ::std::option::Option::Some(ref v) = self.option_entity_type_data {
+            match v {
+                &ServerMessage_EntityData_oneof_option_entity_type_data::entityTypeData(ref v) => {
+                    os.write_tag(7, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+                    os.write_raw_varint32(v.get_cached_size())?;
+                    v.write_to_with_cached_sizes(os)?;
                 },
             };
         }
@@ -1818,6 +2003,21 @@ impl ::protobuf::Message for ServerMessage_EntityData {
                     ServerMessage_EntityData::has_rotation,
                     ServerMessage_EntityData::get_rotation,
                 ));
+                fields.push(::protobuf::reflect::accessor::make_singular_u32_accessor::<_>(
+                    "health",
+                    ServerMessage_EntityData::has_health,
+                    ServerMessage_EntityData::get_health,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_u32_accessor::<_>(
+                    "energy",
+                    ServerMessage_EntityData::has_energy,
+                    ServerMessage_EntityData::get_energy,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_message_accessor::<_, ServerMessage_EntityTypeData>(
+                    "entityTypeData",
+                    ServerMessage_EntityData::has_entityTypeData,
+                    ServerMessage_EntityData::get_entityTypeData,
+                ));
                 ::protobuf::reflect::MessageDescriptor::new::<ServerMessage_EntityData>(
                     "ServerMessage_EntityData",
                     fields,
@@ -1844,6 +2044,9 @@ impl ::protobuf::Clear for ServerMessage_EntityData {
         self.option_x = ::std::option::Option::None;
         self.option_y = ::std::option::Option::None;
         self.option_rotation = ::std::option::Option::None;
+        self.option_health = ::std::option::Option::None;
+        self.option_energy = ::std::option::Option::None;
+        self.option_entity_type_data = ::std::option::Option::None;
         self.unknown_fields.clear();
     }
 }
@@ -1860,8 +2063,1186 @@ impl ::protobuf::reflect::ProtobufValue for ServerMessage_EntityData {
     }
 }
 
+#[derive(PartialEq,Clone,Default)]
+pub struct ServerMessage_EntityTypeData {
+    // message oneof groups
+    pub entityData: ::std::option::Option<ServerMessage_EntityTypeData_oneof_entityData>,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a ServerMessage_EntityTypeData {
+    fn default() -> &'a ServerMessage_EntityTypeData {
+        <ServerMessage_EntityTypeData as ::protobuf::Message>::default_instance()
+    }
+}
+
+#[derive(Clone,PartialEq,Debug)]
+pub enum ServerMessage_EntityTypeData_oneof_entityData {
+    characterData(ServerMessage_EntityTypeData_CharacterData),
+    minionData(ServerMessage_EntityTypeData_MinionData),
+    towerData(ServerMessage_EntityTypeData_TowerData),
+    coreData(ServerMessage_EntityTypeData_CoreData),
+}
+
+impl ServerMessage_EntityTypeData {
+    pub fn new() -> ServerMessage_EntityTypeData {
+        ::std::default::Default::default()
+    }
+
+    // .ServerMessage.EntityTypeData.CharacterData characterData = 1;
+
+
+    pub fn get_characterData(&self) -> &ServerMessage_EntityTypeData_CharacterData {
+        match self.entityData {
+            ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::characterData(ref v)) => v,
+            _ => ServerMessage_EntityTypeData_CharacterData::default_instance(),
+        }
+    }
+    pub fn clear_characterData(&mut self) {
+        self.entityData = ::std::option::Option::None;
+    }
+
+    pub fn has_characterData(&self) -> bool {
+        match self.entityData {
+            ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::characterData(..)) => true,
+            _ => false,
+        }
+    }
+
+    // Param is passed by value, moved
+    pub fn set_characterData(&mut self, v: ServerMessage_EntityTypeData_CharacterData) {
+        self.entityData = ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::characterData(v))
+    }
+
+    // Mutable pointer to the field.
+    pub fn mut_characterData(&mut self) -> &mut ServerMessage_EntityTypeData_CharacterData {
+        if let ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::characterData(_)) = self.entityData {
+        } else {
+            self.entityData = ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::characterData(ServerMessage_EntityTypeData_CharacterData::new()));
+        }
+        match self.entityData {
+            ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::characterData(ref mut v)) => v,
+            _ => panic!(),
+        }
+    }
+
+    // Take field
+    pub fn take_characterData(&mut self) -> ServerMessage_EntityTypeData_CharacterData {
+        if self.has_characterData() {
+            match self.entityData.take() {
+                ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::characterData(v)) => v,
+                _ => panic!(),
+            }
+        } else {
+            ServerMessage_EntityTypeData_CharacterData::new()
+        }
+    }
+
+    // .ServerMessage.EntityTypeData.MinionData minionData = 2;
+
+
+    pub fn get_minionData(&self) -> &ServerMessage_EntityTypeData_MinionData {
+        match self.entityData {
+            ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::minionData(ref v)) => v,
+            _ => ServerMessage_EntityTypeData_MinionData::default_instance(),
+        }
+    }
+    pub fn clear_minionData(&mut self) {
+        self.entityData = ::std::option::Option::None;
+    }
+
+    pub fn has_minionData(&self) -> bool {
+        match self.entityData {
+            ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::minionData(..)) => true,
+            _ => false,
+        }
+    }
+
+    // Param is passed by value, moved
+    pub fn set_minionData(&mut self, v: ServerMessage_EntityTypeData_MinionData) {
+        self.entityData = ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::minionData(v))
+    }
+
+    // Mutable pointer to the field.
+    pub fn mut_minionData(&mut self) -> &mut ServerMessage_EntityTypeData_MinionData {
+        if let ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::minionData(_)) = self.entityData {
+        } else {
+            self.entityData = ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::minionData(ServerMessage_EntityTypeData_MinionData::new()));
+        }
+        match self.entityData {
+            ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::minionData(ref mut v)) => v,
+            _ => panic!(),
+        }
+    }
+
+    // Take field
+    pub fn take_minionData(&mut self) -> ServerMessage_EntityTypeData_MinionData {
+        if self.has_minionData() {
+            match self.entityData.take() {
+                ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::minionData(v)) => v,
+                _ => panic!(),
+            }
+        } else {
+            ServerMessage_EntityTypeData_MinionData::new()
+        }
+    }
+
+    // .ServerMessage.EntityTypeData.TowerData towerData = 3;
+
+
+    pub fn get_towerData(&self) -> &ServerMessage_EntityTypeData_TowerData {
+        match self.entityData {
+            ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::towerData(ref v)) => v,
+            _ => ServerMessage_EntityTypeData_TowerData::default_instance(),
+        }
+    }
+    pub fn clear_towerData(&mut self) {
+        self.entityData = ::std::option::Option::None;
+    }
+
+    pub fn has_towerData(&self) -> bool {
+        match self.entityData {
+            ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::towerData(..)) => true,
+            _ => false,
+        }
+    }
+
+    // Param is passed by value, moved
+    pub fn set_towerData(&mut self, v: ServerMessage_EntityTypeData_TowerData) {
+        self.entityData = ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::towerData(v))
+    }
+
+    // Mutable pointer to the field.
+    pub fn mut_towerData(&mut self) -> &mut ServerMessage_EntityTypeData_TowerData {
+        if let ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::towerData(_)) = self.entityData {
+        } else {
+            self.entityData = ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::towerData(ServerMessage_EntityTypeData_TowerData::new()));
+        }
+        match self.entityData {
+            ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::towerData(ref mut v)) => v,
+            _ => panic!(),
+        }
+    }
+
+    // Take field
+    pub fn take_towerData(&mut self) -> ServerMessage_EntityTypeData_TowerData {
+        if self.has_towerData() {
+            match self.entityData.take() {
+                ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::towerData(v)) => v,
+                _ => panic!(),
+            }
+        } else {
+            ServerMessage_EntityTypeData_TowerData::new()
+        }
+    }
+
+    // .ServerMessage.EntityTypeData.CoreData coreData = 4;
+
+
+    pub fn get_coreData(&self) -> &ServerMessage_EntityTypeData_CoreData {
+        match self.entityData {
+            ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::coreData(ref v)) => v,
+            _ => ServerMessage_EntityTypeData_CoreData::default_instance(),
+        }
+    }
+    pub fn clear_coreData(&mut self) {
+        self.entityData = ::std::option::Option::None;
+    }
+
+    pub fn has_coreData(&self) -> bool {
+        match self.entityData {
+            ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::coreData(..)) => true,
+            _ => false,
+        }
+    }
+
+    // Param is passed by value, moved
+    pub fn set_coreData(&mut self, v: ServerMessage_EntityTypeData_CoreData) {
+        self.entityData = ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::coreData(v))
+    }
+
+    // Mutable pointer to the field.
+    pub fn mut_coreData(&mut self) -> &mut ServerMessage_EntityTypeData_CoreData {
+        if let ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::coreData(_)) = self.entityData {
+        } else {
+            self.entityData = ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::coreData(ServerMessage_EntityTypeData_CoreData::new()));
+        }
+        match self.entityData {
+            ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::coreData(ref mut v)) => v,
+            _ => panic!(),
+        }
+    }
+
+    // Take field
+    pub fn take_coreData(&mut self) -> ServerMessage_EntityTypeData_CoreData {
+        if self.has_coreData() {
+            match self.entityData.take() {
+                ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::coreData(v)) => v,
+                _ => panic!(),
+            }
+        } else {
+            ServerMessage_EntityTypeData_CoreData::new()
+        }
+    }
+}
+
+impl ::protobuf::Message for ServerMessage_EntityTypeData {
+    fn is_initialized(&self) -> bool {
+        if let Some(ServerMessage_EntityTypeData_oneof_entityData::characterData(ref v)) = self.entityData {
+            if !v.is_initialized() {
+                return false;
+            }
+        }
+        if let Some(ServerMessage_EntityTypeData_oneof_entityData::minionData(ref v)) = self.entityData {
+            if !v.is_initialized() {
+                return false;
+            }
+        }
+        if let Some(ServerMessage_EntityTypeData_oneof_entityData::towerData(ref v)) = self.entityData {
+            if !v.is_initialized() {
+                return false;
+            }
+        }
+        if let Some(ServerMessage_EntityTypeData_oneof_entityData::coreData(ref v)) = self.entityData {
+            if !v.is_initialized() {
+                return false;
+            }
+        }
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    self.entityData = ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::characterData(is.read_message()?));
+                },
+                2 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    self.entityData = ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::minionData(is.read_message()?));
+                },
+                3 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    self.entityData = ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::towerData(is.read_message()?));
+                },
+                4 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    self.entityData = ::std::option::Option::Some(ServerMessage_EntityTypeData_oneof_entityData::coreData(is.read_message()?));
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if let ::std::option::Option::Some(ref v) = self.entityData {
+            match v {
+                &ServerMessage_EntityTypeData_oneof_entityData::characterData(ref v) => {
+                    let len = v.compute_size();
+                    my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+                },
+                &ServerMessage_EntityTypeData_oneof_entityData::minionData(ref v) => {
+                    let len = v.compute_size();
+                    my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+                },
+                &ServerMessage_EntityTypeData_oneof_entityData::towerData(ref v) => {
+                    let len = v.compute_size();
+                    my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+                },
+                &ServerMessage_EntityTypeData_oneof_entityData::coreData(ref v) => {
+                    let len = v.compute_size();
+                    my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+                },
+            };
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if let ::std::option::Option::Some(ref v) = self.entityData {
+            match v {
+                &ServerMessage_EntityTypeData_oneof_entityData::characterData(ref v) => {
+                    os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+                    os.write_raw_varint32(v.get_cached_size())?;
+                    v.write_to_with_cached_sizes(os)?;
+                },
+                &ServerMessage_EntityTypeData_oneof_entityData::minionData(ref v) => {
+                    os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+                    os.write_raw_varint32(v.get_cached_size())?;
+                    v.write_to_with_cached_sizes(os)?;
+                },
+                &ServerMessage_EntityTypeData_oneof_entityData::towerData(ref v) => {
+                    os.write_tag(3, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+                    os.write_raw_varint32(v.get_cached_size())?;
+                    v.write_to_with_cached_sizes(os)?;
+                },
+                &ServerMessage_EntityTypeData_oneof_entityData::coreData(ref v) => {
+                    os.write_tag(4, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+                    os.write_raw_varint32(v.get_cached_size())?;
+                    v.write_to_with_cached_sizes(os)?;
+                },
+            };
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> ServerMessage_EntityTypeData {
+        ServerMessage_EntityTypeData::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ::protobuf::reflect::MessageDescriptor,
+        };
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_singular_message_accessor::<_, ServerMessage_EntityTypeData_CharacterData>(
+                    "characterData",
+                    ServerMessage_EntityTypeData::has_characterData,
+                    ServerMessage_EntityTypeData::get_characterData,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_message_accessor::<_, ServerMessage_EntityTypeData_MinionData>(
+                    "minionData",
+                    ServerMessage_EntityTypeData::has_minionData,
+                    ServerMessage_EntityTypeData::get_minionData,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_message_accessor::<_, ServerMessage_EntityTypeData_TowerData>(
+                    "towerData",
+                    ServerMessage_EntityTypeData::has_towerData,
+                    ServerMessage_EntityTypeData::get_towerData,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_message_accessor::<_, ServerMessage_EntityTypeData_CoreData>(
+                    "coreData",
+                    ServerMessage_EntityTypeData::has_coreData,
+                    ServerMessage_EntityTypeData::get_coreData,
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<ServerMessage_EntityTypeData>(
+                    "ServerMessage_EntityTypeData",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static ServerMessage_EntityTypeData {
+        static mut instance: ::protobuf::lazy::Lazy<ServerMessage_EntityTypeData> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ServerMessage_EntityTypeData,
+        };
+        unsafe {
+            instance.get(ServerMessage_EntityTypeData::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for ServerMessage_EntityTypeData {
+    fn clear(&mut self) {
+        self.entityData = ::std::option::Option::None;
+        self.entityData = ::std::option::Option::None;
+        self.entityData = ::std::option::Option::None;
+        self.entityData = ::std::option::Option::None;
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for ServerMessage_EntityTypeData {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for ServerMessage_EntityTypeData {
+    fn as_ref(&self) -> ::protobuf::reflect::ProtobufValueRef {
+        ::protobuf::reflect::ProtobufValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct ServerMessage_EntityTypeData_CharacterData {
+    // message oneof groups
+    pub option_max_health: ::std::option::Option<ServerMessage_EntityTypeData_CharacterData_oneof_option_max_health>,
+    pub option_max_energy: ::std::option::Option<ServerMessage_EntityTypeData_CharacterData_oneof_option_max_energy>,
+    pub option_energy_type: ::std::option::Option<ServerMessage_EntityTypeData_CharacterData_oneof_option_energy_type>,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a ServerMessage_EntityTypeData_CharacterData {
+    fn default() -> &'a ServerMessage_EntityTypeData_CharacterData {
+        <ServerMessage_EntityTypeData_CharacterData as ::protobuf::Message>::default_instance()
+    }
+}
+
+#[derive(Clone,PartialEq,Debug)]
+pub enum ServerMessage_EntityTypeData_CharacterData_oneof_option_max_health {
+    maxHealth(u32),
+}
+
+#[derive(Clone,PartialEq,Debug)]
+pub enum ServerMessage_EntityTypeData_CharacterData_oneof_option_max_energy {
+    maxEnergy(u32),
+}
+
+#[derive(Clone,PartialEq,Debug)]
+pub enum ServerMessage_EntityTypeData_CharacterData_oneof_option_energy_type {
+    energyType(ServerMessage_EntityTypeData_CharacterData_EnergyType),
+}
+
+impl ServerMessage_EntityTypeData_CharacterData {
+    pub fn new() -> ServerMessage_EntityTypeData_CharacterData {
+        ::std::default::Default::default()
+    }
+
+    // uint32 maxHealth = 1;
+
+
+    pub fn get_maxHealth(&self) -> u32 {
+        match self.option_max_health {
+            ::std::option::Option::Some(ServerMessage_EntityTypeData_CharacterData_oneof_option_max_health::maxHealth(v)) => v,
+            _ => 0,
+        }
+    }
+    pub fn clear_maxHealth(&mut self) {
+        self.option_max_health = ::std::option::Option::None;
+    }
+
+    pub fn has_maxHealth(&self) -> bool {
+        match self.option_max_health {
+            ::std::option::Option::Some(ServerMessage_EntityTypeData_CharacterData_oneof_option_max_health::maxHealth(..)) => true,
+            _ => false,
+        }
+    }
+
+    // Param is passed by value, moved
+    pub fn set_maxHealth(&mut self, v: u32) {
+        self.option_max_health = ::std::option::Option::Some(ServerMessage_EntityTypeData_CharacterData_oneof_option_max_health::maxHealth(v))
+    }
+
+    // uint32 maxEnergy = 2;
+
+
+    pub fn get_maxEnergy(&self) -> u32 {
+        match self.option_max_energy {
+            ::std::option::Option::Some(ServerMessage_EntityTypeData_CharacterData_oneof_option_max_energy::maxEnergy(v)) => v,
+            _ => 0,
+        }
+    }
+    pub fn clear_maxEnergy(&mut self) {
+        self.option_max_energy = ::std::option::Option::None;
+    }
+
+    pub fn has_maxEnergy(&self) -> bool {
+        match self.option_max_energy {
+            ::std::option::Option::Some(ServerMessage_EntityTypeData_CharacterData_oneof_option_max_energy::maxEnergy(..)) => true,
+            _ => false,
+        }
+    }
+
+    // Param is passed by value, moved
+    pub fn set_maxEnergy(&mut self, v: u32) {
+        self.option_max_energy = ::std::option::Option::Some(ServerMessage_EntityTypeData_CharacterData_oneof_option_max_energy::maxEnergy(v))
+    }
+
+    // .ServerMessage.EntityTypeData.CharacterData.EnergyType energyType = 3;
+
+
+    pub fn get_energyType(&self) -> ServerMessage_EntityTypeData_CharacterData_EnergyType {
+        match self.option_energy_type {
+            ::std::option::Option::Some(ServerMessage_EntityTypeData_CharacterData_oneof_option_energy_type::energyType(v)) => v,
+            _ => ServerMessage_EntityTypeData_CharacterData_EnergyType::NONE,
+        }
+    }
+    pub fn clear_energyType(&mut self) {
+        self.option_energy_type = ::std::option::Option::None;
+    }
+
+    pub fn has_energyType(&self) -> bool {
+        match self.option_energy_type {
+            ::std::option::Option::Some(ServerMessage_EntityTypeData_CharacterData_oneof_option_energy_type::energyType(..)) => true,
+            _ => false,
+        }
+    }
+
+    // Param is passed by value, moved
+    pub fn set_energyType(&mut self, v: ServerMessage_EntityTypeData_CharacterData_EnergyType) {
+        self.option_energy_type = ::std::option::Option::Some(ServerMessage_EntityTypeData_CharacterData_oneof_option_energy_type::energyType(v))
+    }
+}
+
+impl ::protobuf::Message for ServerMessage_EntityTypeData_CharacterData {
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    self.option_max_health = ::std::option::Option::Some(ServerMessage_EntityTypeData_CharacterData_oneof_option_max_health::maxHealth(is.read_uint32()?));
+                },
+                2 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    self.option_max_energy = ::std::option::Option::Some(ServerMessage_EntityTypeData_CharacterData_oneof_option_max_energy::maxEnergy(is.read_uint32()?));
+                },
+                3 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    self.option_energy_type = ::std::option::Option::Some(ServerMessage_EntityTypeData_CharacterData_oneof_option_energy_type::energyType(is.read_enum()?));
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if let ::std::option::Option::Some(ref v) = self.option_max_health {
+            match v {
+                &ServerMessage_EntityTypeData_CharacterData_oneof_option_max_health::maxHealth(v) => {
+                    my_size += ::protobuf::rt::value_size(1, v, ::protobuf::wire_format::WireTypeVarint);
+                },
+            };
+        }
+        if let ::std::option::Option::Some(ref v) = self.option_max_energy {
+            match v {
+                &ServerMessage_EntityTypeData_CharacterData_oneof_option_max_energy::maxEnergy(v) => {
+                    my_size += ::protobuf::rt::value_size(2, v, ::protobuf::wire_format::WireTypeVarint);
+                },
+            };
+        }
+        if let ::std::option::Option::Some(ref v) = self.option_energy_type {
+            match v {
+                &ServerMessage_EntityTypeData_CharacterData_oneof_option_energy_type::energyType(v) => {
+                    my_size += ::protobuf::rt::enum_size(3, v);
+                },
+            };
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if let ::std::option::Option::Some(ref v) = self.option_max_health {
+            match v {
+                &ServerMessage_EntityTypeData_CharacterData_oneof_option_max_health::maxHealth(v) => {
+                    os.write_uint32(1, v)?;
+                },
+            };
+        }
+        if let ::std::option::Option::Some(ref v) = self.option_max_energy {
+            match v {
+                &ServerMessage_EntityTypeData_CharacterData_oneof_option_max_energy::maxEnergy(v) => {
+                    os.write_uint32(2, v)?;
+                },
+            };
+        }
+        if let ::std::option::Option::Some(ref v) = self.option_energy_type {
+            match v {
+                &ServerMessage_EntityTypeData_CharacterData_oneof_option_energy_type::energyType(v) => {
+                    os.write_enum(3, v.value())?;
+                },
+            };
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> ServerMessage_EntityTypeData_CharacterData {
+        ServerMessage_EntityTypeData_CharacterData::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ::protobuf::reflect::MessageDescriptor,
+        };
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_singular_u32_accessor::<_>(
+                    "maxHealth",
+                    ServerMessage_EntityTypeData_CharacterData::has_maxHealth,
+                    ServerMessage_EntityTypeData_CharacterData::get_maxHealth,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_u32_accessor::<_>(
+                    "maxEnergy",
+                    ServerMessage_EntityTypeData_CharacterData::has_maxEnergy,
+                    ServerMessage_EntityTypeData_CharacterData::get_maxEnergy,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_enum_accessor::<_, ServerMessage_EntityTypeData_CharacterData_EnergyType>(
+                    "energyType",
+                    ServerMessage_EntityTypeData_CharacterData::has_energyType,
+                    ServerMessage_EntityTypeData_CharacterData::get_energyType,
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<ServerMessage_EntityTypeData_CharacterData>(
+                    "ServerMessage_EntityTypeData_CharacterData",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static ServerMessage_EntityTypeData_CharacterData {
+        static mut instance: ::protobuf::lazy::Lazy<ServerMessage_EntityTypeData_CharacterData> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ServerMessage_EntityTypeData_CharacterData,
+        };
+        unsafe {
+            instance.get(ServerMessage_EntityTypeData_CharacterData::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for ServerMessage_EntityTypeData_CharacterData {
+    fn clear(&mut self) {
+        self.option_max_health = ::std::option::Option::None;
+        self.option_max_energy = ::std::option::Option::None;
+        self.option_energy_type = ::std::option::Option::None;
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for ServerMessage_EntityTypeData_CharacterData {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for ServerMessage_EntityTypeData_CharacterData {
+    fn as_ref(&self) -> ::protobuf::reflect::ProtobufValueRef {
+        ::protobuf::reflect::ProtobufValueRef::Message(self)
+    }
+}
+
+#[derive(Clone,PartialEq,Eq,Debug,Hash)]
+pub enum ServerMessage_EntityTypeData_CharacterData_EnergyType {
+    NONE = 0,
+    MANA = 1,
+    ENERGY = 2,
+}
+
+impl ::protobuf::ProtobufEnum for ServerMessage_EntityTypeData_CharacterData_EnergyType {
+    fn value(&self) -> i32 {
+        *self as i32
+    }
+
+    fn from_i32(value: i32) -> ::std::option::Option<ServerMessage_EntityTypeData_CharacterData_EnergyType> {
+        match value {
+            0 => ::std::option::Option::Some(ServerMessage_EntityTypeData_CharacterData_EnergyType::NONE),
+            1 => ::std::option::Option::Some(ServerMessage_EntityTypeData_CharacterData_EnergyType::MANA),
+            2 => ::std::option::Option::Some(ServerMessage_EntityTypeData_CharacterData_EnergyType::ENERGY),
+            _ => ::std::option::Option::None
+        }
+    }
+
+    fn values() -> &'static [Self] {
+        static values: &'static [ServerMessage_EntityTypeData_CharacterData_EnergyType] = &[
+            ServerMessage_EntityTypeData_CharacterData_EnergyType::NONE,
+            ServerMessage_EntityTypeData_CharacterData_EnergyType::MANA,
+            ServerMessage_EntityTypeData_CharacterData_EnergyType::ENERGY,
+        ];
+        values
+    }
+
+    fn enum_descriptor_static() -> &'static ::protobuf::reflect::EnumDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::EnumDescriptor> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ::protobuf::reflect::EnumDescriptor,
+        };
+        unsafe {
+            descriptor.get(|| {
+                ::protobuf::reflect::EnumDescriptor::new("ServerMessage_EntityTypeData_CharacterData_EnergyType", file_descriptor_proto())
+            })
+        }
+    }
+}
+
+impl ::std::marker::Copy for ServerMessage_EntityTypeData_CharacterData_EnergyType {
+}
+
+impl ::std::default::Default for ServerMessage_EntityTypeData_CharacterData_EnergyType {
+    fn default() -> Self {
+        ServerMessage_EntityTypeData_CharacterData_EnergyType::NONE
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for ServerMessage_EntityTypeData_CharacterData_EnergyType {
+    fn as_ref(&self) -> ::protobuf::reflect::ProtobufValueRef {
+        ::protobuf::reflect::ProtobufValueRef::Enum(self.descriptor())
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct ServerMessage_EntityTypeData_MinionData {
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a ServerMessage_EntityTypeData_MinionData {
+    fn default() -> &'a ServerMessage_EntityTypeData_MinionData {
+        <ServerMessage_EntityTypeData_MinionData as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl ServerMessage_EntityTypeData_MinionData {
+    pub fn new() -> ServerMessage_EntityTypeData_MinionData {
+        ::std::default::Default::default()
+    }
+}
+
+impl ::protobuf::Message for ServerMessage_EntityTypeData_MinionData {
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> ServerMessage_EntityTypeData_MinionData {
+        ServerMessage_EntityTypeData_MinionData::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ::protobuf::reflect::MessageDescriptor,
+        };
+        unsafe {
+            descriptor.get(|| {
+                let fields = ::std::vec::Vec::new();
+                ::protobuf::reflect::MessageDescriptor::new::<ServerMessage_EntityTypeData_MinionData>(
+                    "ServerMessage_EntityTypeData_MinionData",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static ServerMessage_EntityTypeData_MinionData {
+        static mut instance: ::protobuf::lazy::Lazy<ServerMessage_EntityTypeData_MinionData> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ServerMessage_EntityTypeData_MinionData,
+        };
+        unsafe {
+            instance.get(ServerMessage_EntityTypeData_MinionData::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for ServerMessage_EntityTypeData_MinionData {
+    fn clear(&mut self) {
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for ServerMessage_EntityTypeData_MinionData {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for ServerMessage_EntityTypeData_MinionData {
+    fn as_ref(&self) -> ::protobuf::reflect::ProtobufValueRef {
+        ::protobuf::reflect::ProtobufValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct ServerMessage_EntityTypeData_TowerData {
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a ServerMessage_EntityTypeData_TowerData {
+    fn default() -> &'a ServerMessage_EntityTypeData_TowerData {
+        <ServerMessage_EntityTypeData_TowerData as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl ServerMessage_EntityTypeData_TowerData {
+    pub fn new() -> ServerMessage_EntityTypeData_TowerData {
+        ::std::default::Default::default()
+    }
+}
+
+impl ::protobuf::Message for ServerMessage_EntityTypeData_TowerData {
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> ServerMessage_EntityTypeData_TowerData {
+        ServerMessage_EntityTypeData_TowerData::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ::protobuf::reflect::MessageDescriptor,
+        };
+        unsafe {
+            descriptor.get(|| {
+                let fields = ::std::vec::Vec::new();
+                ::protobuf::reflect::MessageDescriptor::new::<ServerMessage_EntityTypeData_TowerData>(
+                    "ServerMessage_EntityTypeData_TowerData",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static ServerMessage_EntityTypeData_TowerData {
+        static mut instance: ::protobuf::lazy::Lazy<ServerMessage_EntityTypeData_TowerData> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ServerMessage_EntityTypeData_TowerData,
+        };
+        unsafe {
+            instance.get(ServerMessage_EntityTypeData_TowerData::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for ServerMessage_EntityTypeData_TowerData {
+    fn clear(&mut self) {
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for ServerMessage_EntityTypeData_TowerData {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for ServerMessage_EntityTypeData_TowerData {
+    fn as_ref(&self) -> ::protobuf::reflect::ProtobufValueRef {
+        ::protobuf::reflect::ProtobufValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
+pub struct ServerMessage_EntityTypeData_CoreData {
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a ServerMessage_EntityTypeData_CoreData {
+    fn default() -> &'a ServerMessage_EntityTypeData_CoreData {
+        <ServerMessage_EntityTypeData_CoreData as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl ServerMessage_EntityTypeData_CoreData {
+    pub fn new() -> ServerMessage_EntityTypeData_CoreData {
+        ::std::default::Default::default()
+    }
+}
+
+impl ::protobuf::Message for ServerMessage_EntityTypeData_CoreData {
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> ServerMessage_EntityTypeData_CoreData {
+        ServerMessage_EntityTypeData_CoreData::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ::protobuf::reflect::MessageDescriptor,
+        };
+        unsafe {
+            descriptor.get(|| {
+                let fields = ::std::vec::Vec::new();
+                ::protobuf::reflect::MessageDescriptor::new::<ServerMessage_EntityTypeData_CoreData>(
+                    "ServerMessage_EntityTypeData_CoreData",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static ServerMessage_EntityTypeData_CoreData {
+        static mut instance: ::protobuf::lazy::Lazy<ServerMessage_EntityTypeData_CoreData> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ServerMessage_EntityTypeData_CoreData,
+        };
+        unsafe {
+            instance.get(ServerMessage_EntityTypeData_CoreData::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for ServerMessage_EntityTypeData_CoreData {
+    fn clear(&mut self) {
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for ServerMessage_EntityTypeData_CoreData {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for ServerMessage_EntityTypeData_CoreData {
+    fn as_ref(&self) -> ::protobuf::reflect::ProtobufValueRef {
+        ::protobuf::reflect::ProtobufValueRef::Message(self)
+    }
+}
+
 static file_descriptor_proto_data: &'static [u8] = b"\
-    \n\x13ServerMessage.proto\"\xe7\x06\n\rServerMessage\x12;\n\nupdateTick\
+    \n\x13ServerMessage.proto\"\xb3\r\n\rServerMessage\x12;\n\nupdateTick\
     \x18\x01\x20\x01(\x0b2\x19.ServerMessage.UpdateTickH\0R\nupdateTick\x125\
     \n\x08snapshot\x18\x02\x20\x01(\x0b2\x17.ServerMessage.SnapshotH\0R\x08s\
     napshot\x12J\n\x0fentityDestroyed\x18\x05\x20\x01(\x0b2\x1e.ServerMessag\
@@ -1876,79 +3257,156 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \x01(\rR\rreplicationId\x1a\x8c\x01\n\x08Snapshot\x12\x14\n\x05frame\x18\
     \x01\x20\x01(\rR\x05frame\x12\x1c\n\x08baseline\x18\x02\x20\x01(\rH\0R\
     \x08baseline\x129\n\nentityData\x18\x03\x20\x03(\x0b2\x19.ServerMessage.\
-    EntityDataR\nentityDataB\x11\n\x0foption_baseline\x1a\x9b\x01\n\nEntityD\
+    EntityDataR\nentityDataB\x11\n\x0foption_baseline\x1a\xd5\x02\n\nEntityD\
     ata\x12$\n\rreplicationId\x18\x01\x20\x01(\rR\rreplicationId\x12\x0e\n\
     \x01x\x18\x02\x20\x01(\x11H\0R\x01x\x12\x0e\n\x01y\x18\x03\x20\x01(\x11H\
-    \x01R\x01y\x12\x1c\n\x08rotation\x18\x04\x20\x01(\x11H\x02R\x08rotationB\
-    \n\n\x08option_xB\n\n\x08option_yB\x11\n\x0foption_rotationB\t\n\x07msgD\
-    ataJ\x84\x0b\n\x06\x12\x04\0\02\x01\n\x08\n\x01\x0c\x12\x03\0\0\x12\n\n\
-    \n\x02\x04\0\x12\x04\x02\02\x01\n\n\n\x03\x04\0\x01\x12\x03\x02\x08\x15\
-    \n\x0c\n\x04\x04\0\x03\0\x12\x04\x03\x02\x06\x03\n\x0c\n\x05\x04\0\x03\0\
-    \x01\x12\x03\x03\n\x14\n\r\n\x06\x04\0\x03\0\x02\0\x12\x03\x04\x04\x15\n\
-    \x0e\n\x07\x04\0\x03\0\x02\0\x05\x12\x03\x04\x04\n\n\x0e\n\x07\x04\0\x03\
-    \0\x02\0\x01\x12\x03\x04\x0b\x10\n\x0e\n\x07\x04\0\x03\0\x02\0\x03\x12\
-    \x03\x04\x13\x14\n\r\n\x06\x04\0\x03\0\x02\x01\x12\x03\x05\x04\x1e\n\x0e\
-    \n\x07\x04\0\x03\0\x02\x01\x06\x12\x03\x05\x04\x0e\n\x0e\n\x07\x04\0\x03\
-    \0\x02\x01\x01\x12\x03\x05\x0f\x19\n\x0e\n\x07\x04\0\x03\0\x02\x01\x03\
-    \x12\x03\x05\x1c\x1d\n\x0c\n\x04\x04\0\x03\x01\x12\x04\x08\x02\n\x03\n\
-    \x0c\n\x05\x04\0\x03\x01\x01\x12\x03\x08\n\x14\n\r\n\x06\x04\0\x03\x01\
-    \x02\0\x12\x03\t\x04\x14\n\x0e\n\x07\x04\0\x03\x01\x02\0\x05\x12\x03\t\
-    \x04\n\n\x0e\n\x07\x04\0\x03\x01\x02\0\x01\x12\x03\t\x0b\x0f\n\x0e\n\x07\
-    \x04\0\x03\x01\x02\0\x03\x12\x03\t\x12\x13\n\x0b\n\x04\x04\0\x03\x02\x12\
-    \x03\x0c\x02\x1a\n\x0c\n\x05\x04\0\x03\x02\x01\x12\x03\x0c\n\x16\n\x0c\n\
-    \x04\x04\0\x03\x03\x12\x04\x0e\x02\x11\x03\n\x0c\n\x05\x04\0\x03\x03\x01\
-    \x12\x03\x0e\n\x19\n\r\n\x06\x04\0\x03\x03\x02\0\x12\x03\x0f\x04\x15\n\
-    \x0e\n\x07\x04\0\x03\x03\x02\0\x05\x12\x03\x0f\x04\n\n\x0e\n\x07\x04\0\
-    \x03\x03\x02\0\x01\x12\x03\x0f\x0b\x10\n\x0e\n\x07\x04\0\x03\x03\x02\0\
-    \x03\x12\x03\x0f\x13\x14\n\r\n\x06\x04\0\x03\x03\x02\x01\x12\x03\x10\x04\
-    \x1d\n\x0e\n\x07\x04\0\x03\x03\x02\x01\x05\x12\x03\x10\x04\n\n\x0e\n\x07\
-    \x04\0\x03\x03\x02\x01\x01\x12\x03\x10\x0b\x18\n\x0e\n\x07\x04\0\x03\x03\
-    \x02\x01\x03\x12\x03\x10\x1b\x1c\n\x0c\n\x04\x04\0\x03\x04\x12\x04\x13\
-    \x02\x19\x03\n\x0c\n\x05\x04\0\x03\x04\x01\x12\x03\x13\n\x12\n\r\n\x06\
-    \x04\0\x03\x04\x02\0\x12\x03\x14\x04\x15\n\x0e\n\x07\x04\0\x03\x04\x02\0\
-    \x05\x12\x03\x14\x04\n\n\x0e\n\x07\x04\0\x03\x04\x02\0\x01\x12\x03\x14\
-    \x0b\x10\n\x0e\n\x07\x04\0\x03\x04\x02\0\x03\x12\x03\x14\x13\x14\n\x0e\n\
-    \x06\x04\0\x03\x04\x08\0\x12\x04\x15\x04\x17\x05\n\x0e\n\x07\x04\0\x03\
-    \x04\x08\0\x01\x12\x03\x15\n\x19\n\r\n\x06\x04\0\x03\x04\x02\x01\x12\x03\
-    \x16\x06\x1a\n\x0e\n\x07\x04\0\x03\x04\x02\x01\x05\x12\x03\x16\x06\x0c\n\
-    \x0e\n\x07\x04\0\x03\x04\x02\x01\x01\x12\x03\x16\r\x15\n\x0e\n\x07\x04\0\
-    \x03\x04\x02\x01\x03\x12\x03\x16\x18\x19\n\r\n\x06\x04\0\x03\x04\x02\x02\
-    \x12\x03\x18\x04'\n\x0e\n\x07\x04\0\x03\x04\x02\x02\x04\x12\x03\x18\x04\
-    \x0c\n\x0e\n\x07\x04\0\x03\x04\x02\x02\x06\x12\x03\x18\r\x17\n\x0e\n\x07\
-    \x04\0\x03\x04\x02\x02\x01\x12\x03\x18\x18\"\n\x0e\n\x07\x04\0\x03\x04\
-    \x02\x02\x03\x12\x03\x18%&\n\x0c\n\x04\x04\0\x03\x05\x12\x04\x1b\x02)\
-    \x03\n\x0c\n\x05\x04\0\x03\x05\x01\x12\x03\x1b\n\x14\n\r\n\x06\x04\0\x03\
-    \x05\x02\0\x12\x03\x1c\x04\x1d\n\x0e\n\x07\x04\0\x03\x05\x02\0\x05\x12\
-    \x03\x1c\x04\n\n\x0e\n\x07\x04\0\x03\x05\x02\0\x01\x12\x03\x1c\x0b\x18\n\
-    \x0e\n\x07\x04\0\x03\x05\x02\0\x03\x12\x03\x1c\x1b\x1c\n\x0e\n\x06\x04\0\
-    \x03\x05\x08\0\x12\x04\x1e\x04\x20\x05\n\x0e\n\x07\x04\0\x03\x05\x08\0\
-    \x01\x12\x03\x1e\n\x12\n\r\n\x06\x04\0\x03\x05\x02\x01\x12\x03\x1f\x06\
-    \x13\n\x0e\n\x07\x04\0\x03\x05\x02\x01\x05\x12\x03\x1f\x06\x0c\n\x0e\n\
-    \x07\x04\0\x03\x05\x02\x01\x01\x12\x03\x1f\r\x0e\n\x0e\n\x07\x04\0\x03\
-    \x05\x02\x01\x03\x12\x03\x1f\x11\x12\n\x0e\n\x06\x04\0\x03\x05\x08\x01\
-    \x12\x04!\x04#\x05\n\x0e\n\x07\x04\0\x03\x05\x08\x01\x01\x12\x03!\n\x12\
-    \n\r\n\x06\x04\0\x03\x05\x02\x02\x12\x03\"\x06\x13\n\x0e\n\x07\x04\0\x03\
-    \x05\x02\x02\x05\x12\x03\"\x06\x0c\n\x0e\n\x07\x04\0\x03\x05\x02\x02\x01\
-    \x12\x03\"\r\x0e\n\x0e\n\x07\x04\0\x03\x05\x02\x02\x03\x12\x03\"\x11\x12\
-    \n\x0e\n\x06\x04\0\x03\x05\x08\x02\x12\x04$\x04&\x05\n\x0e\n\x07\x04\0\
-    \x03\x05\x08\x02\x01\x12\x03$\n\x19\n\r\n\x06\x04\0\x03\x05\x02\x03\x12\
-    \x03%\x06\x1a\n\x0e\n\x07\x04\0\x03\x05\x02\x03\x05\x12\x03%\x06\x0c\n\
-    \x0e\n\x07\x04\0\x03\x05\x02\x03\x01\x12\x03%\r\x15\n\x0e\n\x07\x04\0\
-    \x03\x05\x02\x03\x03\x12\x03%\x18\x19\n\x0c\n\x04\x04\0\x08\0\x12\x04+\
-    \x021\x03\n\x0c\n\x05\x04\0\x08\0\x01\x12\x03+\x08\x0f\n\x0b\n\x04\x04\0\
-    \x02\0\x12\x03,\x04\x1e\n\x0c\n\x05\x04\0\x02\0\x06\x12\x03,\x04\x0e\n\
-    \x0c\n\x05\x04\0\x02\0\x01\x12\x03,\x0f\x19\n\x0c\n\x05\x04\0\x02\0\x03\
-    \x12\x03,\x1c\x1d\n\x0b\n\x04\x04\0\x02\x01\x12\x03-\x04\x1a\n\x0c\n\x05\
-    \x04\0\x02\x01\x06\x12\x03-\x04\x0c\n\x0c\n\x05\x04\0\x02\x01\x01\x12\
-    \x03-\r\x15\n\x0c\n\x05\x04\0\x02\x01\x03\x12\x03-\x18\x19\n\x0b\n\x04\
-    \x04\0\x02\x02\x12\x03.\x04(\n\x0c\n\x05\x04\0\x02\x02\x06\x12\x03.\x04\
-    \x13\n\x0c\n\x05\x04\0\x02\x02\x01\x12\x03.\x14#\n\x0c\n\x05\x04\0\x02\
-    \x02\x03\x12\x03.&'\n\x0b\n\x04\x04\0\x02\x03\x12\x03/\x04\x1f\n\x0c\n\
-    \x05\x04\0\x02\x03\x06\x12\x03/\x04\x0e\n\x0c\n\x05\x04\0\x02\x03\x01\
-    \x12\x03/\x0f\x19\n\x0c\n\x05\x04\0\x02\x03\x03\x12\x03/\x1c\x1e\n\x0b\n\
-    \x04\x04\0\x02\x04\x12\x030\x04#\n\x0c\n\x05\x04\0\x02\x04\x06\x12\x030\
-    \x04\x10\n\x0c\n\x05\x04\0\x02\x04\x01\x12\x030\x11\x1d\n\x0c\n\x05\x04\
-    \0\x02\x04\x03\x12\x030\x20\"b\x06proto3\
+    \x01R\x01y\x12\x1c\n\x08rotation\x18\x04\x20\x01(\x11H\x02R\x08rotation\
+    \x12\x18\n\x06health\x18\x05\x20\x01(\rH\x03R\x06health\x12\x18\n\x06ene\
+    rgy\x18\x06\x20\x01(\rH\x04R\x06energy\x12G\n\x0eentityTypeData\x18\x07\
+    \x20\x01(\x0b2\x1d.ServerMessage.EntityTypeDataH\x05R\x0eentityTypeDataB\
+    \n\n\x08option_xB\n\n\x08option_yB\x11\n\x0foption_rotationB\x0f\n\ropti\
+    on_healthB\x0f\n\roption_energyB\x19\n\x17option_entity_type_data\x1a\
+    \x8f\x05\n\x0eEntityTypeData\x12S\n\rcharacterData\x18\x01\x20\x01(\x0b2\
+    +.ServerMessage.EntityTypeData.CharacterDataH\0R\rcharacterData\x12J\n\n\
+    minionData\x18\x02\x20\x01(\x0b2(.ServerMessage.EntityTypeData.MinionDat\
+    aH\0R\nminionData\x12G\n\ttowerData\x18\x03\x20\x01(\x0b2'.ServerMessage\
+    .EntityTypeData.TowerDataH\0R\ttowerData\x12D\n\x08coreData\x18\x04\x20\
+    \x01(\x0b2&.ServerMessage.EntityTypeData.CoreDataH\0R\x08coreData\x1a\
+    \x97\x02\n\rCharacterData\x12\x1e\n\tmaxHealth\x18\x01\x20\x01(\rH\0R\tm\
+    axHealth\x12\x1e\n\tmaxEnergy\x18\x02\x20\x01(\rH\x01R\tmaxEnergy\x12X\n\
+    \nenergyType\x18\x03\x20\x01(\x0e26.ServerMessage.EntityTypeData.Charact\
+    erData.EnergyTypeH\x02R\nenergyType\",\n\nEnergyType\x12\x08\n\x04NONE\
+    \x10\0\x12\x08\n\x04MANA\x10\x01\x12\n\n\x06ENERGY\x10\x02B\x13\n\x11opt\
+    ion_max_healthB\x13\n\x11option_max_energyB\x14\n\x12option_energy_type\
+    \x1a\x0c\n\nMinionData\x1a\x0b\n\tTowerData\x1a\n\n\x08CoreDataB\x0c\n\n\
+    entityDataB\t\n\x07msgDataJ\xa5\x15\n\x06\x12\x04\0\0j\x01\n\x08\n\x01\
+    \x0c\x12\x03\0\0\x12\n\n\n\x02\x04\0\x12\x04\x02\0j\x01\n\n\n\x03\x04\0\
+    \x01\x12\x03\x02\x08\x15\n\x0c\n\x04\x04\0\x03\0\x12\x04\x03\x02\x06\x03\
+    \n\x0c\n\x05\x04\0\x03\0\x01\x12\x03\x03\n\x14\n\r\n\x06\x04\0\x03\0\x02\
+    \0\x12\x03\x04\x04\x15\n\x0e\n\x07\x04\0\x03\0\x02\0\x05\x12\x03\x04\x04\
+    \n\n\x0e\n\x07\x04\0\x03\0\x02\0\x01\x12\x03\x04\x0b\x10\n\x0e\n\x07\x04\
+    \0\x03\0\x02\0\x03\x12\x03\x04\x13\x14\n\r\n\x06\x04\0\x03\0\x02\x01\x12\
+    \x03\x05\x04\x1e\n\x0e\n\x07\x04\0\x03\0\x02\x01\x06\x12\x03\x05\x04\x0e\
+    \n\x0e\n\x07\x04\0\x03\0\x02\x01\x01\x12\x03\x05\x0f\x19\n\x0e\n\x07\x04\
+    \0\x03\0\x02\x01\x03\x12\x03\x05\x1c\x1d\n\x0c\n\x04\x04\0\x03\x01\x12\
+    \x04\x08\x02\n\x03\n\x0c\n\x05\x04\0\x03\x01\x01\x12\x03\x08\n\x14\n\r\n\
+    \x06\x04\0\x03\x01\x02\0\x12\x03\t\x04\x14\n\x0e\n\x07\x04\0\x03\x01\x02\
+    \0\x05\x12\x03\t\x04\n\n\x0e\n\x07\x04\0\x03\x01\x02\0\x01\x12\x03\t\x0b\
+    \x0f\n\x0e\n\x07\x04\0\x03\x01\x02\0\x03\x12\x03\t\x12\x13\n\x0b\n\x04\
+    \x04\0\x03\x02\x12\x03\x0c\x02\x1a\n\x0c\n\x05\x04\0\x03\x02\x01\x12\x03\
+    \x0c\n\x16\n\x0c\n\x04\x04\0\x03\x03\x12\x04\x0e\x02\x11\x03\n\x0c\n\x05\
+    \x04\0\x03\x03\x01\x12\x03\x0e\n\x19\n\r\n\x06\x04\0\x03\x03\x02\0\x12\
+    \x03\x0f\x04\x15\n\x0e\n\x07\x04\0\x03\x03\x02\0\x05\x12\x03\x0f\x04\n\n\
+    \x0e\n\x07\x04\0\x03\x03\x02\0\x01\x12\x03\x0f\x0b\x10\n\x0e\n\x07\x04\0\
+    \x03\x03\x02\0\x03\x12\x03\x0f\x13\x14\n\r\n\x06\x04\0\x03\x03\x02\x01\
+    \x12\x03\x10\x04\x1d\n\x0e\n\x07\x04\0\x03\x03\x02\x01\x05\x12\x03\x10\
+    \x04\n\n\x0e\n\x07\x04\0\x03\x03\x02\x01\x01\x12\x03\x10\x0b\x18\n\x0e\n\
+    \x07\x04\0\x03\x03\x02\x01\x03\x12\x03\x10\x1b\x1c\n\x0c\n\x04\x04\0\x03\
+    \x04\x12\x04\x13\x02\x19\x03\n\x0c\n\x05\x04\0\x03\x04\x01\x12\x03\x13\n\
+    \x12\n\r\n\x06\x04\0\x03\x04\x02\0\x12\x03\x14\x04\x15\n\x0e\n\x07\x04\0\
+    \x03\x04\x02\0\x05\x12\x03\x14\x04\n\n\x0e\n\x07\x04\0\x03\x04\x02\0\x01\
+    \x12\x03\x14\x0b\x10\n\x0e\n\x07\x04\0\x03\x04\x02\0\x03\x12\x03\x14\x13\
+    \x14\n\x0e\n\x06\x04\0\x03\x04\x08\0\x12\x04\x15\x04\x17\x05\n\x0e\n\x07\
+    \x04\0\x03\x04\x08\0\x01\x12\x03\x15\n\x19\n\r\n\x06\x04\0\x03\x04\x02\
+    \x01\x12\x03\x16\x06\x1a\n\x0e\n\x07\x04\0\x03\x04\x02\x01\x05\x12\x03\
+    \x16\x06\x0c\n\x0e\n\x07\x04\0\x03\x04\x02\x01\x01\x12\x03\x16\r\x15\n\
+    \x0e\n\x07\x04\0\x03\x04\x02\x01\x03\x12\x03\x16\x18\x19\n\r\n\x06\x04\0\
+    \x03\x04\x02\x02\x12\x03\x18\x04'\n\x0e\n\x07\x04\0\x03\x04\x02\x02\x04\
+    \x12\x03\x18\x04\x0c\n\x0e\n\x07\x04\0\x03\x04\x02\x02\x06\x12\x03\x18\r\
+    \x17\n\x0e\n\x07\x04\0\x03\x04\x02\x02\x01\x12\x03\x18\x18\"\n\x0e\n\x07\
+    \x04\0\x03\x04\x02\x02\x03\x12\x03\x18%&\n\x0c\n\x04\x04\0\x03\x05\x12\
+    \x04\x1b\x023\x03\n\x0c\n\x05\x04\0\x03\x05\x01\x12\x03\x1b\n\x14\n\r\n\
+    \x06\x04\0\x03\x05\x02\0\x12\x03\x1c\x04\x1d\n\x0e\n\x07\x04\0\x03\x05\
+    \x02\0\x05\x12\x03\x1c\x04\n\n\x0e\n\x07\x04\0\x03\x05\x02\0\x01\x12\x03\
+    \x1c\x0b\x18\n\x0e\n\x07\x04\0\x03\x05\x02\0\x03\x12\x03\x1c\x1b\x1c\n\
+    \x0e\n\x06\x04\0\x03\x05\x08\0\x12\x04\x1e\x04\x20\x05\n\x0e\n\x07\x04\0\
+    \x03\x05\x08\0\x01\x12\x03\x1e\n\x12\n\r\n\x06\x04\0\x03\x05\x02\x01\x12\
+    \x03\x1f\x06\x13\n\x0e\n\x07\x04\0\x03\x05\x02\x01\x05\x12\x03\x1f\x06\
+    \x0c\n\x0e\n\x07\x04\0\x03\x05\x02\x01\x01\x12\x03\x1f\r\x0e\n\x0e\n\x07\
+    \x04\0\x03\x05\x02\x01\x03\x12\x03\x1f\x11\x12\n\x0e\n\x06\x04\0\x03\x05\
+    \x08\x01\x12\x04!\x04#\x05\n\x0e\n\x07\x04\0\x03\x05\x08\x01\x01\x12\x03\
+    !\n\x12\n\r\n\x06\x04\0\x03\x05\x02\x02\x12\x03\"\x06\x13\n\x0e\n\x07\
+    \x04\0\x03\x05\x02\x02\x05\x12\x03\"\x06\x0c\n\x0e\n\x07\x04\0\x03\x05\
+    \x02\x02\x01\x12\x03\"\r\x0e\n\x0e\n\x07\x04\0\x03\x05\x02\x02\x03\x12\
+    \x03\"\x11\x12\n\x0e\n\x06\x04\0\x03\x05\x08\x02\x12\x04$\x04&\x05\n\x0e\
+    \n\x07\x04\0\x03\x05\x08\x02\x01\x12\x03$\n\x19\n\r\n\x06\x04\0\x03\x05\
+    \x02\x03\x12\x03%\x06\x1a\n\x0e\n\x07\x04\0\x03\x05\x02\x03\x05\x12\x03%\
+    \x06\x0c\n\x0e\n\x07\x04\0\x03\x05\x02\x03\x01\x12\x03%\r\x15\n\x0e\n\
+    \x07\x04\0\x03\x05\x02\x03\x03\x12\x03%\x18\x19\n\x0e\n\x06\x04\0\x03\
+    \x05\x08\x03\x12\x04(\x04*\x05\n\x0e\n\x07\x04\0\x03\x05\x08\x03\x01\x12\
+    \x03(\n\x17\n\r\n\x06\x04\0\x03\x05\x02\x04\x12\x03)\x06\x18\n\x0e\n\x07\
+    \x04\0\x03\x05\x02\x04\x05\x12\x03)\x06\x0c\n\x0e\n\x07\x04\0\x03\x05\
+    \x02\x04\x01\x12\x03)\r\x13\n\x0e\n\x07\x04\0\x03\x05\x02\x04\x03\x12\
+    \x03)\x16\x17\n\x0e\n\x06\x04\0\x03\x05\x08\x04\x12\x04,\x04.\x05\n\x0e\
+    \n\x07\x04\0\x03\x05\x08\x04\x01\x12\x03,\n\x17\n\r\n\x06\x04\0\x03\x05\
+    \x02\x05\x12\x03-\x06\x18\n\x0e\n\x07\x04\0\x03\x05\x02\x05\x05\x12\x03-\
+    \x06\x0c\n\x0e\n\x07\x04\0\x03\x05\x02\x05\x01\x12\x03-\r\x13\n\x0e\n\
+    \x07\x04\0\x03\x05\x02\x05\x03\x12\x03-\x16\x17\n\x0e\n\x06\x04\0\x03\
+    \x05\x08\x05\x12\x040\x042\x05\n\x0e\n\x07\x04\0\x03\x05\x08\x05\x01\x12\
+    \x030\n!\n\r\n\x06\x04\0\x03\x05\x02\x06\x12\x031\x06(\n\x0e\n\x07\x04\0\
+    \x03\x05\x02\x06\x06\x12\x031\x06\x14\n\x0e\n\x07\x04\0\x03\x05\x02\x06\
+    \x01\x12\x031\x15#\n\x0e\n\x07\x04\0\x03\x05\x02\x06\x03\x12\x031&'\n\
+    \x0c\n\x04\x04\0\x03\x06\x12\x045\x02a\x03\n\x0c\n\x05\x04\0\x03\x06\x01\
+    \x12\x035\n\x18\n\x0e\n\x06\x04\0\x03\x06\x03\0\x12\x047\x04M\x05\n\x0e\
+    \n\x07\x04\0\x03\x06\x03\0\x01\x12\x037\x0c\x19\n\x10\n\x08\x04\0\x03\
+    \x06\x03\0\x08\0\x12\x048\x06:\x07\n\x10\n\t\x04\0\x03\x06\x03\0\x08\0\
+    \x01\x12\x038\x0c\x1d\n\x0f\n\x08\x04\0\x03\x06\x03\0\x02\0\x12\x039\x08\
+    \x1d\n\x10\n\t\x04\0\x03\x06\x03\0\x02\0\x05\x12\x039\x08\x0e\n\x10\n\t\
+    \x04\0\x03\x06\x03\0\x02\0\x01\x12\x039\x0f\x18\n\x10\n\t\x04\0\x03\x06\
+    \x03\0\x02\0\x03\x12\x039\x1b\x1c\n\x10\n\x08\x04\0\x03\x06\x03\0\x08\
+    \x01\x12\x04<\x06>\x07\n\x10\n\t\x04\0\x03\x06\x03\0\x08\x01\x01\x12\x03\
+    <\x0c\x1d\n\x0f\n\x08\x04\0\x03\x06\x03\0\x02\x01\x12\x03=\x08\x1d\n\x10\
+    \n\t\x04\0\x03\x06\x03\0\x02\x01\x05\x12\x03=\x08\x0e\n\x10\n\t\x04\0\
+    \x03\x06\x03\0\x02\x01\x01\x12\x03=\x0f\x18\n\x10\n\t\x04\0\x03\x06\x03\
+    \0\x02\x01\x03\x12\x03=\x1b\x1c\n\x10\n\x08\x04\0\x03\x06\x03\0\x08\x02\
+    \x12\x04@\x06C\x07\n\x10\n\t\x04\0\x03\x06\x03\0\x08\x02\x01\x12\x03@\
+    \x0c\x1e\n0\n\x08\x04\0\x03\x06\x03\0\x02\x02\x12\x03A\x08\"\"\x1fTODO\
+    \x20-\x20mana,\x20energy,\x20none,\x20etc\n\n\x10\n\t\x04\0\x03\x06\x03\
+    \0\x02\x02\x06\x12\x03A\x08\x12\n\x10\n\t\x04\0\x03\x06\x03\0\x02\x02\
+    \x01\x12\x03A\x13\x1d\n\x10\n\t\x04\0\x03\x06\x03\0\x02\x02\x03\x12\x03A\
+    \x20!\n\x10\n\x08\x04\0\x03\x06\x03\0\x04\0\x12\x04D\x06H\x07\n\x10\n\t\
+    \x04\0\x03\x06\x03\0\x04\0\x01\x12\x03D\x0b\x15\n\x11\n\n\x04\0\x03\x06\
+    \x03\0\x04\0\x02\0\x12\x03E\x08\x11\n\x12\n\x0b\x04\0\x03\x06\x03\0\x04\
+    \0\x02\0\x01\x12\x03E\x08\x0c\n\x12\n\x0b\x04\0\x03\x06\x03\0\x04\0\x02\
+    \0\x02\x12\x03E\x0f\x10\n\x11\n\n\x04\0\x03\x06\x03\0\x04\0\x02\x01\x12\
+    \x03F\x08\x11\n\x12\n\x0b\x04\0\x03\x06\x03\0\x04\0\x02\x01\x01\x12\x03F\
+    \x08\x0c\n\x12\n\x0b\x04\0\x03\x06\x03\0\x04\0\x02\x01\x02\x12\x03F\x0f\
+    \x10\n\x11\n\n\x04\0\x03\x06\x03\0\x04\0\x02\x02\x12\x03G\x08\x13\n\x12\
+    \n\x0b\x04\0\x03\x06\x03\0\x04\0\x02\x02\x01\x12\x03G\x08\x0e\n\x12\n\
+    \x0b\x04\0\x03\x06\x03\0\x04\0\x02\x02\x02\x12\x03G\x11\x12\n\x15\n\x06\
+    \x04\0\x03\x06\x03\x01\x12\x04O\x04Q\x05\"\x05TODO\n\n\x0e\n\x07\x04\0\
+    \x03\x06\x03\x01\x01\x12\x03O\x0c\x16\n\x15\n\x06\x04\0\x03\x06\x03\x02\
+    \x12\x04S\x04U\x05\"\x05TODO\n\n\x0e\n\x07\x04\0\x03\x06\x03\x02\x01\x12\
+    \x03S\x0c\x15\n\x15\n\x06\x04\0\x03\x06\x03\x03\x12\x04W\x04Y\x05\"\x05T\
+    ODO\n\n\x0e\n\x07\x04\0\x03\x06\x03\x03\x01\x12\x03W\x0c\x14\n\x0e\n\x06\
+    \x04\0\x03\x06\x08\0\x12\x04[\x04`\x05\n\x0e\n\x07\x04\0\x03\x06\x08\0\
+    \x01\x12\x03[\n\x14\n\r\n\x06\x04\0\x03\x06\x02\0\x12\x03\\\x06&\n\x0e\n\
+    \x07\x04\0\x03\x06\x02\0\x06\x12\x03\\\x06\x13\n\x0e\n\x07\x04\0\x03\x06\
+    \x02\0\x01\x12\x03\\\x14!\n\x0e\n\x07\x04\0\x03\x06\x02\0\x03\x12\x03\\$\
+    %\n\r\n\x06\x04\0\x03\x06\x02\x01\x12\x03]\x06\x20\n\x0e\n\x07\x04\0\x03\
+    \x06\x02\x01\x06\x12\x03]\x06\x10\n\x0e\n\x07\x04\0\x03\x06\x02\x01\x01\
+    \x12\x03]\x11\x1b\n\x0e\n\x07\x04\0\x03\x06\x02\x01\x03\x12\x03]\x1e\x1f\
+    \n\r\n\x06\x04\0\x03\x06\x02\x02\x12\x03^\x06\x1e\n\x0e\n\x07\x04\0\x03\
+    \x06\x02\x02\x06\x12\x03^\x06\x0f\n\x0e\n\x07\x04\0\x03\x06\x02\x02\x01\
+    \x12\x03^\x10\x19\n\x0e\n\x07\x04\0\x03\x06\x02\x02\x03\x12\x03^\x1c\x1d\
+    \n\r\n\x06\x04\0\x03\x06\x02\x03\x12\x03_\x06\x1c\n\x0e\n\x07\x04\0\x03\
+    \x06\x02\x03\x06\x12\x03_\x06\x0e\n\x0e\n\x07\x04\0\x03\x06\x02\x03\x01\
+    \x12\x03_\x0f\x17\n\x0e\n\x07\x04\0\x03\x06\x02\x03\x03\x12\x03_\x1a\x1b\
+    \n\x0c\n\x04\x04\0\x08\0\x12\x04c\x02i\x03\n\x0c\n\x05\x04\0\x08\0\x01\
+    \x12\x03c\x08\x0f\n\x0b\n\x04\x04\0\x02\0\x12\x03d\x04\x1e\n\x0c\n\x05\
+    \x04\0\x02\0\x06\x12\x03d\x04\x0e\n\x0c\n\x05\x04\0\x02\0\x01\x12\x03d\
+    \x0f\x19\n\x0c\n\x05\x04\0\x02\0\x03\x12\x03d\x1c\x1d\n\x0b\n\x04\x04\0\
+    \x02\x01\x12\x03e\x04\x1a\n\x0c\n\x05\x04\0\x02\x01\x06\x12\x03e\x04\x0c\
+    \n\x0c\n\x05\x04\0\x02\x01\x01\x12\x03e\r\x15\n\x0c\n\x05\x04\0\x02\x01\
+    \x03\x12\x03e\x18\x19\n\x0b\n\x04\x04\0\x02\x02\x12\x03f\x04(\n\x0c\n\
+    \x05\x04\0\x02\x02\x06\x12\x03f\x04\x13\n\x0c\n\x05\x04\0\x02\x02\x01\
+    \x12\x03f\x14#\n\x0c\n\x05\x04\0\x02\x02\x03\x12\x03f&'\n\x0b\n\x04\x04\
+    \0\x02\x03\x12\x03g\x04\x1f\n\x0c\n\x05\x04\0\x02\x03\x06\x12\x03g\x04\
+    \x0e\n\x0c\n\x05\x04\0\x02\x03\x01\x12\x03g\x0f\x19\n\x0c\n\x05\x04\0\
+    \x02\x03\x03\x12\x03g\x1c\x1e\n\x0b\n\x04\x04\0\x02\x04\x12\x03h\x04#\n\
+    \x0c\n\x05\x04\0\x02\x04\x06\x12\x03h\x04\x10\n\x0c\n\x05\x04\0\x02\x04\
+    \x01\x12\x03h\x11\x1d\n\x0c\n\x05\x04\0\x02\x04\x03\x12\x03h\x20\"b\x06p\
+    roto3\
 ";
 
 static mut file_descriptor_proto_lazy: ::protobuf::lazy::Lazy<::protobuf::descriptor::FileDescriptorProto> = ::protobuf::lazy::Lazy {

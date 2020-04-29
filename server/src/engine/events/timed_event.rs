@@ -1,15 +1,16 @@
 use core::cmp::Ordering;
 
 use legion::prelude::*;
-use legion::world::World;
+
+use crate::engine::game::Game;
+use super::event_data::EventData;
 
 pub struct TimedEvent {
     pub event_type: TimedEventType,
     pub execute_frame: u32,
     pub name: String,
-    pub owner: Option<Entity>,
-    // TODO: Add Optional params like Location, Target, etc
-    pub execute: fn(&mut World) -> (),
+    pub event_data: Option<EventData>,
+    pub execute: fn(&mut Game) -> (),
 }
 
 #[derive(Clone, Copy)]
@@ -24,6 +25,7 @@ impl TimedEvent {
         Self {
             execute_frame: self.execute_frame + offset,
             name: self.name.clone(),
+            event_data: self.event_data.clone(),
             ..*self
         }
     }

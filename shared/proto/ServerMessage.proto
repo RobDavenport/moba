@@ -38,7 +38,63 @@ message ServerMessage {
       sint32 rotation = 4;
     }
 
-    //Health, Energy, Energy Type, Entity Type etc
+    oneof option_health {
+      uint32 health = 5;
+    }
+
+    oneof option_energy {
+      uint32 energy = 6;
+    }
+
+    oneof option_entity_type_data {
+      EntityTypeData entityTypeData = 7;
+    }
+  }
+
+  message EntityTypeData {
+
+    message CharacterData {
+      oneof option_max_health {
+        uint32 maxHealth = 1;
+      }
+
+      oneof option_max_energy {
+        uint32 maxEnergy = 2;
+      }
+
+      oneof option_energy_type {
+        EnergyType energyType = 3;
+        //TODO - mana, energy, none, etc
+      }
+      enum EnergyType {
+        NONE = 0;
+        MANA = 1;
+        ENERGY = 2;
+      }
+
+      // oneof option_character_type {
+      //   //TODO - character unique ID / character name
+      // }
+    }
+
+    message MinionData {
+      //TODO
+    }
+
+    message TowerData {
+      //TODO
+    }
+
+    message CoreData {
+      //TODO
+    }
+
+    oneof entityData {
+      CharacterData characterData = 1;
+      MinionData minionData = 2;
+      TowerData towerData = 3;
+      CoreData coreData = 4;
+    }
   }
   
   oneof msgData {
@@ -49,6 +105,3 @@ message ServerMessage {
     VerifiedUuid verifiedUuid = 26;
   }
 }
-
-
-

@@ -14,9 +14,9 @@ impl Game {
                 let replicated = Replicated::new_for_game(self);
                 (
                     Transform::new(core.pos, None, None),
-                    // Health
                     Team::new(TeamId(team_id as u32)),
                     replicated,
+                    //TODO
                     // Collider,
                     // Provides Vision
                     // Visible
@@ -34,6 +34,7 @@ impl Game {
                 let replicated = Replicated::new_for_game(self);
                 (
                     Transform::new(tower.pos, None, None),
+                    // TODO
                     // Attacks
                     // Search Hostile
                     // Health
@@ -54,21 +55,21 @@ impl Game {
             (
                 Transform::new(spawner_data.pos, None, None),
                 Team::new(TeamId(team_id as u32)),
-                //Waypoints
+                Waypoints::new(spawner_data.waypoints),
             )
         });
         // TODO:
         // Attach TimedEvents to these spawners
         // FOR TESTING ONLY!
-        self.timed_events.push(TimedEvent {
-            event_type: TimedEventType::Repeating(60),
-            execute_frame: 60,
-            name: "Test Event".to_string(),
-            owner: None,
-            execute: |_unused: &mut World| {
-                println!("fast");
-            },
-        });
+        // self.timed_events.push(TimedEvent {
+        //     event_type: TimedEventType::Repeating(60),
+        //     execute_frame: 60,
+        //     name: "Test Event".to_string(),
+        //     owner: None,
+        //     execute: |_unused: &mut Self| {
+        //         println!("fast");
+        //     },
+        // });
 
         self.world.insert((), component_set);
     }

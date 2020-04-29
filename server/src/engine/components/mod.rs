@@ -17,6 +17,7 @@ pub mod team;
 pub mod transform;
 pub mod velocity;
 pub mod visible;
+pub mod waypoints;
 
 pub mod all {
     pub use super::abilities::*;
@@ -38,4 +39,5 @@ pub mod all {
     pub use super::transform::*;
     pub use super::velocity::*;
     pub use super::visible::*;
+    pub use super::waypoints::*;
 }
