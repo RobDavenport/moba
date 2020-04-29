@@ -6,7 +6,7 @@ use crate::engine::components::all::*;
 // Attacking(u32) - transform, attack data, datatarget entity
 pub fn pawn_attack(tick_time: f32) -> Box<dyn Schedulable> {
     SystemBuilder::new("pawn_attacking_system")
-        .with_query(<(Write<Position>, Write<Attacking>)>::query())
+        .with_query(<(Read<Position>, Write<Attacking>)>::query())
         .read_component::<Position>()
         .read_component::<Collider>()
         .build(move |_, mut world, _, query| {
@@ -15,8 +15,8 @@ pub fn pawn_attack(tick_time: f32) -> Box<dyn Schedulable> {
                     if let Some(other_position) = world.get_component::<Position>(other) {
                         helpers::within_attack_range(
                             &attacking,
-                            &position,
-                            &other_position,
+                            position.0,
+                            other_position.0,
                             world.get_component::<Collider>(other),
                         )
                     } else {

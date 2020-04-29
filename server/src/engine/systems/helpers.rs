@@ -5,8 +5,8 @@ use crate::engine::components::all::*;
 
 pub fn within_attack_range(
     attacking: &Attacking,
-    position: &Position,
-    other_position: &Position,
+    position: Vec2,
+    other_position: Vec2,
     other_collision: Option<Ref<Collider>>,
 ) -> bool {
     let radius = if let Some(collider) = other_collision {
@@ -14,7 +14,7 @@ pub fn within_attack_range(
     } else {
         0.
     };
-    let distance = (position.0 - other_position.0).length() - radius;
+    let distance = (position - other_position).length() - radius;
 
     distance <= attacking.range
 }
